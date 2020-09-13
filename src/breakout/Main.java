@@ -1,7 +1,7 @@
 package breakout;
 
-/**
- * Feel free to completely change this code or delete it entirely. 
+/***
+ * Calls launch(args) to start the program.
  */
 public class Main {
     /**
