@@ -218,7 +218,7 @@ no block is present.
   
      * Method: displayBlocks
      
-* Class 10: FilledBlockRow.java (extends BlockRow)
+* Class 10: FilledBlockRow.java (implements BlockRow)
   * Purpose: Contains private array (size 12) of multiple Block objects. Array
   might contain empty values if no blocks are present in that space from the text file.
   
@@ -229,9 +229,9 @@ no block is present.
 
  * Class 11: Paddle.java
     * Purpose: A small rectangle at the bottom of the screen that a Ball
-    can bounce off of.
+    can bounce off of. Moved horizontally using the arrow keys.
  
-    * Method: collision, setSize
+    * Method: collision, setSize, move
     
 * Class 12: Ball.java
     * Purpose: A circle that breaks Blocks, and ends the game if it crosses the 

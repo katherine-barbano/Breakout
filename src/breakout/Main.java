@@ -1,13 +1,28 @@
 package breakout;
 
-/**
- * Feel free to completely change this code or delete it entirely. 
+import javafx.application.Application;
+import javafx.stage.Stage;
+
+
+/***
+ * Calls launch(args) to start the program. Instantiates a new Game object to setup
+ * the stage.
  */
-public class Main {
+public class Main extends Application{
+
     /**
      * Start of the program.
      */
     public static void main (String[] args) {
-        System.out.println("Hello world");
+        launch(args);
+    }
+
+    /***
+     * Instantiates a new Game object to create the stage.
+     * @param stage Stage to run Breakout
+     */
+    @Override
+    public void start (Stage stage) {
+        Game game = new Game(stage);
     }
 }
