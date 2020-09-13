@@ -156,27 +156,109 @@ no block is present.
 
 ### Possible Classes
 
- * Class 1
-   * Purpose
+ * Class 1: PowerUp.java (interface)
+   * Purpose: This object is released from breaking a BlockContainingPowerUp. The
+   powerUp object moves down the screen, potentially through other blocks obstructing
+   its path, towards the bottom of the screen. If paddle touches a PowerUp, the PowerUp's
+   positive effect is activated.
+   
+   Implemented by subclasses of PowerUp.
 
-   * Method
+   * Method: activateAbility, deactivateAbility, isTouchingPaddle, fallToBottom
 
- * Class 2
-   * Purpose
+ * Class 2: ExtendedPaddlePowerUp.java (implements PowerUp)
+   * Purpose: A yellow circle that moves down the screen. If it touches the paddle,
+   the paddle object's size is set to a larger size for 20 seconds
 
-   * Method
+   * Method: all methods in PowerUp, extendPaddleSize
 
- * Class 3
-   * Purpose
+ * Class 3: SlowBallPowerUp.java (implements PowerUp)
+   * Purpose: A purple circle that moves down the screen. If it touches the paddle,
+   the speed of the Ball object is set to a slower speed.
 
-   * Method
+   * Method: all methods in PowerUp, setBallSpeedToSlow
 
- * Class 4
-   * Purpose
+ * Class 4: StrongBallPowerUp.java (implements PowerUp)
+   * Purpose: A pink circle that moves down the screen. If it touches the paddle,
+   the ball's color changes to pink (so the user knows a change happened), and
+   it sets the strength of the ball to 3 for 20 seconds.
 
-   * Method
+   * Method: all methods in PowerUp, setBallColor, setBallStrength
 
- * Class 5
-   * Purpose
+ * Class 5: Block.java
+   * Purpose: A rectangle that is removed from obstructing the Ball's movement
+   if the hardness becomes 0. Contains a hardness field from 0 to 3. The Block's 
+   color corresponds to the current hardness, which is updated if it is hit by a 
+   Ball.
 
-   * Method
+   * Method: updateHardness
+   
+ * Class 6: PowerUpBlock.java (extends Block)
+    * Purpose: Has a hardness of 1 until it is hit, and turns to 0. Drops PowerUp
+    when hit.
+ 
+    * Method: dropPowerUp
+ 
+ * Class 7: MovingBlock.java (extends Block implements BlockRow)
+    * Purpose: Moves horizontally across the row, in which it is the only block.
+    Bounces off left and right sides of screen, and obstructs movement of
+    the Ball. Has a hardness of 1 until it is hit, and turns to 0.
+ 
+    * Method: move
+    
+ * Class 8: BlockConfiguration.java
+     * Purpose: Reads in a text file into an array (size 8) of BlockRows
+     Throws exception if any text file does not provide a valid level.
+  
+     * Methods: readTextFile, setBlockRows
+     
+ * Class 9: BlockRow.java (interface)
+     * Purpose: Interface for a row of blocks in the block configuration. Its subclasses,
+     MovingBlock and FilledBlockRow, should be instantiated.
+  
+     * Method: displayBlocks
+     
+* Class 10: FilledBlockRow.java (extends BlockRow)
+  * Purpose: Contains private array (size 12) of multiple Block objects. Array
+  might contain empty values if no blocks are present in that space from the text file.
+  
+  This is a subclass of BlockRow. It only contains Block or PowerUpBlock. It cannot
+  contain MovingBlock, since a single MovingBlock will take up the entire row.
+
+  * Method: setBlocks, displayBlocks
+
+ * Class 11: Paddle.java
+    * Purpose: A small rectangle at the bottom of the screen that a Ball
+    can bounce off of.
+ 
+    * Method: collision, setSize
+    
+* Class 12: Ball.java
+    * Purpose: A circle that breaks Blocks, and ends the game if it crosses the 
+    bottom of the screen. Bounces off all other walls of the screen, as well as 
+    the Paddle and other Blocks.
+    
+    * Method: isOnScreen, breakBlock, isTouchingBlock, isTouchingPaddle
+
+ * Class 13: Level.java
+    * Purpose: Contains private field for a BlockConfiguration. Maintains
+    number of lives left. Starts a game if the user hits the space bar. Maintains
+    cheat keys. Ends game if lives run out, or ends the current Level
+    if BlockConfiguration does not contain any more Blocks.
+ 
+    * Method: endGame, finishLevel, updateLives
+ 
+ * Class 14: Game.java
+    * Purpose: Creates a new BlockConfiguration instance for each text file. Create a new
+    Level for each BlockConfiguration. Iterates through all Levels (or
+    at least until a Game Over) and displays a "You Won" screen at the end.
+ 
+    * Method: start, createBlockConfiguration, createLevels, runLevels, gameOverDisplay, youWonDisplay
+ 
+ * Class 15: Main.java
+    * Purpose: Calls launch(args) to start the program.
+ 
+    * Method: main
+ 
+ * Class 16: MainTest.java
+    * Purpose: Contains JUnit tests for the program.
