@@ -218,7 +218,7 @@ no block is present.
   
      * Method: displayBlocks
      
-* Class 10: FilledBlockRow.java (extends BlockRow)
+* Class 10: FilledBlockRow.java (implements BlockRow)
   * Purpose: Contains private array (size 12) of multiple Block objects. Array
   might contain empty values if no blocks are present in that space from the text file.
   

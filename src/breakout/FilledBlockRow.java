@@ -1,5 +1,5 @@
 package breakout;
 
-public class FilledBlockRow {
+public class FilledBlockRow implements BlockRow {
 
 }

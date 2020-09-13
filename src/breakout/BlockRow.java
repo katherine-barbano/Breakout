@@ -1,5 +1,5 @@
 package breakout;
 
-public class BlockRow {
+public interface BlockRow {
 
 }
