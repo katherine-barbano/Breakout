@@ -57,5 +57,8 @@ public class Game {
 
   void step (double elapsedTime) {
     System.out.println("I am taking a step");
+
+    ball.updateCoordinates(elapsedTime);
+    //paddle.updatePaddleCoordinates();
   }
 }
