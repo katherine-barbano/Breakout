@@ -1,14 +1,19 @@
 # Game Plan
 ## NAMEs
-
+Anna Diemel (ad356) and Katherine Barbano (kab134)
 
 ### Breakout Variation Ideas
 
 ### Interesting Existing Game Variations
 
- * Game 1
+ * Game 1: Fairy Treasure - This game used gems as a "positive" object and fire as a "negative" object.
+ Similarly, we can have "good objects" in our game that drops down from a broken block to increase the
+ paddle's score if the paddle collects it. We can also have a "bad object" drop down from a broken block to kill
+ the paddle once.
 
- * Game 2
+ * Game 2: Super Breakout - This game had different color blocks have different corresponding levels of
+ number of hits needed to break the block. Similarly, we can have blocks of varying hardness in our game
+ that require a different number of hits to be broken.
 
 
 #### Block Ideas
