@@ -68,20 +68,90 @@ Anna Diemel (ad356) and Katherine Barbano (kab134)
 
 #### Level Descriptions
 
+In these block configurations, numbers represent how many hits are required to break
+the block. For power up blocks, blocks labeled "P" represent blocks that drop power-ups
+that increase the size of the paddle. Blocks labeled "S" drop power ups that slow
+down the ball. Blocks labeled "B" drop power ups that allow the ball to break any
+hardness of block with one hit. Next, blocks labeled "M" represent blocks moving in a row, with the position of the block in the diagram
+specifying the block's starting position.
+
+Block configurations must be exactly 12 columns and 8 rows. Text
+files that specify block configurations must have a "0" to represent a space where
+no block is present.
+
  * Level 1
    * Block Configuration
+   
+   0 0 0 0 0 0 0 0 0 0 0 0
+   
+   3 3 3 1 2 2 2 1 3 3 3 3
+   
+   1 1 3 1 2 1 2 1 1 1 1 3
+   
+   3 3 3 1 2 1 2 1 1 1 3 1
+   
+   1 1 3 1 2 1 2 1 1 3 1 1
+   
+   3 3 3 1 2 2 2 1 3 1 1 1
+   
+   0 0 0 0 0 0 0 0 0 0 0 0
+   
+   0 0 0 0 0 0 0 0 0 0 0 0
 
-   * Variation features
+   * Variation features: This level contains blocks of varying hardness. Because
+   the blocks are different colors based on their hardness, the colors will spell
+   out the numbers "307". There are no power ups available in this level.
+   
 
  * Level 2
    * Block Configuration
+   
+   0 0 0 0 0 1 1 0 0 0 0 0
+   
+   0 0 0 0 1 0 0 1 0 0 0 0
+   
+   0 0 0 1 0 2 2 0 1 0 0 0
+   
+   0 0 1 0 2 S B 2 0 1 0 0
+   
+   0 0 0 1 0 2 2 0 1 0 0 0
+   
+   0 0 0 0 1 0 0 1 0 0 0 0
+   
+   3 S 3 0 0 1 1 0 0 3 B 3
+   
+   0 0 0 0 0 0 0 0 0 0 0 0
+   
 
-   * Variation features
+   * Variation features: The configuration of blocks is shaped differently
+   from a basic rectangle. Power-ups to make the ball strong or to slow the ball
+   down are available in some blocks. These power-ups drop down once the blocks
+   are broken, and are activated if they touch the paddle. This level also
+   contains blocks of varying hardness again.
 
  * Level 3
    * Block Configuration
+   
+   M 0 0 0 0 0 0 0 0 0 0 0
+   
+   1 2 B 2 1 1 1 1 2 S 2 1
+   
+   0 0 0 0 0 0 0 0 0 0 0 M
+   
+   1 1 1 0 2 3 3 2 0 1 1 1
+   
+   M 0 0 0 0 0 0 0 0 0 0 0
+   
+   0 P 0 0 3 1 1 3 0 0 P 0
+   
+   0 0 0 0 0 0 0 0 0 0 0 M
+   
+   0 0 0 0 0 0 0 0 0 0 0 0
 
-   * Variation features
+   * Variation features: This level contains moving blocks. It also contains
+   blocks that drop all three types of power-ups, including the power up
+   that extends the size of the paddle. It also still contains blocks of varying
+   hardness.
 
 
 ### Possible Classes
