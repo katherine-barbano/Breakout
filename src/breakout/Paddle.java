@@ -61,4 +61,8 @@ public class Paddle extends Rectangle{
       setX(newXPosition);
     }
   }
+
+  public double getCenterX() {
+    return getX() + getWidth()/2;
+  }
 }

@@ -66,6 +66,9 @@ public class Ball extends Circle {
     if(isTouchingPaddleSide()) {
       velocityX = velocityX * -1;
     }
+    if(isTouchingPaddleTop()) {
+      velocityX = getVelocityXFromPaddleHit();
+    }
   }
 
   private void updateVelocityY() {
@@ -75,6 +78,13 @@ public class Ball extends Circle {
     if(isTouchingTopWall()) {
       velocityY = velocityY * -1;
     }
+  }
+
+  private int getVelocityXFromPaddleHit() {
+    double distanceFromPaddleCenter = getCenterX() - paddle.getCenterX();
+    double angleRatio = distanceFromPaddleCenter/paddle.getWidth();
+    double angleRadians = Math.toRadians(angleRatio * 90);
+    return (int)(velocityY * Math.sin(angleRadians));
   }
 
   private boolean isTouchingPaddleTop() {
@@ -97,7 +107,7 @@ public class Ball extends Circle {
   }
 
   private boolean isTouchingTopWall() {
-    return getCenterY()-BALL_RADIUS<=0;
+    return getCenterY()-BALL_RADIUS<0;
   }
 
   //assumes Scene has already been instantiated in Game so that it can use the getScene method
