@@ -18,5 +18,7 @@ public class FilledBlockRow implements BlockRow {
     rowOfBlocks = new Block[BLOCKS_PER_ROW];
   }
 
+  @Override
+  public Block[] getRowOfBlocks() { return (rowOfBlocks == null) ? new Block[BLOCKS_PER_ROW] : rowOfBlocks; }
   void setBlocks(Block[] blocks) { this.rowOfBlocks = blocks; }
 }

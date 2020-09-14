@@ -21,17 +21,6 @@ public class Block extends Rectangle {
   public static final int NUMBER_OF_BLOCK_ROWS = 8;
 
   private int blockHardness;
-  private int blockWidth;
-  private int blockHeight;
-
-  public Paint getBlockColor() {
-    return blockColor;
-  }
-
-  public void setBlockColor(Paint blockColor) {
-    this.blockColor = blockColor;
-  }
-
   private Paint blockColor;
 
   public Block(int sceneWidth, int sceneHeight, int blockHardness) {
@@ -44,14 +33,16 @@ public class Block extends Rectangle {
     setId("block");
   }
 
+  public Block () { }
+
   private void updateBlockColor(int blockHardness) {
     Paint newBlockColor = getBlockColor(blockHardness);
     this.blockColor = newBlockColor;
   }
 
   private void setDimensions(int sceneWidth, int sceneHeight) {
-    blockWidth = sceneWidth / BLOCKS_PER_ROW;
-    blockHeight = getBlockHeight(sceneHeight);
+    int blockWidth = sceneWidth / BLOCKS_PER_ROW;
+    int blockHeight = getBlockHeight(sceneHeight);
     setWidth(blockWidth);
     setHeight(blockHeight);
   }
@@ -60,14 +51,6 @@ public class Block extends Rectangle {
   // TODO: optimize this scaling factor
   private int getBlockHeight(int sceneHeight) {
     return (sceneHeight * 8) / 10 * NUMBER_OF_BLOCK_ROWS;
-  }
-
-  void decreaseHardnessByOne() {
-    blockHardness--;
-  }
-  void updateHardness(int blockHardness) {
-    this.blockHardness = blockHardness;
-    updateBlockColor(blockHardness);
   }
 
   Paint getBlockColor(int blockHardness) {
@@ -85,11 +68,21 @@ public class Block extends Rectangle {
     }
   }
 
-  public int getBlockHardness() {
-    return blockHardness;
-  }
-
-  public void setBlockHardness(int blockHardness) {
+  int getBlockHardness() { return blockHardness; }
+  void setBlockHardness(int blockHardness) {
     this.blockHardness = blockHardness;
+    updateBlockColor(blockHardness);
+  }
+  void decreaseHardnessByOne() {
+    blockHardness--;
+  }
+  Paint getBlockColor() { return blockColor; }
+  void setBlockColor(Paint blockColor) { this.blockColor = blockColor; }
+
+  public void updatePosition(int blockWidth, int blockHeight, int x, int y) {
+    setWidth(blockWidth);
+    setHeight(blockHeight);
+    setX(x);
+    setY(y);
   }
 }

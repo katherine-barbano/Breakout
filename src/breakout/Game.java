@@ -1,5 +1,6 @@
 package breakout;
 
+import java.util.ArrayList;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.scene.Group;
@@ -38,8 +39,10 @@ public class Game {
   public static final String GAME_OVER_MESSAGE = "Game Over! Click the space bar to play again.";
   public static final int START_XPOSITION = 20;
   public static final int START_YPOSITION = LIVES_YPOSITION;
+  public static final int NUMBER_OF_LEVELS = 1;
 
   private Scene gameScene;
+  private Level gameLevel;
   private Ball gameBall; // TODO extension: List<Ball> myBalls, to accomodate multi-gameBall powerups
   private Paddle gamePaddle;
   private Group gameRoot;
@@ -67,6 +70,7 @@ public class Game {
     gameRoot = new Group();
 
     initializeNewBallAndPaddle();
+    initializeLevels();
     initializeLivesText();
     initializeStartText();
 
@@ -142,6 +146,18 @@ public class Game {
     gameRoot.getChildren().add(gamePaddle);
   }
 
+  void initializeLevels() {
+    int newLevel;
+    if (gameLevel != null) {
+      newLevel = gameLevel.getLevelNumber() + 1;
+    } else {
+      newLevel = 1;
+    }
+    setLevel(newLevel);
+    ArrayList<Block> allBlocks = gameLevel.getAllBlocks(SCENE_SIZE, SCENE_SIZE);
+    for (Block block : allBlocks) gameRoot.getChildren().add(block);
+  }
+
   private Text initializeLivesText() {
     Text text = new Text();
     updateLivesText(text);
@@ -157,14 +173,13 @@ public class Game {
 
   // TODO
   private void updateLivesText(Text text) {
-    text.setText(LIVES_TITLE + 0);
+    text.setText(LIVES_TITLE + gameLevel.getLives());
   }
 
   private void endGameText(Text text) {
     text.setText(GAME_OVER_MESSAGE);
   }
 
-  Scene getScene() {
-    return gameScene;
-  }
+  Scene getScene() { return gameScene; }
+  void setLevel(int levelNumber) { this.gameLevel = new Level(levelNumber); }
 }
