@@ -1,6 +1,8 @@
 package breakout;
 
 import java.util.concurrent.TimeUnit;
+import javafx.scene.Scene;
+import javafx.scene.input.KeyCode;
 import javafx.stage.Stage;
 import util.DukeApplicationTest;
 import org.junit.jupiter.api.Test;
@@ -14,12 +16,13 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 public class MainTest extends DukeApplicationTest {
 
+  private Game game;
   private Ball ball;
   private Paddle paddle;
 
   @Override
   public void start (Stage stage) {
-    Game game = new Game(stage);
+    game = new Game(stage);
 
     ball = lookup("#ball").query();
     paddle = lookup("#paddle").query();
@@ -46,8 +49,25 @@ public class MainTest extends DukeApplicationTest {
   }
 
   @Test
-  public void movePaddle() {
+  public void testMovePaddle() {
+    Scene myScene = game.getScene();
 
+    for(int expectedXCoordinate = 255; expectedXCoordinate>=0; expectedXCoordinate=expectedXCoordinate-10) {
+      press(myScene, KeyCode.LEFT);
+      assertEquals(expectedXCoordinate,paddle.getX());
+    }
+
+    press(myScene, KeyCode.LEFT);
+    assertTrue(paddle.getX()>=0);
+
+    for(double expectedXCoordinate = paddle.getX()+10; expectedXCoordinate<=myScene.getWidth()-paddle.getWidth(); expectedXCoordinate=expectedXCoordinate+10) {
+      press(myScene, KeyCode.RIGHT);
+      assertEquals(expectedXCoordinate,paddle.getX());
+    }
+
+    press(myScene, KeyCode.RIGHT);
+    assertTrue(paddle.getX()<=game.getScene().getWidth());
+
+    assertEquals(570, paddle.getY());
   }
-
 }
