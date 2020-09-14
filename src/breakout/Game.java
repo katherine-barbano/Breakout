@@ -41,7 +41,6 @@ public class Game {
   private Ball ball;
   private Paddle paddle;
   private Group root;
-  private int lives;
   private boolean isPaused;
   private Text pauseText;
 
@@ -121,6 +120,7 @@ public class Game {
     }
   }
 
+  //TODO: update lives from Level
   public void reset() {
     isPaused = true;
 
@@ -153,8 +153,9 @@ public class Game {
     return text;
   }
 
+  //TODO: replace 0 with lives from Level
   private void updateLivesText(Text text) {
-    text.setText(LIVES_TITLE + lives);
+    text.setText(LIVES_TITLE + 0);
   }
 
   public Scene getScene() {

@@ -10,8 +10,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Tests for Game class.
- *
- * @author Robert C Duvall
  */
 public class MainTest extends DukeApplicationTest {
 
@@ -25,6 +23,11 @@ public class MainTest extends DukeApplicationTest {
 
     ball = lookup("#ball").query();
     paddle = lookup("#paddle").query();
+  }
+
+  public void startAnimation() {
+    Scene myScene = game.getScene();
+    press(myScene,KeyCode.SPACE);
   }
 
   @Test
@@ -50,6 +53,8 @@ public class MainTest extends DukeApplicationTest {
   @Test
   public void testMovePaddle() {
     Scene myScene = game.getScene();
+
+    startAnimation();
 
     for(int expectedXCoordinate = 255; expectedXCoordinate>=0; expectedXCoordinate=expectedXCoordinate-10) {
       press(myScene, KeyCode.LEFT);
@@ -77,6 +82,8 @@ public class MainTest extends DukeApplicationTest {
     ball.setCenterX(15);
     ball.setCenterY(15);
 
+    startAnimation();
+
     for(int numSteps = 0; numSteps < 2; numSteps ++) {
       game.step(Game.SECOND_DELAY);
     }
@@ -92,6 +99,8 @@ public class MainTest extends DukeApplicationTest {
   public void testBallPaddleInteraction() {
     double startingYBall = ball.getCenterY();
 
+    startAnimation();
+
     for(int numSteps = 0; numSteps < 3; numSteps ++) {
       game.step(Game.SECOND_DELAY);
     }
@@ -100,4 +109,23 @@ public class MainTest extends DukeApplicationTest {
     assertTrue(ball.getCenterY()<startingYBall);
   }
 
+  @Test
+  //TODO: fix this test, does not start on same thread, so throws exception
+  public void resetBallPosition() {
+    ball.setCenterX(20);
+    ball.setCenterY(585);
+
+    startAnimation();
+
+    //game.beginInfiniteLoop();
+
+    for(int numSteps = 0; numSteps < 10; numSteps ++) {
+      game.step(Game.SECOND_DELAY);
+      System.out.println(ball.getCenterY());
+    }
+
+
+    assertEquals(300,ball.getCenterX());
+    assertEquals(555,ball.getCenterY());
+  }
 }

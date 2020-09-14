@@ -137,6 +137,6 @@ public class Ball extends Circle {
 
   //assumes Scene has already been instantiated in Game so that it can use the getScene method
   private boolean isTouchingBottomWall() {
-    return getCenterY()-BALL_RADIUS>getScene().getHeight();
+    return getCenterY()+BALL_RADIUS>getScene().getHeight();
   }
 }
