@@ -88,7 +88,7 @@ public class Game {
   private void handleKeyInput(KeyCode code) {
     paddle.handleKeyInput(code, isPaused);
     handleSpaceBarInput(code);
-    //handleRKeyInput(code);
+    handleRKeyInput(code);
   }
 
   private void handleSpaceBarInput(KeyCode code) {
@@ -106,7 +106,9 @@ public class Game {
   }
 
   private void handleRKeyInput(KeyCode code) {
-
+    if(code == KeyCode.R) {
+      reset();
+    }
   }
 
 
