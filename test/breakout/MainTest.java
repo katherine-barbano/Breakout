@@ -73,19 +73,16 @@ public class MainTest extends DukeApplicationTest {
   @Test
   public void testBallCornerInteraction() {
     ball.setVelocityX(-150);
-    ball.setVelocityY(150);
-    ball.setCenterX(20);
-    ball.setCenterY(20);
+    ball.setVelocityY(-150);
+    ball.setCenterX(15);
+    ball.setCenterY(15);
 
-    System.out.println(ball.getVelocityX());
-    for(int i=0;i<10;i++) {
+    for(int numSteps = 0; numSteps < 2; numSteps ++) {
       game.step(Game.SECOND_DELAY);
-      System.out.println(ball.getVelocityX());
-      sleep(500);
     }
 
     assertEquals(150,ball.getVelocityX());
-    assertEquals(-150,ball.getVelocityY());
+    assertEquals(150,ball.getVelocityY());
   }
 
 }

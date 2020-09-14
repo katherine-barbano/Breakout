@@ -43,7 +43,7 @@ public class Ball extends Circle {
   }
 
   public void setVelocityY(int velocityYArg) {
-    velocityX = velocityYArg;
+    velocityY = velocityYArg;
   }
 
   public int getVelocityX() {
