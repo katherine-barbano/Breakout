@@ -33,7 +33,7 @@ public class Ball extends Circle {
     isPaused=true;
   }
 
-  public boolean updateCoordinatesAndContinue(double elapsedTime) {
+  boolean updateCoordinatesAndContinue(double elapsedTime) {
     if(isTouchingBottomWall()) {
       return false;
     }
@@ -46,27 +46,27 @@ public class Ball extends Circle {
     return true;
   }
 
-  public void setVelocityX(int velocityXArg) {
+  void setVelocityX(int velocityXArg) {
     velocityX = velocityXArg;
   }
 
-  public void setVelocityY(int velocityYArg) {
+  void setVelocityY(int velocityYArg) {
     velocityY = velocityYArg;
   }
 
-  public int getVelocityX() {
+  int getVelocityX() {
     return velocityX;
   }
 
-  public int getVelocityY() {
+  int getVelocityY() {
     return velocityY;
   }
 
-  public void pause() {
+  void pause() {
     isPaused = true;
   }
 
-  public void unpause() {
+  void unpause() {
     isPaused = false;
   }
 

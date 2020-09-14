@@ -18,27 +18,30 @@ public class Paddle extends Rectangle{
   public static final int PADDLE_HEIGHT = 10;
   public static final int VERTICAL_PADDLE_OFFSET_FROM_BOTTOM = 30;
   public static final int PADDLE_SPEED = 10;
+  public static final int MAX_NUMBER_LIVES = 3; // TODO
 
   private int paddleWidth;
+  private int paddleLives;
 
   public Paddle(int sceneWidth, int sceneHeight) {
     super(sceneWidth / 2 - NORMAL_PADDLE_WIDTH/2, sceneHeight - VERTICAL_PADDLE_OFFSET_FROM_BOTTOM, NORMAL_PADDLE_WIDTH, PADDLE_HEIGHT);
     setFill(PADDLE_COLOR);
     setId("paddle");
     paddleWidth = NORMAL_PADDLE_WIDTH;
+    paddleLives =- MAX_NUMBER_LIVES;
   }
 
   //for power up later
-  public void extendPaddleWidth() {
+  void extendPaddleWidth() {
     paddleWidth = NORMAL_PADDLE_WIDTH * 2;
   }
 
   //for power up later
-  public void setNormalPaddleWidth() {
+  void setNormalPaddleWidth() {
     paddleWidth = NORMAL_PADDLE_WIDTH;
   }
 
-  public void handleKeyInput(KeyCode code, boolean isPaused) {
+  void handleKeyInput(KeyCode code, boolean isPaused) {
     if(code == KeyCode.LEFT && !isPaused) {
       moveLeft();
     }
@@ -47,7 +50,7 @@ public class Paddle extends Rectangle{
     }
   }
 
-  private void moveLeft() {
+  void moveLeft() {
     double newXPosition = getX() - PADDLE_SPEED;
     if(newXPosition>0) {
       setX(newXPosition);
@@ -62,7 +65,8 @@ public class Paddle extends Rectangle{
     }
   }
 
-  public double getCenterX() {
+  double getCenterX() {
     return getX() + getWidth()/2;
   }
+  void loseOneLife() { paddleLives--; }
 }

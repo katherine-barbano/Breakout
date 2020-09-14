@@ -38,7 +38,7 @@ public class Game {
   public static final int START_YPOSITION = LIVES_YPOSITION;
 
   private Scene myScene;
-  private Ball ball;
+  private Ball ball; // TODO extension: List<Ball> myBalls, to accomodate multi-ball powerups
   private Paddle paddle;
   private Group root;
   private boolean isPaused;
@@ -53,7 +53,7 @@ public class Game {
     isPaused = true;
   }
 
-  public void beginInfiniteLoop() {
+  void beginInfiniteLoop() {
     KeyFrame frame = new KeyFrame(Duration.seconds(SECOND_DELAY), e -> step(SECOND_DELAY));
     Timeline animation = new Timeline();
     animation.setCycleCount(Timeline.INDEFINITE);
@@ -111,17 +111,18 @@ public class Game {
   }
 
 
-  public void step (double elapsedTime) {
-    System.out.println("I am taking a step");
+  void step (double elapsedTime) {
+    // System.out.println("I am taking a step");
 
     boolean ballIsValid = ball.updateCoordinatesAndContinue(elapsedTime);
     if(!ballIsValid) {
+      // TODO numLives --;
       reset();
     }
   }
 
   //TODO: update lives from Level
-  public void reset() {
+  void reset() {
     isPaused = true;
 
     root.getChildren().remove(ball);
@@ -132,7 +133,7 @@ public class Game {
     initializeStartText();
   }
 
-  private void initializeNewBallAndPaddle() {
+  void initializeNewBallAndPaddle() {
     paddle = new Paddle(SCENE_SIZE,SCENE_SIZE);
     ball = new Ball (SCENE_SIZE, paddle);
 
@@ -158,7 +159,7 @@ public class Game {
     text.setText(LIVES_TITLE + 0);
   }
 
-  public Scene getScene() {
+  Scene getScene() {
     return myScene;
   }
 }
