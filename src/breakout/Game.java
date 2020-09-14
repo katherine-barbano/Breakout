@@ -53,14 +53,18 @@ public class Game {
     root.getChildren().add(ball);
 
     Scene scene = new Scene(root, sceneWidth, sceneHeight, sceneBackground);
+    scene.setOnKeyPressed(e -> paddle.handleKeyInput(e.getCode()));
     return scene;
   }
 
 
-  private void step (double elapsedTime) {
+  public void step (double elapsedTime) {
     System.out.println("I am taking a step");
 
     ball.updateCoordinates(elapsedTime);
-    //paddle.updatePaddleCoordinates();
+  }
+
+  public Scene getScene() {
+    return myScene;
   }
 }

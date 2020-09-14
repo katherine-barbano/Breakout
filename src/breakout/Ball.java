@@ -21,14 +21,12 @@ public class Ball extends Circle {
   private Paddle paddle;
   private int velocityX;
   private int velocityY;
-  private int sceneWidth;
 
   public Ball(int sceneWidthArg, Paddle paddleArg) {
     super(sceneWidthArg/2, paddleArg.getY() - BALL_RADIUS, BALL_RADIUS);
     setFill(BALL_COLOR);
     setId("ball");
     paddle = paddleArg;
-    sceneWidth = sceneWidthArg;
     velocityX = 0;
     velocityY = NORMAL_BALL_SPEED;
   }
@@ -102,10 +100,11 @@ public class Ball extends Circle {
     return getCenterY()-BALL_RADIUS<0;
   }
 
+  //assumes Scene has already been instantiated in Game so that it can use the getScene method
   private boolean isTouchingSideWall() {
     double leftWallBounce = getCenterX() - BALL_RADIUS;
     double rightWallBounce = getCenterX() + BALL_RADIUS;
-    return leftWallBounce<0 || rightWallBounce>sceneWidth;
+    return leftWallBounce<0 || rightWallBounce>getScene().getWidth();
   }
 
   private boolean topOfBallIsTouchingBottomWall() {
