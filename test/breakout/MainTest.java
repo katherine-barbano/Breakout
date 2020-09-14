@@ -10,8 +10,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Tests for Game class.
- *
- * @author Robert C Duvall
  */
 public class MainTest extends DukeApplicationTest {
 
@@ -25,6 +23,11 @@ public class MainTest extends DukeApplicationTest {
 
     ball = lookup("#ball").query();
     paddle = lookup("#paddle").query();
+  }
+
+  public void startAnimation() {
+    Scene myScene = game.getScene();
+    press(myScene,KeyCode.SPACE);
   }
 
   @Test
@@ -51,6 +54,8 @@ public class MainTest extends DukeApplicationTest {
   public void testMovePaddle() {
     Scene myScene = game.getScene();
 
+    startAnimation();
+
     for(int expectedXCoordinate = 255; expectedXCoordinate>=0; expectedXCoordinate=expectedXCoordinate-10) {
       press(myScene, KeyCode.LEFT);
       assertEquals(expectedXCoordinate,paddle.getX());
@@ -72,20 +77,55 @@ public class MainTest extends DukeApplicationTest {
 
   @Test
   public void testBallCornerInteraction() {
-    /*ball.setVelocityX(-150);
-    ball.setVelocityY(150);
-    ball.setCenterX(20);
-    ball.setCenterY(20);
+    ball.setVelocityX(-150);
+    ball.setVelocityY(-150);
+    ball.setCenterX(15);
+    ball.setCenterY(15);
 
-    System.out.println(ball.getVelocityX());
-    for(int i=0;i<10;i++) {
+    startAnimation();
+
+    for(int numSteps = 0; numSteps < 2; numSteps ++) {
       game.step(Game.SECOND_DELAY);
-      System.out.println(ball.getVelocityX());
-      sleep(500);
     }
 
     assertEquals(150,ball.getVelocityX());
-    assertEquals(-150,ball.getVelocityY());*/
+    assertEquals(150,ball.getVelocityY());
+
+    assertEquals(15, ball.getCenterX());
+    assertEquals(15, ball.getCenterY());
   }
 
+  @Test
+  public void testBallPaddleInteraction() {
+    double startingYBall = ball.getCenterY();
+
+    startAnimation();
+
+    for(int numSteps = 0; numSteps < 3; numSteps ++) {
+      game.step(Game.SECOND_DELAY);
+    }
+
+    assertEquals(300,ball.getCenterX());
+    assertTrue(ball.getCenterY()<startingYBall);
+  }
+
+  @Test
+  //TODO: fix this test, does not start on same thread, so throws exception
+  public void resetBallPosition() {
+    ball.setCenterX(20);
+    ball.setCenterY(585);
+
+    startAnimation();
+
+    //game.beginInfiniteLoop();
+
+    for(int numSteps = 0; numSteps < 10; numSteps ++) {
+      game.step(Game.SECOND_DELAY);
+      System.out.println(ball.getCenterY());
+    }
+
+
+    assertEquals(300,ball.getCenterX());
+    assertEquals(555,ball.getCenterY());
+  }
 }

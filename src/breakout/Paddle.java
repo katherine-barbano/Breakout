@@ -38,11 +38,11 @@ public class Paddle extends Rectangle{
     paddleWidth = NORMAL_PADDLE_WIDTH;
   }
 
-  public void handleKeyInput(KeyCode code) {
-    if(code == KeyCode.LEFT) {
+  public void handleKeyInput(KeyCode code, boolean isPaused) {
+    if(code == KeyCode.LEFT && !isPaused) {
       moveLeft();
     }
-    else if(code== KeyCode.RIGHT) {
+    else if(code== KeyCode.RIGHT && !isPaused) {
       moveRight();
     }
   }
@@ -60,5 +60,9 @@ public class Paddle extends Rectangle{
     if(newXPosition + getWidth() <getScene().getWidth()) {
       setX(newXPosition);
     }
+  }
+
+  public double getCenterX() {
+    return getX() + getWidth()/2;
   }
 }
