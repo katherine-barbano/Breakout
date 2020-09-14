@@ -3,6 +3,7 @@ package breakout;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.scene.Group;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
@@ -43,6 +44,7 @@ public class Game {
   private Group root;
   private boolean isPaused;
   private Text pauseText;
+  private Text livesText;
 
   public Game(Stage stage) {
     myScene = setupScene();
@@ -67,21 +69,12 @@ public class Game {
     initializeNewBallAndPaddle();
     initializeLivesText();
     initializeStartText();
+    addFieldsToRoot();
 
     Scene scene = new Scene(root, SCENE_SIZE, SCENE_SIZE, BACKGROUND);
     scene.setOnKeyPressed(e -> handleKeyInput(e.getCode()));
+
     return scene;
-  }
-
-  private void initializeStartText() {
-    pauseText = new Text();
-    pauseText.setText(START_TITLE);
-    pauseText.setX(START_XPOSITION);
-    pauseText.setY(START_YPOSITION);
-    pauseText.setFont(new Font(TEXT_FONT, TEXT_SIZE));
-    pauseText.setFill(TEXT_COLOR);
-
-    root.getChildren().add(pauseText);
   }
 
   private void handleKeyInput(KeyCode code) {
@@ -110,7 +103,6 @@ public class Game {
     }
   }
 
-
   public void step (double elapsedTime) {
     System.out.println("I am taking a step");
 
@@ -122,35 +114,47 @@ public class Game {
 
   //TODO: update lives from Level
   public void reset() {
+    for(Node child:root.getChildren()){
+      System.out.println(child.getId());
+    }
     isPaused = true;
-
-    root.getChildren().remove(ball);
-    root.getChildren().remove(paddle);
-    root.getChildren().remove(pauseText);
-
     initializeNewBallAndPaddle();
     initializeStartText();
+    addFieldsToRoot();
+    for(Node child:root.getChildren()){
+      System.out.println(child.getId());
+    }
   }
 
   private void initializeNewBallAndPaddle() {
     paddle = new Paddle(SCENE_SIZE,SCENE_SIZE);
     ball = new Ball (SCENE_SIZE, paddle);
-
-    root.getChildren().add(ball);
-    root.getChildren().add(paddle);
   }
 
-  private Text initializeLivesText() {
-    Text text = new Text();
-    updateLivesText(text);
-    text.setX(LIVES_XPOSITION);
-    text.setY(LIVES_YPOSITION);
-    text.setFont(new Font(TEXT_FONT, TEXT_SIZE));
-    text.setFill(TEXT_COLOR);
+  private void initializeStartText() {
+    pauseText = new Text();
+    pauseText.setText(START_TITLE);
+    pauseText.setX(START_XPOSITION);
+    pauseText.setY(START_YPOSITION);
+    pauseText.setFont(new Font(TEXT_FONT, TEXT_SIZE));
+    pauseText.setFill(TEXT_COLOR);
+  }
 
-    root.getChildren().add(text);
+  private void initializeLivesText() {
+    livesText = new Text();
+    updateLivesText(livesText);
+    livesText.setX(LIVES_XPOSITION);
+    livesText.setY(LIVES_YPOSITION);
+    livesText.setFont(new Font(TEXT_FONT, TEXT_SIZE));
+    livesText.setFill(TEXT_COLOR);
+  }
 
-    return text;
+  private void addFieldsToRoot() {
+    root.getChildren().clear();
+    root.getChildren().add(livesText);
+    root.getChildren().add(ball);
+    root.getChildren().add(paddle);
+    root.getChildren().add(pauseText);
   }
 
   //TODO: replace 0 with lives from Level
