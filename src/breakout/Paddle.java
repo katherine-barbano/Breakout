@@ -39,9 +39,11 @@ public class Paddle extends Rectangle{
   }
 
   public void handleKeyInput(KeyCode code) {
-    switch (code) {
-      case LEFT -> moveLeft();
-      case RIGHT -> moveRight();
+    if(code == KeyCode.LEFT) {
+      moveLeft();
+    }
+    else if(code== KeyCode.RIGHT) {
+      moveRight();
     }
   }
 
