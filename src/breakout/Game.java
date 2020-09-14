@@ -33,7 +33,9 @@ public class Game {
     stage.setScene(myScene);
     stage.setTitle(TITLE);
     stage.show();
+  }
 
+  public void beginInfiniteLoop() {
     KeyFrame frame = new KeyFrame(Duration.seconds(SECOND_DELAY), e -> step(SECOND_DELAY));
     Timeline animation = new Timeline();
     animation.setCycleCount(Timeline.INDEFINITE);
@@ -55,7 +57,7 @@ public class Game {
   }
 
 
-  void step (double elapsedTime) {
+  private void step (double elapsedTime) {
     System.out.println("I am taking a step");
 
     ball.updateCoordinates(elapsedTime);
