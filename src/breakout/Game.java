@@ -3,7 +3,6 @@ package breakout;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.scene.Group;
-import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
@@ -85,13 +84,12 @@ public class Game {
 
   private void handleSpaceBarInput(KeyCode code) {
     if(code == KeyCode.SPACE && isPaused) {
-      pauseText.setText(PAUSE_TITLE);
-      root.getChildren().remove(pauseText);
+      pauseText.setText("");
       isPaused = false;
       ball.unpause();
     }
     else if(code == KeyCode.SPACE){
-      root.getChildren().add(pauseText);
+      pauseText.setText(PAUSE_TITLE);
       isPaused = true;
       ball.pause();
     }
@@ -114,16 +112,10 @@ public class Game {
 
   //TODO: update lives from Level
   public void reset() {
-    for(Node child:root.getChildren()){
-      System.out.println(child.getId());
-    }
     isPaused = true;
-    initializeNewBallAndPaddle();
-    initializeStartText();
-    addFieldsToRoot();
-    for(Node child:root.getChildren()){
-      System.out.println(child.getId());
-    }
+    paddle.resetPaddle();
+    ball.resetBall();
+    pauseText.setText(START_TITLE);
   }
 
   private void initializeNewBallAndPaddle() {

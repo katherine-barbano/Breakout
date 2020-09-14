@@ -22,12 +22,20 @@ public class Ball extends Circle {
   private int velocityX;
   private int velocityY;
   private boolean isPaused;
+  private int sceneWidth;
 
   public Ball(int sceneWidthArg, Paddle paddleArg) {
-    super(sceneWidthArg/2, paddleArg.getY() - BALL_RADIUS, BALL_RADIUS);
+    sceneWidth = sceneWidthArg;
+    paddle = paddleArg;
+    resetBall();
+  }
+
+  public void resetBall() {
+    setCenterX(sceneWidth / 2);
+    setCenterY(paddle.getY() - BALL_RADIUS);
+    setRadius(BALL_RADIUS);
     setFill(BALL_COLOR);
     setId("ball");
-    paddle = paddleArg;
     velocityX = 0;
     velocityY = NORMAL_BALL_SPEED;
     isPaused=true;
