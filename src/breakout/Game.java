@@ -120,6 +120,8 @@ public class Game {
   }
 
   public void reset() {
+    isPaused = true;
+
     root.getChildren().remove(ball);
     root.getChildren().remove(paddle);
     root.getChildren().remove(pauseText);
