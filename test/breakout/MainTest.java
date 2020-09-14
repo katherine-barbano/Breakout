@@ -83,6 +83,21 @@ public class MainTest extends DukeApplicationTest {
 
     assertEquals(150,ball.getVelocityX());
     assertEquals(150,ball.getVelocityY());
+
+    assertEquals(15, ball.getCenterX());
+    assertEquals(15, ball.getCenterY());
+  }
+
+  @Test
+  public void testBallPaddleInteraction() {
+    double startingYBall = ball.getCenterY();
+
+    for(int numSteps = 0; numSteps < 3; numSteps ++) {
+      game.step(Game.SECOND_DELAY);
+    }
+
+    assertEquals(300,ball.getCenterX());
+    assertTrue(ball.getCenterY()<startingYBall);
   }
 
 }
