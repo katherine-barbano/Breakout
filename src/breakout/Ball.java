@@ -1,10 +1,8 @@
 package breakout;
 
-import javafx.scene.Group;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Circle;
-import javafx.scene.shape.Shape;
 
 
 /***
@@ -31,7 +29,7 @@ public class Ball extends Circle {
     setId("ball");
     paddle = paddleArg;
     sceneWidth = sceneWidthArg;
-    velocityX = -1* NORMAL_BALL_SPEED;
+    velocityX = 0;
     velocityY = NORMAL_BALL_SPEED;
   }
 
@@ -40,6 +38,22 @@ public class Ball extends Circle {
     updateVelocityY();
     setCenterX(getCenterX() + velocityX * elapsedTime);
     setCenterY(getCenterY() + velocityY * elapsedTime);
+  }
+
+  public void setVelocityX(int velocityXArg) {
+    velocityX = velocityXArg;
+  }
+
+  public void setVelocityY(int velocityYArg) {
+    velocityX = velocityYArg;
+  }
+
+  public int getVelocityX() {
+    return velocityX;
+  }
+
+  public int getVelocityY() {
+    return velocityY;
   }
 
   // TODO: update once have blocks
