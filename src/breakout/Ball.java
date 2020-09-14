@@ -21,6 +21,7 @@ public class Ball extends Circle {
   private Paddle paddle;
   private int velocityX;
   private int velocityY;
+  private boolean isPaused;
 
   public Ball(int sceneWidthArg, Paddle paddleArg) {
     super(sceneWidthArg/2, paddleArg.getY() - BALL_RADIUS, BALL_RADIUS);
@@ -29,13 +30,20 @@ public class Ball extends Circle {
     paddle = paddleArg;
     velocityX = 0;
     velocityY = NORMAL_BALL_SPEED;
+    isPaused=true;
   }
 
-  public void updateCoordinates(double elapsedTime) {
-    updateVelocityX();
-    updateVelocityY();
-    setCenterX(getCenterX() + velocityX * elapsedTime);
-    setCenterY(getCenterY() + velocityY * elapsedTime);
+  public boolean updateCoordinatesAndContinue(double elapsedTime) {
+    if(isTouchingBottomWall()) {
+      return false;
+    }
+    if(!isPaused) {
+      updateVelocityX();
+      updateVelocityY();
+      setCenterX(getCenterX() + velocityX * elapsedTime);
+      setCenterY(getCenterY() + velocityY * elapsedTime);
+    }
+    return true;
   }
 
   public void setVelocityX(int velocityXArg) {
@@ -52,6 +60,14 @@ public class Ball extends Circle {
 
   public int getVelocityY() {
     return velocityY;
+  }
+
+  public void pause() {
+    isPaused = true;
+  }
+
+  public void unpause() {
+    isPaused = false;
   }
 
   // TODO: update once have blocks
@@ -80,6 +96,7 @@ public class Ball extends Circle {
     }
   }
 
+  //TODO: modify the physics
   private int getVelocityXFromPaddleHit() {
     double distanceFromPaddleCenter = getCenterX() - paddle.getCenterX();
     double angleRatio = distanceFromPaddleCenter/paddle.getWidth();
@@ -87,6 +104,7 @@ public class Ball extends Circle {
     return (int)(velocityY * Math.sin(angleRadians));
   }
 
+  //TODO: fix for edges of ball that are not in center
   private boolean isTouchingPaddleTop() {
     boolean hitsInCorrectXCoordinates = paddle.getX() < getCenterX() &&  getCenterX() < paddle.getX() + paddle.getWidth();
     boolean hitsInCorrectYCoordinate = paddle.getY() < getCenterY() + BALL_RADIUS;
@@ -117,7 +135,8 @@ public class Ball extends Circle {
     return leftWallBounce<0 || rightWallBounce>getScene().getWidth();
   }
 
-  private boolean topOfBallIsTouchingBottomWall() {
-    return false;
+  //assumes Scene has already been instantiated in Game so that it can use the getScene method
+  private boolean isTouchingBottomWall() {
+    return getCenterY()-BALL_RADIUS>getScene().getHeight();
   }
 }
