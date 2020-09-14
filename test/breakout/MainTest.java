@@ -1,6 +1,5 @@
 package breakout;
 
-import java.util.concurrent.TimeUnit;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
 import javafx.stage.Stage;
@@ -70,4 +69,23 @@ public class MainTest extends DukeApplicationTest {
 
     assertEquals(570, paddle.getY());
   }
+
+  @Test
+  public void testBallCornerInteraction() {
+    /*ball.setVelocityX(-150);
+    ball.setVelocityY(150);
+    ball.setCenterX(20);
+    ball.setCenterY(20);
+
+    System.out.println(ball.getVelocityX());
+    for(int i=0;i<10;i++) {
+      game.step(Game.SECOND_DELAY);
+      System.out.println(ball.getVelocityX());
+      sleep(500);
+    }
+
+    assertEquals(150,ball.getVelocityX());
+    assertEquals(-150,ball.getVelocityY());*/
+  }
+
 }

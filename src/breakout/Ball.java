@@ -84,8 +84,8 @@ public class Ball extends Circle {
   }
 
   private boolean isTouchingPaddleSide() {
-    boolean hitsLeftSideOfPaddleXCoordinate = getCenterX() + BALL_RADIUS > paddle.getX() && getCenterX()<paddle.getX();//>
-    boolean hitsRightSideOfPaddleXCoordinate = getCenterX() - BALL_RADIUS < paddle.getX() + paddle.getWidth() && getCenterX() > paddle.getX() + paddle.getWidth();//<
+    boolean hitsLeftSideOfPaddleXCoordinate = getCenterX() + BALL_RADIUS > paddle.getX() && getCenterX()<paddle.getX();
+    boolean hitsRightSideOfPaddleXCoordinate = getCenterX() - BALL_RADIUS < paddle.getX() + paddle.getWidth() && getCenterX() > paddle.getX() + paddle.getWidth();
 
     boolean hitsWithinTopOfPaddle = paddle.getY() < getCenterY() + BALL_RADIUS;
     boolean hitsWithinBottomOfPaddle = paddle.getY() + paddle.getHeight() > getCenterY() - BALL_RADIUS;
@@ -97,7 +97,7 @@ public class Ball extends Circle {
   }
 
   private boolean isTouchingTopWall() {
-    return getCenterY()-BALL_RADIUS<0;
+    return getCenterY()-BALL_RADIUS<=0;
   }
 
   //assumes Scene has already been instantiated in Game so that it can use the getScene method
