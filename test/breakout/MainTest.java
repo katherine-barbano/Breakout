@@ -110,22 +110,18 @@ public class MainTest extends DukeApplicationTest {
   }
 
   @Test
-  //TODO: fix this test, does not start on same thread, so throws exception
   public void resetBallPosition() {
-    ball.setCenterX(20);
-    ball.setCenterY(585);
+      ball.setCenterX(20);
+      ball.setCenterY(585);
+      ball.setVelocityX(0);
+      ball.setVelocityY(150);
 
-    startAnimation();
+      startAnimation();
 
-    //game.beginInfiniteLoop();
-
-    for(int numSteps = 0; numSteps < 10; numSteps ++) {
-      game.step(Game.SECOND_DELAY);
-      System.out.println(ball.getCenterY());
+      for(int numSteps = 0; numSteps < 3; numSteps ++) {
+        game.step(Game.SECOND_DELAY);
+      }
+      assertEquals(300,ball.getCenterX());
+      assertEquals(555,ball.getCenterY());
     }
-
-
-    assertEquals(300,ball.getCenterX());
-    assertEquals(555,ball.getCenterY());
-  }
 }

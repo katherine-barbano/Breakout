@@ -8,7 +8,7 @@ import javafx.stage.Stage;
  * Calls launch(args) to start the program. Instantiates a new Game object to setup
  * the stage.
  */
-public class Main extends Application{
+public class Main extends Application {
 
     /**
      * Start of the program.
