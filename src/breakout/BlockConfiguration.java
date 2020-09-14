@@ -8,4 +8,9 @@ package breakout;
  */
 public class BlockConfiguration {
 
+
+  void readTextFile() {
+
+  }
+
 }

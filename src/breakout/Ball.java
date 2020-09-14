@@ -106,14 +106,17 @@ public class Ball extends Circle {
 
   //TODO: fix for edges of ball that are not in center
   private boolean isTouchingPaddleTop() {
-    boolean hitsInCorrectXCoordinates = paddle.getX() < getCenterX() &&  getCenterX() < paddle.getX() + paddle.getWidth();
+    boolean hitsInCorrectXCoordinates = paddle.getX() < getCenterX() &&
+        getCenterX() < paddle.getX() + paddle.getWidth();
     boolean hitsInCorrectYCoordinate = paddle.getY() < getCenterY() + BALL_RADIUS;
     return hitsInCorrectYCoordinate && hitsInCorrectXCoordinates;
   }
 
   private boolean isTouchingPaddleSide() {
-    boolean hitsLeftSideOfPaddleXCoordinate = getCenterX() + BALL_RADIUS > paddle.getX() && getCenterX()<paddle.getX();
-    boolean hitsRightSideOfPaddleXCoordinate = getCenterX() - BALL_RADIUS < paddle.getX() + paddle.getWidth() && getCenterX() > paddle.getX() + paddle.getWidth();
+    boolean hitsLeftSideOfPaddleXCoordinate = getCenterX() + BALL_RADIUS > paddle.getX()
+        && getCenterX()<paddle.getX();
+    boolean hitsRightSideOfPaddleXCoordinate = getCenterX() - BALL_RADIUS < paddle.getX() +
+        paddle.getWidth() && getCenterX() > paddle.getX() + paddle.getWidth();
 
     boolean hitsWithinTopOfPaddle = paddle.getY() < getCenterY() + BALL_RADIUS;
     boolean hitsWithinBottomOfPaddle = paddle.getY() + paddle.getHeight() > getCenterY() - BALL_RADIUS;

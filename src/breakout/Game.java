@@ -11,6 +11,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+import org.testfx.osgi.service.TestFx;
 
 /***
  * Purpose: Creates a new BlockConfiguration instance for each text file. Create a new
@@ -34,23 +35,24 @@ public class Game {
   public static final Paint TEXT_COLOR = Color.MEDIUMVIOLETRED;
   public static final String START_TITLE = "Click the space bar to start!";
   public static final String PAUSE_TITLE="Paused. Resume with space bar";
+  public static final String GAME_OVER_MESSAGE = "Game Over! Click the space bar to play again.";
   public static final int START_XPOSITION = 20;
   public static final int START_YPOSITION = LIVES_YPOSITION;
 
-  private Scene myScene;
-  private Ball ball; // TODO extension: List<Ball> myBalls, to accomodate multi-ball powerups
-  private Paddle paddle;
-  private Group root;
-  private boolean isPaused;
-  private Text pauseText;
+  private Scene gameScene;
+  private Ball gameBall; // TODO extension: List<Ball> myBalls, to accomodate multi-gameBall powerups
+  private Paddle gamePaddle;
+  private Group gameRoot;
+  private boolean gameIsPaused;
+  private Text gamePauseText;
 
   public Game(Stage stage) {
-    myScene = setupScene();
-    stage.setScene(myScene);
+    gameScene = setupScene();
+    stage.setScene(gameScene);
     stage.setTitle(TITLE);
     stage.show();
 
-    isPaused = true;
+    gameIsPaused = true;
   }
 
   void beginInfiniteLoop() {
@@ -62,45 +64,45 @@ public class Game {
   }
 
   private Scene setupScene () {
-    root = new Group();
+    gameRoot = new Group();
 
     initializeNewBallAndPaddle();
     initializeLivesText();
     initializeStartText();
 
-    Scene scene = new Scene(root, SCENE_SIZE, SCENE_SIZE, BACKGROUND);
+    Scene scene = new Scene(gameRoot, SCENE_SIZE, SCENE_SIZE, BACKGROUND);
     scene.setOnKeyPressed(e -> handleKeyInput(e.getCode()));
     return scene;
   }
 
   private void initializeStartText() {
-    pauseText = new Text();
-    pauseText.setText(START_TITLE);
-    pauseText.setX(START_XPOSITION);
-    pauseText.setY(START_YPOSITION);
-    pauseText.setFont(new Font(TEXT_FONT, TEXT_SIZE));
-    pauseText.setFill(TEXT_COLOR);
+    gamePauseText = new Text();
+    gamePauseText.setText(START_TITLE);
+    gamePauseText.setX(START_XPOSITION);
+    gamePauseText.setY(START_YPOSITION);
+    gamePauseText.setFont(new Font(TEXT_FONT, TEXT_SIZE));
+    gamePauseText.setFill(TEXT_COLOR);
 
-    root.getChildren().add(pauseText);
+    gameRoot.getChildren().add(gamePauseText);
   }
 
   private void handleKeyInput(KeyCode code) {
-    paddle.handleKeyInput(code, isPaused);
+    gamePaddle.handleKeyInput(code, gameIsPaused);
     handleSpaceBarInput(code);
     handleRKeyInput(code);
   }
 
   private void handleSpaceBarInput(KeyCode code) {
-    if(code == KeyCode.SPACE && isPaused) {
-      pauseText.setText(PAUSE_TITLE);
-      root.getChildren().remove(pauseText);
-      isPaused = false;
-      ball.unpause();
+    if(code == KeyCode.SPACE && gameIsPaused) {
+      gamePauseText.setText(PAUSE_TITLE);
+      gameRoot.getChildren().remove(gamePauseText);
+      gameIsPaused = false;
+      gameBall.unpause();
     }
     else if(code == KeyCode.SPACE){
-      root.getChildren().add(pauseText);
-      isPaused = true;
-      ball.pause();
+      gameRoot.getChildren().add(gamePauseText);
+      gameIsPaused = true;
+      gameBall.pause();
     }
   }
 
@@ -114,31 +116,30 @@ public class Game {
   void step (double elapsedTime) {
     // System.out.println("I am taking a step");
 
-    boolean ballIsValid = ball.updateCoordinatesAndContinue(elapsedTime);
+    boolean ballIsValid = gameBall.updateCoordinatesAndContinue(elapsedTime);
     if(!ballIsValid) {
-      // TODO numLives --;
       reset();
     }
   }
 
   //TODO: update lives from Level
   void reset() {
-    isPaused = true;
+    gameIsPaused = true;
 
-    root.getChildren().remove(ball);
-    root.getChildren().remove(paddle);
-    root.getChildren().remove(pauseText);
+    gameRoot.getChildren().remove(gameBall);
+    gameRoot.getChildren().remove(gamePaddle);
+    gameRoot.getChildren().remove(gamePauseText);
 
     initializeNewBallAndPaddle();
     initializeStartText();
   }
 
   void initializeNewBallAndPaddle() {
-    paddle = new Paddle(SCENE_SIZE,SCENE_SIZE);
-    ball = new Ball (SCENE_SIZE, paddle);
+    gamePaddle = new Paddle(SCENE_SIZE,SCENE_SIZE);
+    gameBall = new Ball (SCENE_SIZE, gamePaddle);
 
-    root.getChildren().add(ball);
-    root.getChildren().add(paddle);
+    gameRoot.getChildren().add(gameBall);
+    gameRoot.getChildren().add(gamePaddle);
   }
 
   private Text initializeLivesText() {
@@ -149,17 +150,21 @@ public class Game {
     text.setFont(new Font(TEXT_FONT, TEXT_SIZE));
     text.setFill(TEXT_COLOR);
 
-    root.getChildren().add(text);
+    gameRoot.getChildren().add(text);
 
     return text;
   }
 
-  //TODO: replace 0 with lives from Level
+  // TODO
   private void updateLivesText(Text text) {
     text.setText(LIVES_TITLE + 0);
   }
 
+  private void endGameText(Text text) {
+    text.setText(GAME_OVER_MESSAGE);
+  }
+
   Scene getScene() {
-    return myScene;
+    return gameScene;
   }
 }
