@@ -27,12 +27,27 @@ public class MainTest extends DukeApplicationTest {
 
   @Test
   public void verifyInitialPositionSizeVelocityOfBall() {
-    assertEquals(ball.getCenterX(), 300);
-    assertEquals(ball.getCenterY(), 555);
+    assertEquals(300, ball.getCenterX());
+    assertEquals(555, ball.getCenterY());
 
-    assertEquals(ball.getRadius(), 15);
+    assertEquals(15, ball.getRadius());
 
-    assertEquals(ball.getVelocityX(), 0);
-    assertEquals(ball.getVelocityY(),150);
+    assertEquals(0, ball.getVelocityX());
+    assertEquals(150, ball.getVelocityY());
   }
+
+  @Test
+  public void verifyInitialPositionSizeOfPaddle() {
+    assertEquals(265, paddle.getX());
+    assertEquals(570, paddle.getY());
+
+    assertEquals(70, paddle.getWidth());
+    assertEquals(10, paddle.getHeight());
+  }
+
+  @Test
+  public void movePaddle() {
+
+  }
+
 }
