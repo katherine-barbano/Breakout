@@ -73,8 +73,8 @@ public class Game {
   private Scene setupScene () {
     gameRoot = new Group();
 
-    initializeNewBallAndPaddle();
     startGameAtLevelOne();
+    initializeNewBallAndPaddle();
     initializeLivesText();
     initializeStartText();
     addFieldsToRoot();
@@ -154,7 +154,7 @@ public class Game {
 
   void initializeNewBallAndPaddle() {
     gamePaddle = new Paddle(SCENE_SIZE,SCENE_SIZE);
-    gameBall = new Ball (SCENE_SIZE, gamePaddle);
+    gameBall = new Ball (SCENE_SIZE, gamePaddle, gameLevel.getLevelConfiguration());
   }
 
   void startGameAtLevelOne() {

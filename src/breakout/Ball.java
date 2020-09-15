@@ -19,14 +19,16 @@ public class Ball extends Circle {
   public static final int NORMAL_BALL_SPEED = 150;
 
   private final Paddle paddle;
+  private BlockConfiguration blockConfiguration;
   private int velocityX;
   private int velocityY;
   private boolean isPaused;
   private int sceneWidth;
 
-  public Ball(int sceneWidthArg, Paddle paddleArg) {
+  public Ball(int sceneWidthArg, Paddle paddleArg, BlockConfiguration configuration) {
     sceneWidth = sceneWidthArg;
     paddle = paddleArg;
+    blockConfiguration = configuration;
     resetBall();
   }
 
@@ -78,9 +80,33 @@ public class Ball extends Circle {
     isPaused = false;
   }
 
-  // TODO: update once have blocks
   private boolean isTouchingBlock() {
+    for (int i = 0; i < blockConfiguration.getBlockRows().length; i++) {
+      BlockRow row = blockConfiguration.getBlockRows()[i];
+      for (int j = 0; j < row.getRowOfBlocks().length; j++) {
+        Block tempBlock = row.getRowOfBlocks()[j];
+        if (tempBlock.getBlockHardness() == 0) continue;
+        if (isTouching(tempBlock)) return true;
+      }
+    }
     return false;
+  }
+
+  boolean isTouching(Block block) {
+    double R = BALL_RADIUS;
+    double Xcoord = getCenterX();
+    double Ycoord = getCenterY();
+    double width = block.getWidth();
+    double height = block.getHeight();
+    double xPos = block.getX();
+    double yPos = block.getY();
+
+    // from https://www.geeksforgeeks.org/check-if-any-point-overlaps-the-given-circle-and-rectangle/
+    double Xn = Math.max(xPos, Math.min(Xcoord, (xPos+width)));
+    double Yn = Math.max(yPos, Math.min(Ycoord, (yPos + height)));
+    double Dx = Xn - Xcoord;
+    double Dy = Yn - Ycoord;
+    return (Dx * Dx + Dy * Dy) <= R*R;
   }
 
   private void updateVelocityX() {
@@ -101,6 +127,9 @@ public class Ball extends Circle {
     }
     if (isTouchingTopWall()) {
       velocityY = velocityY * -1;
+    }
+    if (isTouchingBlock()) {
+      velocityY *= -1;
     }
   }
 
