@@ -51,14 +51,15 @@ public class Game {
   private Text gameLivesText;
 
   public Game(Stage stage) {
+    gameIsPaused = true;
+    gamePauseText = new Text();
+    gameOverText = new Text();
+    gameLivesText = new Text();
+
     gameScene = setupScene();
     stage.setScene(gameScene);
     stage.setTitle(TITLE);
     stage.show();
-
-    gameIsPaused = true;
-    gamePauseText = new Text();
-    gameOverText = new Text();
   }
 
   void beginInfiniteLoop() {
@@ -90,65 +91,59 @@ public class Game {
   }
 
   private void handleSpaceBarInput(KeyCode code) {
-    if(code == KeyCode.SPACE && isPaused) {
-      pauseText.setText("");
-      isPaused = false;
-      ball.unpause();
+    if(code == KeyCode.SPACE && gameIsPaused) {
+      gamePauseText.setText("");
+      gameIsPaused = false;
+      gameBall.unpause();
     }
     else if(code == KeyCode.SPACE){
-      pauseText.setText(PAUSE_TITLE);
-      isPaused = true;
-      ball.pause();
+      gamePauseText.setText(PAUSE_TITLE);
+      gameIsPaused = true;
+      gameBall.pause();
     }
   }
 
   private void handleRKeyInput(KeyCode code) {
     if(code == KeyCode.R) {
-      reset();
+      resetPosition();
     }
   }
 
 
   void step (double elapsedTime) {
-    // System.out.println("I am taking a step");
-
     boolean ballIsValid = gameBall.updateCoordinatesAndContinue(elapsedTime);
     if(!ballIsValid && gameLevel.getLives() > 0) {
       retryLevel();
     }
     else if (!ballIsValid) {
-      reset();
+      resetPosition();
     }
   }
 
   void retryLevel() {
-
     if (gameLevel.getLives() == 0) {
       endGameText();
-      reset();
+      resetPosition();
       return;
     }
-    gameIsPaused = true;
     gameLevel.decreaseLivesByOne();
 
-    gameRoot.getChildren().remove(gameBall);
-    gameRoot.getChildren().remove(gamePaddle);
-    gameRoot.getChildren().remove(gamePauseText);
-
-    initializeNewBallAndPaddle();
+    resetEntireLevel();
     updateLivesText();
   }
 
-  void reset() {
+  void resetPosition() {
     gameIsPaused = true;
+    gamePauseText.setText(START_TITLE);
 
-    gameRoot.getChildren().remove(gameBall);
-    gameRoot.getChildren().remove(gamePaddle);
-    gameRoot.getChildren().remove(gamePauseText);
+    gamePaddle.resetPaddle();
+    gameBall.resetBall();
+  }
+
+  void resetEntireLevel() {
+    resetPosition();
     removeBlocks();
 
-    initializeNewBallAndPaddle();
-    initializeStartText();
     startGameAtLevelOne();
   }
 
@@ -160,9 +155,6 @@ public class Game {
   void initializeNewBallAndPaddle() {
     gamePaddle = new Paddle(SCENE_SIZE,SCENE_SIZE);
     gameBall = new Ball (SCENE_SIZE, gamePaddle);
-
-    gameRoot.getChildren().add(gameBall);
-    gameRoot.getChildren().add(gamePaddle);
   }
 
   void startGameAtLevelOne() {
@@ -174,39 +166,37 @@ public class Game {
   }
 
   private void initializeLivesText() {
-    gameLivesText = new Text();
     gameLivesText.setText(LIVES_TITLE + gameLevel.getLives());
     gameLivesText.setX(LIVES_XPOSITION);
     gameLivesText.setY(LIVES_YPOSITION);
     gameLivesText.setFont(new Font(TEXT_FONT, TEXT_SIZE));
     gameLivesText.setFill(TEXT_COLOR);
-
-    gameRoot.getChildren().add(gameLivesText);
   }
 
   // TODO
   private void updateLivesText() {
-    gameRoot.getChildren().remove(gameLivesText);
     gameLivesText.setText(LIVES_TITLE + gameLevel.getLives());
     gameLivesText.setX(LIVES_XPOSITION);
     gameLivesText.setY(LIVES_YPOSITION);
     gameLivesText.setFont(new Font(TEXT_FONT, TEXT_SIZE));
     gameLivesText.setFill(TEXT_COLOR);
-
-    gameRoot.getChildren().add(gameLivesText);
   }
 
   private void initializeStartText() {
-    if (gameRoot.getChildren().contains(gameOverText)) gameRoot.getChildren().remove(gameOverText);
-    writeStartText(gamePauseText, START_TITLE);
+    if (gameRoot.getChildren().contains(gameOverText)) {
+      gameOverText.setText("");
+    }
+    gamePauseText = writeStartText(gamePauseText, START_TITLE);
   }
 
   private void endGameText() {
-    if (gameRoot.getChildren().contains(gamePauseText)) gameRoot.getChildren().remove(gamePauseText);
+    if (gameRoot.getChildren().contains(gamePauseText)) {
+      gamePauseText.setText("");
+    }
     writeStartText(gameOverText, GAME_OVER_MESSAGE);
   }
 
-  private void writeStartText(Text text, String message) {
+  private Text writeStartText(Text text, String message) {
     text = new Text();
     text.setText(message);
     text.setX(START_XPOSITION);
@@ -214,7 +204,14 @@ public class Game {
     text.setFont(new Font(TEXT_FONT, TEXT_SIZE));
     text.setFill(TEXT_COLOR);
 
-    gameRoot.getChildren().add(text);
+    return text;
+  }
+
+  private void addFieldsToRoot() {
+    gameRoot.getChildren().add(gameLivesText);
+    gameRoot.getChildren().add(gameBall);
+    gameRoot.getChildren().add(gamePaddle);
+    gameRoot.getChildren().add(gamePauseText);
   }
 
   Scene getScene() { return gameScene; }
