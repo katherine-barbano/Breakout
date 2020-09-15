@@ -20,12 +20,13 @@ public class Paddle extends Rectangle{
   public static final int PADDLE_SPEED = 10;
 
   private int paddleWidth;
+  private int sceneWidth;
+  private int sceneHeight;
 
-  public Paddle(int sceneWidth, int sceneHeight) {
-    super(sceneWidth / 2 - NORMAL_PADDLE_WIDTH/2, sceneHeight - VERTICAL_PADDLE_OFFSET_FROM_BOTTOM, NORMAL_PADDLE_WIDTH, PADDLE_HEIGHT);
-    setFill(PADDLE_COLOR);
-    setId("paddle");
-    paddleWidth = NORMAL_PADDLE_WIDTH;
+  public Paddle(int sceneWidthArg, int sceneHeightArg) {
+    sceneWidth = sceneWidthArg;
+    sceneHeight = sceneHeightArg;
+    resetPaddle();
   }
 
   //for power up later
@@ -38,7 +39,17 @@ public class Paddle extends Rectangle{
     paddleWidth = NORMAL_PADDLE_WIDTH;
   }
 
-  void handleKeyInput(KeyCode code, boolean isPaused) {
+  public void resetPaddle() {
+    setX(sceneWidth / 2 - NORMAL_PADDLE_WIDTH/2);
+    setY(sceneHeight - VERTICAL_PADDLE_OFFSET_FROM_BOTTOM);
+    setWidth(NORMAL_PADDLE_WIDTH);
+    setHeight(PADDLE_HEIGHT);
+    setFill(PADDLE_COLOR);
+    setId("paddle");
+    paddleWidth = NORMAL_PADDLE_WIDTH;
+  }
+
+  public void handleKeyInput(KeyCode code, boolean isPaused) {
     if(code == KeyCode.LEFT && !isPaused) {
       moveLeft();
     }

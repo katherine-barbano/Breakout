@@ -76,6 +76,7 @@ public class Game {
     startGameAtLevelOne();
     initializeLivesText();
     initializeStartText();
+    addFieldsToRoot();
 
     Scene scene = new Scene(gameRoot, SCENE_SIZE, SCENE_SIZE, BACKGROUND);
     scene.setOnKeyPressed(e -> handleKeyInput(e.getCode()));
@@ -89,16 +90,15 @@ public class Game {
   }
 
   private void handleSpaceBarInput(KeyCode code) {
-    if(code == KeyCode.SPACE && gameIsPaused) {
-      gamePauseText.setText(PAUSE_TITLE);
-      gameRoot.getChildren().remove(gamePauseText);
-      gameIsPaused = false;
-      gameBall.unpause();
+    if(code == KeyCode.SPACE && isPaused) {
+      pauseText.setText("");
+      isPaused = false;
+      ball.unpause();
     }
     else if(code == KeyCode.SPACE){
-      gameRoot.getChildren().add(gamePauseText);
-      gameIsPaused = true;
-      gameBall.pause();
+      pauseText.setText(PAUSE_TITLE);
+      isPaused = true;
+      ball.pause();
     }
   }
 
