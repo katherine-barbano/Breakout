@@ -30,12 +30,12 @@ public class Paddle extends Rectangle{
   }
 
   //for power up later
-  public void extendPaddleWidth() {
+  void extendPaddleWidth() {
     paddleWidth = NORMAL_PADDLE_WIDTH * 2;
   }
 
   //for power up later
-  public void setNormalPaddleWidth() {
+  void setNormalPaddleWidth() {
     paddleWidth = NORMAL_PADDLE_WIDTH;
   }
 
@@ -58,7 +58,7 @@ public class Paddle extends Rectangle{
     }
   }
 
-  private void moveLeft() {
+  void moveLeft() {
     double newXPosition = getX() - PADDLE_SPEED;
     if(newXPosition>0) {
       setX(newXPosition);
@@ -73,7 +73,7 @@ public class Paddle extends Rectangle{
     }
   }
 
-  public double getCenterX() {
+  double getCenterX() {
     return getX() + getWidth()/2;
   }
 }
