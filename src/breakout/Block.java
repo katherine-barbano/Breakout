@@ -23,24 +23,24 @@ public class Block extends Rectangle {
   private int blockHardness;
   private Paint blockColor;
 
+  public Block() {
+  }
+
   public Block(int sceneWidth, int sceneHeight, int blockHardness) {
     setDimensions(sceneWidth, sceneHeight);
     this.blockHardness = blockHardness;
-    updateBlockColor(blockHardness);
-    Paint blockColor = getBlockColor(blockHardness);
-
+    updateBlockColor();
     setFill(blockColor);
     setId("block");
   }
 
-  public Block () { }
-
-  private void updateBlockColor(int blockHardness) {
-    Paint newBlockColor = getBlockColor(blockHardness);
+  void updateBlockColor() {
+    Paint newBlockColor = getBlockColor(this.blockHardness);
     this.blockColor = newBlockColor;
+    setFill(this.blockColor);
   }
 
-  private void setDimensions(int sceneWidth, int sceneHeight) {
+  void setDimensions(int sceneWidth, int sceneHeight) {
     int blockWidth = sceneWidth / BLOCKS_PER_ROW;
     int blockHeight = getBlockHeight(sceneHeight);
     setWidth(blockWidth);
@@ -50,39 +50,45 @@ public class Block extends Rectangle {
   // multiplied by factor of 0.8 because we aren't filling entire scene with rows
   // TODO: optimize this scaling factor
   private int getBlockHeight(int sceneHeight) {
-    return (sceneHeight * 8) / 10 * NUMBER_OF_BLOCK_ROWS;
+    return (sceneHeight * 8) / (10 * (NUMBER_OF_BLOCK_ROWS + 1));
   }
 
   Paint getBlockColor(int blockHardness) {
     if (blockHardness == 1) {
       return BLOCK_COLOR_ONE;
-    }
-    else if (blockHardness == 2) {
+    } else if (blockHardness == 2) {
       return BLOCK_COLOR_TWO;
-    }
-    else if (blockHardness == 3) {
+    } else if (blockHardness == 3) {
       return BLOCK_COLOR_THREE;
-    }
-    else {
+    } else {
       return Color.BLACK; // Error color, should never appear
     }
   }
 
-  int getBlockHardness() { return blockHardness; }
+  public void updatePosition(int blockWidth, int blockHeight, int xOffset, int yOffset) {
+    setWidth(blockWidth);
+    setHeight(blockHeight);
+    setX(xOffset);
+    setY(yOffset);
+  }
+
+  int getBlockHardness() {
+    return blockHardness;
+  }
+
   void setBlockHardness(int blockHardness) {
     this.blockHardness = blockHardness;
-    updateBlockColor(blockHardness);
   }
+
   void decreaseHardnessByOne() {
     blockHardness--;
   }
-  Paint getBlockColor() { return blockColor; }
-  void setBlockColor(Paint blockColor) { this.blockColor = blockColor; }
 
-  public void updatePosition(int blockWidth, int blockHeight, int x, int y) {
-    setWidth(blockWidth);
-    setHeight(blockHeight);
-    setX(x);
-    setY(y);
+  Paint getBlockColor() {
+    return blockColor;
+  }
+
+  void setBlockColor(Paint blockColor) {
+    this.blockColor = blockColor;
   }
 }

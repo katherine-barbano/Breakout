@@ -12,19 +12,21 @@ import java.util.ArrayList;
  *         gameIsLost, levelIsWon
  */
 public class Level {
+
   public static final int INITIAL_NUMBER_LIVES = 3;
 
   private int levelLives;
   private int levelNumber;
   private BlockConfiguration levelConfiguration;
-  private ArrayList<Block> blocksInLevel;
+  private final ArrayList<Block> blocksInLevel;
 
-  public Level (String fileName) {
+  public Level(String fileName) {
     this.levelLives = INITIAL_NUMBER_LIVES;
     this.levelNumber = 0;
     this.levelConfiguration = new BlockConfiguration(fileName);
     this.blocksInLevel = new ArrayList<>();
   }
+
   public Level(int levelNumber) {
     this.levelLives = INITIAL_NUMBER_LIVES;
     this.levelNumber = levelNumber;
@@ -42,13 +44,16 @@ public class Level {
   // FIXME: Do you think this should be in BlockConfiguration instead?
   ArrayList<Block> getAllBlocks(int sceneWidth, int sceneHeight) {
     int blockWidth = sceneWidth / Block.BLOCKS_PER_ROW;
-    int blockHeight = (sceneHeight - Paddle.VERTICAL_PADDLE_OFFSET_FROM_BOTTOM - Paddle.PADDLE_HEIGHT) / (Block.NUMBER_OF_BLOCK_ROWS + 1);
+    int blockHeight =
+        (sceneHeight - Paddle.VERTICAL_PADDLE_OFFSET_FROM_BOTTOM - Paddle.PADDLE_HEIGHT) / (
+            Block.NUMBER_OF_BLOCK_ROWS + 1);
     for (int y = 0; y < Block.NUMBER_OF_BLOCK_ROWS; y++) { // each BlockRow
       for (int x = 0; x < Block.BLOCKS_PER_ROW; x++) { // element in block row
         BlockRow row = levelConfiguration.getBlockRows()[y];
         Block block = row.getRowOfBlocks()[x];
         if (block.getBlockHardness() != 0) {
-          block.updatePosition(blockWidth, blockHeight, x*blockWidth, y*blockHeight);
+          block.updatePosition(blockWidth, blockHeight, x * blockWidth, y * blockHeight);
+          block.updateBlockColor();
           blocksInLevel.add(block);
         }
 
@@ -58,19 +63,48 @@ public class Level {
   }
 
   void endGame() {
-
-  }
+  } // TODO
 
   void finishLevel() {
+  } // TODO
 
+  void decreaseLivesByOne() {
+    levelLives--;
   }
 
-  void setLives(int lives) { levelLives = lives; }
-  int getLives() { return levelLives; }
-  void decreaseLivesByOne() { levelLives--; }
-  boolean gameIsLost() { return (levelLives == 0); }
-  boolean levelIsWon() { return (levelConfiguration.getNumberOfBlocksRemaining() == 0); }
-  int getLevelNumber() { return levelNumber; }
-  void setLevelNumber(int levelNumber) { this.levelNumber = levelNumber; }
-  BlockConfiguration getLevelConfiguration() { return levelConfiguration; }
+  int getLives() {
+    return levelLives;
+  }
+
+  void setLives(int lives) {
+    levelLives = lives;
+  }
+
+  boolean gameIsLost() {
+    return (levelLives == 0);
+  }
+
+  void updateBlocks(int width, int height) {
+    levelConfiguration.updateConfiguration(width, height);
+  }
+
+  void updateBlocks(double width, double height) {
+    updateBlocks((int) width, (int) height);
+  }
+
+  boolean levelIsWon() {
+    return (levelConfiguration.getNumberOfBlocksRemaining() == 0);
+  }
+
+  BlockConfiguration getLevelConfiguration() {
+    return levelConfiguration;
+  }
+
+  int getLevelNumber() {
+    return levelNumber;
+  }
+
+  void setLevelNumber(int levelNumber) {
+    this.levelNumber = levelNumber;
+  }
 }

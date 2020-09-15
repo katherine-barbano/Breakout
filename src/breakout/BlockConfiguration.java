@@ -2,7 +2,6 @@ package breakout;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.ArrayList;
 import java.util.Scanner;
 
 /***
@@ -15,7 +14,7 @@ public class BlockConfiguration {
   public static final String FILE_SOURCE_PATH = "data/sample_game/";
   public static final int NUMBER_OF_BLOCK_ROWS = Block.NUMBER_OF_BLOCK_ROWS;
 
-  private String fileName;
+  private String fileName; // FIXME currently unused
   private File configFile;
   private BlockRow[] configRows;
   private int numberOfBlocksRemaining; // TODO keep track of breakable blocks remaining
@@ -28,6 +27,7 @@ public class BlockConfiguration {
     if (!fileName.equals("")) generateBlockRowsFromFile(filePath); // Blocks are dimensionless
   }
 
+  // FIXME: this method is ugly, is there any way we can reformat?
   void generateBlockRowsFromFile(String filePath) {
     try {
       configFile = new File(filePath);
@@ -70,14 +70,48 @@ public class BlockConfiguration {
     return blocks;
   }
 
-  // e.g. input "level_1" generates full file source for level_1.txt
-  private String generateFilePathForFile(String fileName) { return FILE_SOURCE_PATH + fileName + ".txt"; }
+  // TODO: this method isn't currently used, but will be for collisions later
+  void decrementBlock(Block block) {
+    for (int i = 0; i < configRows.length; i++) {
+      BlockRow row = configRows[i];
+      for (int j = 0; j < row.getRowOfBlocks().length; j++) {
+        Block currentBlock = row.getRowOfBlocks()[j];
+        if (currentBlock.equals(block)) {
+          currentBlock.decreaseHardnessByOne();
+          if (currentBlock.getBlockHardness() == 0) {
+            // TODO delete block
+          }
+        }
+      }
+    }
+  }
+
+  void updateConfiguration(int sceneWidth, int sceneHeight) {
+    int blockWidth = sceneWidth / Block.BLOCKS_PER_ROW;
+    int blockHeight = sceneHeight / (Block.NUMBER_OF_BLOCK_ROWS + 1);
+    for (int i = 0; i < configRows.length; i++) {
+      BlockRow blockRow = configRows[i];
+      Block[] blocks = blockRow.getRowOfBlocks();
+      for (int j = 0; j < blocks.length; j++) {
+        if (sceneWidth != 0 && sceneHeight != 0) {
+          blocks[j].setDimensions(sceneWidth,sceneHeight);
+          blocks[j].setX(blockWidth*j);
+          blocks[j].setY(blockHeight*i);
+        }
+        blocks[j].updateBlockColor();
+      }
+    }
+  }
+
+  String generateFilePathForFile(String fileName) { return FILE_SOURCE_PATH + fileName + ".txt"; }
+  void setFileName(String fileName) { this.fileName = fileName; }
 
   BlockRow[] getBlockRows() { return configRows; }
+
   void setConfigFile(File configFile) { this.configFile = configFile; }
-  void setFileName(String fileName) { this.fileName = fileName; }
-  int getNumberOfBlocksRemaining() { return numberOfBlocksRemaining; }
+
   void decreaseNumberOfBlocksByOne() { numberOfBlocksRemaining--; }
   void setNumberOfBlocksRemaining(int numberOfBlocksRemaining) { this.numberOfBlocksRemaining = numberOfBlocksRemaining; }
+  int getNumberOfBlocksRemaining() { return numberOfBlocksRemaining; }
   boolean isEmpty() { return (numberOfBlocksRemaining == 0);}
 }

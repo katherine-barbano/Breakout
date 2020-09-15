@@ -12,7 +12,6 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Duration;
-import org.testfx.osgi.service.TestFx;
 
 /***
  * Purpose: Creates a new BlockConfiguration instance for each text file. Create a new
@@ -48,6 +47,8 @@ public class Game {
   private Group gameRoot;
   private boolean gameIsPaused;
   private Text gamePauseText;
+  private Text gameOverText;
+  private Text gameLivesText;
 
   public Game(Stage stage) {
     gameScene = setupScene();
@@ -56,6 +57,8 @@ public class Game {
     stage.show();
 
     gameIsPaused = true;
+    gamePauseText = new Text();
+    gameOverText = new Text();
   }
 
   void beginInfiniteLoop() {
@@ -70,24 +73,13 @@ public class Game {
     gameRoot = new Group();
 
     initializeNewBallAndPaddle();
-    initializeLevels();
+    startGameAtLevelOne();
     initializeLivesText();
     initializeStartText();
 
     Scene scene = new Scene(gameRoot, SCENE_SIZE, SCENE_SIZE, BACKGROUND);
     scene.setOnKeyPressed(e -> handleKeyInput(e.getCode()));
     return scene;
-  }
-
-  private void initializeStartText() {
-    gamePauseText = new Text();
-    gamePauseText.setText(START_TITLE);
-    gamePauseText.setX(START_XPOSITION);
-    gamePauseText.setY(START_YPOSITION);
-    gamePauseText.setFont(new Font(TEXT_FONT, TEXT_SIZE));
-    gamePauseText.setFill(TEXT_COLOR);
-
-    gameRoot.getChildren().add(gamePauseText);
   }
 
   private void handleKeyInput(KeyCode code) {
@@ -121,21 +113,48 @@ public class Game {
     // System.out.println("I am taking a step");
 
     boolean ballIsValid = gameBall.updateCoordinatesAndContinue(elapsedTime);
-    if(!ballIsValid) {
+    if(!ballIsValid && gameLevel.getLives() > 0) {
+      retryLevel();
+    }
+    else if (!ballIsValid) {
       reset();
     }
   }
 
-  //TODO: update lives from Level
-  void reset() {
+  void retryLevel() {
+
+    if (gameLevel.getLives() == 0) {
+      endGameText();
+      reset();
+      return;
+    }
     gameIsPaused = true;
+    gameLevel.decreaseLivesByOne();
 
     gameRoot.getChildren().remove(gameBall);
     gameRoot.getChildren().remove(gamePaddle);
     gameRoot.getChildren().remove(gamePauseText);
 
     initializeNewBallAndPaddle();
+    updateLivesText();
+  }
+
+  void reset() {
+    gameIsPaused = true;
+
+    gameRoot.getChildren().remove(gameBall);
+    gameRoot.getChildren().remove(gamePaddle);
+    gameRoot.getChildren().remove(gamePauseText);
+    removeBlocks();
+
+    initializeNewBallAndPaddle();
     initializeStartText();
+    startGameAtLevelOne();
+  }
+
+  private void removeBlocks() {
+    ArrayList<Block> allBlocks = gameLevel.getAllBlocks(SCENE_SIZE, SCENE_SIZE);
+    for (Block block : allBlocks) gameRoot.getChildren().remove(block);
   }
 
   void initializeNewBallAndPaddle() {
@@ -146,40 +165,59 @@ public class Game {
     gameRoot.getChildren().add(gamePaddle);
   }
 
-  void initializeLevels() {
-    int newLevel;
-    if (gameLevel != null) {
-      newLevel = gameLevel.getLevelNumber() + 1;
-    } else {
-      newLevel = 1;
-    }
-    setLevel(newLevel);
+  void startGameAtLevelOne() {
+    gameLevel = new Level(1);
+    gameLevel.setLives(Level.INITIAL_NUMBER_LIVES);
+    gameLevel.updateBlocks(SCENE_SIZE, SCENE_SIZE);
     ArrayList<Block> allBlocks = gameLevel.getAllBlocks(SCENE_SIZE, SCENE_SIZE);
-    for (Block block : allBlocks) gameRoot.getChildren().add(block);
+    gameRoot.getChildren().addAll(allBlocks);
   }
 
-  private Text initializeLivesText() {
-    Text text = new Text();
-    updateLivesText(text);
-    text.setX(LIVES_XPOSITION);
-    text.setY(LIVES_YPOSITION);
+  private void initializeLivesText() {
+    gameLivesText = new Text();
+    gameLivesText.setText(LIVES_TITLE + gameLevel.getLives());
+    gameLivesText.setX(LIVES_XPOSITION);
+    gameLivesText.setY(LIVES_YPOSITION);
+    gameLivesText.setFont(new Font(TEXT_FONT, TEXT_SIZE));
+    gameLivesText.setFill(TEXT_COLOR);
+
+    gameRoot.getChildren().add(gameLivesText);
+  }
+
+  // TODO
+  private void updateLivesText() {
+    gameRoot.getChildren().remove(gameLivesText);
+    gameLivesText.setText(LIVES_TITLE + gameLevel.getLives());
+    gameLivesText.setX(LIVES_XPOSITION);
+    gameLivesText.setY(LIVES_YPOSITION);
+    gameLivesText.setFont(new Font(TEXT_FONT, TEXT_SIZE));
+    gameLivesText.setFill(TEXT_COLOR);
+
+    gameRoot.getChildren().add(gameLivesText);
+  }
+
+  private void initializeStartText() {
+    if (gameRoot.getChildren().contains(gameOverText)) gameRoot.getChildren().remove(gameOverText);
+    writeStartText(gamePauseText, START_TITLE);
+  }
+
+  private void endGameText() {
+    if (gameRoot.getChildren().contains(gamePauseText)) gameRoot.getChildren().remove(gamePauseText);
+    writeStartText(gameOverText, GAME_OVER_MESSAGE);
+  }
+
+  private void writeStartText(Text text, String message) {
+    text = new Text();
+    text.setText(message);
+    text.setX(START_XPOSITION);
+    text.setY(START_YPOSITION);
     text.setFont(new Font(TEXT_FONT, TEXT_SIZE));
     text.setFill(TEXT_COLOR);
 
     gameRoot.getChildren().add(text);
-
-    return text;
-  }
-
-  // TODO
-  private void updateLivesText(Text text) {
-    text.setText(LIVES_TITLE + gameLevel.getLives());
-  }
-
-  private void endGameText(Text text) {
-    text.setText(GAME_OVER_MESSAGE);
   }
 
   Scene getScene() { return gameScene; }
   void setLevel(int levelNumber) { this.gameLevel = new Level(levelNumber); }
+  Level getGameLevel() { return gameLevel; }
 }
