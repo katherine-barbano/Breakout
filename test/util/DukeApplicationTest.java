@@ -111,14 +111,14 @@ public class DukeApplicationTest extends ApplicationTest {
 
 
   // HACKs: needed to get simulating an UI action working :(
-  private void simulateAction (Node n, Runnable action) {
+  protected void simulateAction (Node n, Runnable action) {
     // simulate robot motion, not strictly necessary but helps show what test is being run
     moveTo(n);
     // fire event using given action on the given node
     javafxRun(action);
   }
 
-  private void javafxRun (Runnable action) {
+  protected void javafxRun (Runnable action) {
     // fire event using given action on the given node
     Platform.runLater(action);
     // make it "later" so the requested event has time to run
