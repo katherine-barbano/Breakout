@@ -1,5 +1,6 @@
-package breakout;
+package text;
 
+import javafx.scene.Group;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.text.Font;
@@ -14,9 +15,12 @@ public class LivesText extends Text implements GameText {
   public static final int TEXT_SIZE = 20;
   public static final Paint TEXT_COLOR = Color.MEDIUMVIOLETRED;
 
-  public LivesText(int numberOfLives) {
-    String words = LIVES_TITLE + numberOfLives;
-    initializeText(words);
+  private Group gameRoot;
+
+  public LivesText(int numberOfLives, Group gameRootArg) {
+    gameRoot = gameRootArg;
+    updateLives(numberOfLives);
+    addText();
   }
 
   @Override
@@ -30,12 +34,16 @@ public class LivesText extends Text implements GameText {
 
   @Override
   public void removeText() {
-
+    gameRoot.getChildren().remove(this);
   }
 
   @Override
-  public void updateText(String newText) {
-
+  public void addText() {
+    gameRoot.getChildren().add(this);
   }
 
+  public void updateLives(int numberOfLives) {
+    String words = LIVES_TITLE + numberOfLives;
+    initializeText(words);
+  }
 }
