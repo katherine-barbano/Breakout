@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.scene.Group;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
@@ -51,6 +52,24 @@ public class Game {
     stage.show();
   }
 
+  void beginInfiniteLoop() {
+    KeyFrame frame = new KeyFrame(Duration.seconds(SECOND_DELAY), e -> step(SECOND_DELAY));
+    Timeline animation = new Timeline();
+    animation.setCycleCount(Timeline.INDEFINITE);
+    animation.getKeyFrames().add(frame);
+    animation.play();
+  }
+
+  void step (double elapsedTime) {
+    boolean ballIsValid = gameBall.updateCoordinatesAndContinue(elapsedTime, gameIsPaused);
+    if(!ballIsValid && gameLevel.getLives() > 0) {
+      retryLevel();
+    }
+    else if (!ballIsValid) {
+      resetPosition();
+    }
+  }
+
   private Scene setupScene () {
     gameRoot = new Group();
 
@@ -61,19 +80,21 @@ public class Game {
     gameLivesText = new LivesText(gameLevel.getLives(),gameRoot);
 
     initializeNewBallAndPaddle();
-    addFieldsToRoot();
 
     Scene scene = new Scene(gameRoot, SCENE_SIZE, SCENE_SIZE, BACKGROUND);
     scene.setOnKeyPressed(e -> handleKeyInput(e.getCode()));
     return scene;
   }
 
-  void beginInfiniteLoop() {
-    KeyFrame frame = new KeyFrame(Duration.seconds(SECOND_DELAY), e -> step(SECOND_DELAY));
-    Timeline animation = new Timeline();
-    animation.setCycleCount(Timeline.INDEFINITE);
-    animation.getKeyFrames().add(frame);
-    animation.play();
+  void initializeNewBallAndPaddle() {
+    gamePaddle = new Paddle(gameRoot);
+    gameBall = new Ball (gameRoot, gamePaddle, gameLevel.getLevelConfiguration());
+  }
+
+  void resetBallAndPaddle() {
+    gamePaddle.removePaddle();
+    gameBall.removeBall();
+    initializeNewBallAndPaddle();
   }
 
   private void handleKeyInput(KeyCode code) {
@@ -98,28 +119,15 @@ public class Game {
   private void pauseGame() {
     gamePauseText.startPause();
     gameIsPaused = true;
-    gameBall.pause();
   }
 
   private void unpauseGame() {
     gamePauseText.endPause();
     gameIsPaused = false;
-    gameBall.unpause();
   }
 
   private void handleRKeyInput() {
     resetPosition();
-  }
-
-
-  void step (double elapsedTime) {
-    boolean ballIsValid = gameBall.updateCoordinatesAndContinue(elapsedTime);
-    if(!ballIsValid && gameLevel.getLives() > 0) {
-      retryLevel();
-    }
-    else if (!ballIsValid) {
-      resetPosition();
-    }
   }
 
   void retryLevel() {
@@ -136,10 +144,10 @@ public class Game {
 
   void resetPosition() {
     gameIsPaused = true;
+    gamePauseText.removeText();
     gamePauseText = new PauseText(gameRoot);
 
-    gamePaddle.resetPaddle();
-    gameBall.resetBall();
+    resetBallAndPaddle();
   }
 
   void resetEntireLevel() {
@@ -154,11 +162,6 @@ public class Game {
     for (Block block : allBlocks) gameRoot.getChildren().remove(block);
   }
 
-  void initializeNewBallAndPaddle() {
-    gamePaddle = new Paddle(SCENE_SIZE,SCENE_SIZE);
-    gameBall = new Ball (SCENE_SIZE, gamePaddle, gameLevel.getLevelConfiguration());
-  }
-
   void startGameAtLevelOne() {
     gameLevel = new Level(1);
     gameLevel.setLives(Level.INITIAL_NUMBER_LIVES);
@@ -167,12 +170,8 @@ public class Game {
     gameRoot.getChildren().addAll(allBlocks);
   }
 
-  private void addFieldsToRoot() {
-    gameRoot.getChildren().add(gameBall);
-    gameRoot.getChildren().add(gamePaddle);
-  }
-
-  Scene getScene() { return gameScene; }
   void setLevel(int levelNumber) { this.gameLevel = new Level(levelNumber); }
   Level getGameLevel() { return gameLevel; }
+
+  Scene getScene() { return gameScene; }
 }

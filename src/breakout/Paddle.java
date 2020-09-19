@@ -1,5 +1,7 @@
 package breakout;
 
+import javafx.scene.Group;
+import javafx.scene.Node;
 import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
@@ -20,13 +22,16 @@ public class Paddle extends Rectangle{
   public static final int PADDLE_SPEED = 10;
 
   private int paddleWidth;
-  private int sceneWidth;
-  private int sceneHeight;
+  private Group gameRoot;
 
-  public Paddle(int sceneWidthArg, int sceneHeightArg) {
-    sceneWidth = sceneWidthArg;
-    sceneHeight = sceneHeightArg;
-    resetPaddle();
+  public Paddle(Group gameRootArg) {
+    gameRoot = gameRootArg;
+    setPaddleProperties();
+    gameRoot.getChildren().add(this);
+  }
+
+  void removePaddle() {
+    gameRoot.getChildren().remove(this);
   }
 
   //for power up later
@@ -39,9 +44,9 @@ public class Paddle extends Rectangle{
     paddleWidth = NORMAL_PADDLE_WIDTH;
   }
 
-  public void resetPaddle() {
-    setX(sceneWidth / 2 - NORMAL_PADDLE_WIDTH/2);
-    setY(sceneHeight - VERTICAL_PADDLE_OFFSET_FROM_BOTTOM);
+  public void setPaddleProperties() {
+    setX(Game.SCENE_SIZE / 2 - NORMAL_PADDLE_WIDTH/2);
+    setY(Game.SCENE_SIZE - VERTICAL_PADDLE_OFFSET_FROM_BOTTOM);
     setWidth(NORMAL_PADDLE_WIDTH);
     setHeight(PADDLE_HEIGHT);
     setFill(PADDLE_COLOR);
