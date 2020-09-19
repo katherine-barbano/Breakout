@@ -1,5 +1,6 @@
-package breakout;
+package gameElements;
 
+import breakout.Game;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.input.KeyCode;
@@ -30,7 +31,7 @@ public class Paddle extends Rectangle{
     gameRoot.getChildren().add(this);
   }
 
-  void removePaddle() {
+  public void removePaddle() {
     gameRoot.getChildren().remove(this);
   }
 

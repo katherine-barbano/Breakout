@@ -1,4 +1,4 @@
-package breakout;
+package gameElements;
 
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
@@ -34,7 +34,7 @@ public class Block extends Rectangle {
     setId("block");
   }
 
-  void updateBlockColor() {
+  public void updateBlockColor() {
     Paint newBlockColor = getBlockColor(this.blockHardness);
     this.blockColor = newBlockColor;
     setFill(this.blockColor);
@@ -72,11 +72,11 @@ public class Block extends Rectangle {
     setY(yOffset);
   }
 
-  int getBlockHardness() {
+  public int getBlockHardness() {
     return blockHardness;
   }
 
-  void setBlockHardness(int blockHardness) {
+  public void setBlockHardness(int blockHardness) {
     this.blockHardness = blockHardness;
   }
 
@@ -84,11 +84,11 @@ public class Block extends Rectangle {
     blockHardness--;
   }
 
-  Paint getBlockColor() {
+  public Paint getBlockColor() {
     return blockColor;
   }
 
-  void setBlockColor(Paint blockColor) {
+  public void setBlockColor(Paint blockColor) {
     this.blockColor = blockColor;
   }
 }

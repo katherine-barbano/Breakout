@@ -34,9 +34,8 @@ public class Game {
   private Scene gameScene;
   private Group gameRoot;
 
-  private Level gameLevel;
+  private Level gameLevel;//TODO: make this a list of levels
   private GameOverText gameOverText;
-  private boolean gameIsLost;
 
   public Game(Stage stage) {
     gameScene = setupScene();
@@ -54,12 +53,12 @@ public class Game {
   }
 
   void step (double elapsedTime) {
-    if(!gameIsLost) {
+    if(gameLevel.gameIsLost()) {
+      gameOver();
+    }
+    else {
       boolean ballIsValid = gameLevel.isBallValid(elapsedTime);
-      if(!ballIsValid && gameLevel.getLives() <= 1) {
-        gameOver();
-      }
-      else if (!ballIsValid) {
+      if (!ballIsValid) {
         gameLevel.resetCurrentLevel();
       }
     }
@@ -77,7 +76,7 @@ public class Game {
   }
 
   private void handleKeyInput(KeyCode code) {
-    if(code == KeyCode.SPACE && gameIsLost) {
+    if(code == KeyCode.SPACE && gameLevel.gameIsLost()) {
       startGameAtLevelOne();
     }
     else {
@@ -86,13 +85,11 @@ public class Game {
   }
 
   private void gameOver() {
-    gameOverText.gameOverUpdate();
+    gameOverText.gameOverUpdate(gameLevel.levelIsWon());
     gameLevel.removeLevel();
-    gameIsLost = true;
   }
 
   void startGameAtLevelOne() {
-    gameIsLost = false;
     gameLevel = new Level(gameRoot,1);
     gameLevel.setLives(Level.INITIAL_NUMBER_LIVES);
     gameLevel.updateBlocks(SCENE_SIZE, SCENE_SIZE);

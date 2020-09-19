@@ -1,6 +1,6 @@
-package breakout;
+package gameElements;
 
-import static breakout.Block.BLOCKS_PER_ROW;
+import static gameElements.Block.BLOCKS_PER_ROW;
 
 /***
  *   Contains private array (size 12) of multiple Block objects. Array

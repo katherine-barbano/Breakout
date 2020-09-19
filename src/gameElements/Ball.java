@@ -1,5 +1,6 @@
-package breakout;
+package gameElements;
 
+import breakout.Game;
 import javafx.scene.Group;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
@@ -45,11 +46,11 @@ public class Ball extends Circle {
     velocityY = NORMAL_BALL_SPEED;
   }
 
-  void removeBall() {
+  public void removeBall() {
     gameRoot.getChildren().remove(this);
   }
 
-  boolean updateCoordinatesAndContinue(double elapsedTime, boolean isPaused) {
+  public boolean updateCoordinatesAndContinue(double elapsedTime, boolean isPaused) {
     if (isTouchingBottomWall()) {
       return false;
     }
@@ -62,19 +63,19 @@ public class Ball extends Circle {
     return true;
   }
 
-  int getVelocityX() {
+  public int getVelocityX() {
     return velocityX;
   }
 
-  void setVelocityX(int velocityXArg) {
+  public void setVelocityX(int velocityXArg) {
     velocityX = velocityXArg;
   }
 
-  int getVelocityY() {
+  public int getVelocityY() {
     return velocityY;
   }
 
-  void setVelocityY(int velocityYArg) {
+  public void setVelocityY(int velocityYArg) {
     velocityY = velocityYArg;
   }
 

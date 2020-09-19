@@ -1,5 +1,8 @@
 package breakout;
 
+import gameElements.Ball;
+import gameElements.Block;
+import gameElements.Paddle;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;

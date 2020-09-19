@@ -1,4 +1,4 @@
-package breakout;
+package gameElements;
 
 public class MovingBlock extends Block {
 

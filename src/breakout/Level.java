@@ -1,9 +1,13 @@
 package breakout;
 
+import gameElements.Ball;
+import gameElements.Block;
+import gameElements.BlockConfiguration;
+import gameElements.BlockRow;
+import gameElements.Paddle;
 import java.util.ArrayList;
 import javafx.scene.Group;
 import javafx.scene.input.KeyCode;
-import text.GameOverText;
 import text.LivesText;
 import text.PauseText;
 
@@ -67,6 +71,7 @@ public class Level {
   }
 
   // FIXME: Do you think this should be in BlockConfiguration instead?
+  // yes I think we should put this in BlockConfiguration, and probably also split this into some helper methods
   ArrayList<Block> getAllBlocks(int sceneWidth, int sceneHeight) {
     int blockWidth = sceneWidth / Block.BLOCKS_PER_ROW;
     int blockHeight =
@@ -116,7 +121,17 @@ public class Level {
     }
   }
 
-  void resetPosition() {
+  private void pauseGame() {
+    gamePauseText.startPause();
+    gameIsPaused = true;
+  }
+
+  private void unpauseGame() {
+    gamePauseText.endPause();
+    gameIsPaused = false;
+  }
+
+  private void resetPosition() {
     gameIsPaused = true;
     gamePauseText.removeText();
     gamePauseText = new PauseText(gameRoot);
@@ -124,22 +139,12 @@ public class Level {
     resetBallAndPaddle();
   }
 
-  void pauseGame() {
-    gamePauseText.startPause();
-    gameIsPaused = true;
-  }
-
-  void unpauseGame() {
-    gamePauseText.endPause();
-    gameIsPaused = false;
-  }
-
-  void initializeNewBallAndPaddle() {
+  private void initializeNewBallAndPaddle() {
     gamePaddle = new Paddle(gameRoot);
     gameBall = new Ball (gameRoot, gamePaddle, getLevelConfiguration());
   }
 
-  void resetBallAndPaddle() {
+  private void resetBallAndPaddle() {
     gamePaddle.removePaddle();
     gameBall.removeBall();
     initializeNewBallAndPaddle();

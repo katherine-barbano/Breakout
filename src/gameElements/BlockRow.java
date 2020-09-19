@@ -1,6 +1,4 @@
-package breakout;
-
-import static breakout.Block.BLOCKS_PER_ROW;
+package gameElements;
 
 /***
  *      Interface for a row of blocks in the block configuration. Its subclasses,
