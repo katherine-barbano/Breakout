@@ -1,6 +1,11 @@
 package breakout;
 
 import java.util.ArrayList;
+import javafx.scene.Group;
+import javafx.scene.input.KeyCode;
+import text.GameOverText;
+import text.LivesText;
+import text.PauseText;
 
 /***
  * Purpose: Contains private field for a BlockConfiguration. Maintains
@@ -19,20 +24,40 @@ public class Level {
   private int levelNumber;
   private BlockConfiguration levelConfiguration;
   private final ArrayList<Block> blocksInLevel;
+  private boolean gameIsPaused;
+  private PauseText gamePauseText;
+  private LivesText gameLivesText;
+  private Group gameRoot;
+  private Ball gameBall; // TODO extension: List<Ball> myBalls, to accomodate multi-gameBall powerups
+  private Paddle gamePaddle;
 
-  public Level(String fileName) {
+  public Level(Group gameRootArg, String fileName) {
     this.levelLives = INITIAL_NUMBER_LIVES;
     this.levelNumber = 0;
     this.levelConfiguration = new BlockConfiguration(fileName);
     this.blocksInLevel = new ArrayList<>();
+    this.gameIsPaused = true;
+
+    gameRoot = gameRootArg;
+    gamePauseText = new PauseText(gameRoot);
+    gameLivesText = new LivesText(getLives(),gameRoot);
+
+    initializeNewBallAndPaddle();
   }
 
-  public Level(int levelNumber) {
+  public Level(Group gameRootArg, int levelNumber) {
     this.levelLives = INITIAL_NUMBER_LIVES;
     this.levelNumber = levelNumber;
     this.levelConfiguration = new BlockConfiguration();
     this.blocksInLevel = new ArrayList<>();
     generateLevelConfiguration(levelNumber);
+    this.gameIsPaused = true;
+
+    gameRoot = gameRootArg;
+    gamePauseText = new PauseText(gameRoot);
+    gameLivesText = new LivesText(getLives(),gameRoot);
+
+    initializeNewBallAndPaddle();
   }
 
   private void generateLevelConfiguration(int levelNumber) {
@@ -62,8 +87,63 @@ public class Level {
     return this.blocksInLevel;
   }
 
-  void endGame() {
-  } // TODO
+  void resetCurrentLevel() {
+    decreaseLivesByOne();
+    gameLivesText.updateLives(getLives());
+    resetPosition();
+  }
+
+  boolean isBallValid(double elapsedTime) {
+    return gameBall.updateCoordinatesAndContinue(elapsedTime, gameIsPaused);
+  }
+
+  void handleKeyInput(KeyCode code) {
+    gamePaddle.handleKeyInput(code, gameIsPaused);
+    if(code == KeyCode.SPACE) {
+      handleSpaceBarInput();
+    }
+    else if(code == KeyCode.R) {
+      resetPosition();
+    }
+  }
+
+  private void handleSpaceBarInput() {
+    if(gameIsPaused) {
+      unpauseGame();
+    }
+    else {
+      pauseGame();
+    }
+  }
+
+  void resetPosition() {
+    gameIsPaused = true;
+    gamePauseText.removeText();
+    gamePauseText = new PauseText(gameRoot);
+
+    resetBallAndPaddle();
+  }
+
+  void pauseGame() {
+    gamePauseText.startPause();
+    gameIsPaused = true;
+  }
+
+  void unpauseGame() {
+    gamePauseText.endPause();
+    gameIsPaused = false;
+  }
+
+  void initializeNewBallAndPaddle() {
+    gamePaddle = new Paddle(gameRoot);
+    gameBall = new Ball (gameRoot, gamePaddle, getLevelConfiguration());
+  }
+
+  void resetBallAndPaddle() {
+    gamePaddle.removePaddle();
+    gameBall.removeBall();
+    initializeNewBallAndPaddle();
+  }
 
   void finishLevel() {
   } // TODO
@@ -106,5 +186,19 @@ public class Level {
 
   void setLevelNumber(int levelNumber) {
     this.levelNumber = levelNumber;
+  }
+
+  void removeLevel() {
+    gameLivesText.removeText();
+    gamePauseText.removeText();
+    gamePaddle.removePaddle();
+    gameBall.removeBall();
+    removeBlocks();
+  }
+
+  //TODO:add to BlockConfiguration
+  private void removeBlocks() {
+    ArrayList<Block> allBlocks = getAllBlocks(Game.SCENE_SIZE, Game.SCENE_SIZE);
+    for (Block block : allBlocks) gameRoot.getChildren().remove(block);
   }
 }

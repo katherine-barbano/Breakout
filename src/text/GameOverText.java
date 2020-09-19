@@ -1,5 +1,6 @@
 package text;
 
+import breakout.Game;
 import javafx.scene.Group;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
@@ -8,13 +9,13 @@ import javafx.scene.text.Text;
 
 public class GameOverText extends Text implements GameText {
 
-  public static final String GAMEOVER_TITLE = "Game Over! Click the space bar to restart from Level 1.";
+  public static final String GAMEOVER_TITLE = "Game Over! Tap the space bar to restart from Level 1.";
   public static final String TEXT_FONT = "ARIAL";
   public static final int TEXT_SIZE = 20;
   public static final Paint TEXT_COLOR = Color.MEDIUMVIOLETRED;
 
-  public static final int GAMEOVER_XPOSITION = PauseText.PAUSE_XPOSITION;
-  public static final int GAMEOVER_YPOSITION = PauseText.PAUSE_YPOSITION;
+  public static final int GAMEOVER_XPOSITION = 60;
+  public static final int GAMEOVER_YPOSITION = 250;
 
   private Group gameRoot;
 

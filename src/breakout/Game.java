@@ -35,17 +35,10 @@ public class Game {
   private Group gameRoot;
 
   private Level gameLevel;
-  private Ball gameBall; // TODO extension: List<Ball> myBalls, to accomodate multi-gameBall powerups
-  private Paddle gamePaddle;
-  private boolean gameIsPaused;
-
-  private PauseText gamePauseText;
   private GameOverText gameOverText;
-  private LivesText gameLivesText;
+  private boolean gameIsLost;
 
   public Game(Stage stage) {
-    gameIsPaused = true;
-
     gameScene = setupScene();
     stage.setScene(gameScene);
     stage.setTitle(TITLE);
@@ -61,12 +54,14 @@ public class Game {
   }
 
   void step (double elapsedTime) {
-    boolean ballIsValid = gameBall.updateCoordinatesAndContinue(elapsedTime, gameIsPaused);
-    if(!ballIsValid && gameLevel.getLives() <= 0) {
-      gameOver();
-    }
-    else if (!ballIsValid) {
-      resetCurrentLevel();
+    if(!gameIsLost) {
+      boolean ballIsValid = gameLevel.isBallValid(elapsedTime);
+      if(!ballIsValid && gameLevel.getLives() <= 1) {
+        gameOver();
+      }
+      else if (!ballIsValid) {
+        gameLevel.resetCurrentLevel();
+      }
     }
   }
 
@@ -74,92 +69,38 @@ public class Game {
     gameRoot = new Group();
 
     startGameAtLevelOne();
-
-    gamePauseText = new PauseText(gameRoot);
     gameOverText = new GameOverText(gameRoot);
-    gameLivesText = new LivesText(gameLevel.getLives(),gameRoot);
-
-    initializeNewBallAndPaddle();
 
     Scene scene = new Scene(gameRoot, SCENE_SIZE, SCENE_SIZE, BACKGROUND);
     scene.setOnKeyPressed(e -> handleKeyInput(e.getCode()));
     return scene;
   }
 
-  void initializeNewBallAndPaddle() {
-    gamePaddle = new Paddle(gameRoot);
-    gameBall = new Ball (gameRoot, gamePaddle, gameLevel.getLevelConfiguration());
-  }
-
-  void resetBallAndPaddle() {
-    gamePaddle.removePaddle();
-    gameBall.removeBall();
-    initializeNewBallAndPaddle();
-  }
-
   private void handleKeyInput(KeyCode code) {
-    gamePaddle.handleKeyInput(code, gameIsPaused);
-    if(code == KeyCode.SPACE) {
-      handleSpaceBarInput();
+    if(code == KeyCode.SPACE && gameIsLost) {
+      startGameAtLevelOne();
+      System.out.println("level1");
     }
-    else if(code == KeyCode.R) {
-      resetPosition();
-    }
-  }
-
-  private void handleSpaceBarInput() {
-    if(gameIsPaused) {
-      unpauseGame();
-    }
-    else {
-      pauseGame();
-    }
-  }
-
-  private void pauseGame() {
-    gamePauseText.startPause();
-    gameIsPaused = true;
-  }
-
-  private void unpauseGame() {
-    gamePauseText.endPause();
-    gameIsPaused = false;
+    gameLevel.handleKeyInput(code);
   }
 
   private void gameOver() {
     gameOverText.gameOverUpdate();
-    resetBallAndPaddle();
-  }
-
-  private void resetCurrentLevel() {
-    resetPosition();
-    gameLevel.decreaseLivesByOne();
-    gameLivesText.updateLives(gameLevel.getLives());
-  }
-
-  private void resetPosition() {
-    gameIsPaused = true;
-    gamePauseText.removeText();
-    gamePauseText = new PauseText(gameRoot);
-
-    resetBallAndPaddle();
-  }
-
-  //TODO: @Anna can we remove this method? Because of refactoring for gameOver
-  private void removeBlocks() {
-    ArrayList<Block> allBlocks = gameLevel.getAllBlocks(SCENE_SIZE, SCENE_SIZE);
-    for (Block block : allBlocks) gameRoot.getChildren().remove(block);
+    gameLevel.removeLevel();
+    gameIsLost = true;
   }
 
   void startGameAtLevelOne() {
-    gameLevel = new Level(1);
+    gameIsLost = false;
+    gameLevel = new Level(gameRoot,1);
     gameLevel.setLives(Level.INITIAL_NUMBER_LIVES);
     gameLevel.updateBlocks(SCENE_SIZE, SCENE_SIZE);
     ArrayList<Block> allBlocks = gameLevel.getAllBlocks(SCENE_SIZE, SCENE_SIZE);
     gameRoot.getChildren().addAll(allBlocks);
   }
 
-  void setLevel(int levelNumber) { this.gameLevel = new Level(levelNumber); }
+  void setLevel(int levelNumber) { this.gameLevel = new Level(gameRoot,levelNumber); }
+
   Level getGameLevel() { return gameLevel; }
 
   Scene getScene() { return gameScene; }

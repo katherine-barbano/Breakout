@@ -1,5 +1,6 @@
 package breakout;
 
+import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
 import javafx.stage.Stage;
@@ -30,7 +31,8 @@ public class GameTest extends DukeApplicationTest{
   @Test
   void test() {
     game.startGameAtLevelOne();
-    level = new Level(1);
+    Group testGroup = new Group();
+    level = new Level(testGroup, 1);
     assertEquals(game.getGameLevel(), level);
   }
 }
