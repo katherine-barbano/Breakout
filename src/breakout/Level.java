@@ -196,6 +196,11 @@ public class Level {
     removeBlocks();
   }
 
+  void addBlocks() {
+    ArrayList<Block> allBlocks = getAllBlocks(Game.SCENE_SIZE, Game.SCENE_SIZE);
+    gameRoot.getChildren().addAll(allBlocks);
+  }
+
   //TODO:add to BlockConfiguration
   private void removeBlocks() {
     ArrayList<Block> allBlocks = getAllBlocks(Game.SCENE_SIZE, Game.SCENE_SIZE);

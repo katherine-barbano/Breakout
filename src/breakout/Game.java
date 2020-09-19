@@ -79,9 +79,10 @@ public class Game {
   private void handleKeyInput(KeyCode code) {
     if(code == KeyCode.SPACE && gameIsLost) {
       startGameAtLevelOne();
-      System.out.println("level1");
     }
-    gameLevel.handleKeyInput(code);
+    else {
+      gameLevel.handleKeyInput(code);
+    }
   }
 
   private void gameOver() {
@@ -95,8 +96,7 @@ public class Game {
     gameLevel = new Level(gameRoot,1);
     gameLevel.setLives(Level.INITIAL_NUMBER_LIVES);
     gameLevel.updateBlocks(SCENE_SIZE, SCENE_SIZE);
-    ArrayList<Block> allBlocks = gameLevel.getAllBlocks(SCENE_SIZE, SCENE_SIZE);
-    gameRoot.getChildren().addAll(allBlocks);
+    gameLevel.addBlocks();
   }
 
   void setLevel(int levelNumber) { this.gameLevel = new Level(gameRoot,levelNumber); }

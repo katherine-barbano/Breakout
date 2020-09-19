@@ -44,10 +44,6 @@ public class PauseText extends Text implements GameText {
   }
 
   public void startGame() {
-    /*if (gameRoot.getChildren().contains(gameOverText)) {
-      gameOverText.removeText();
-    }*/
-
     initializeText(START_TITLE);
     addText();
   }
