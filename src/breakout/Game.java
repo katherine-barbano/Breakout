@@ -62,11 +62,11 @@ public class Game {
 
   void step (double elapsedTime) {
     boolean ballIsValid = gameBall.updateCoordinatesAndContinue(elapsedTime, gameIsPaused);
-    if(!ballIsValid && gameLevel.getLives() > 0) {
-      retryLevel();
+    if(!ballIsValid && gameLevel.getLives() <= 0) {
+      gameOver();
     }
     else if (!ballIsValid) {
-      resetPosition();
+      resetCurrentLevel();
     }
   }
 
@@ -103,7 +103,7 @@ public class Game {
       handleSpaceBarInput();
     }
     else if(code == KeyCode.R) {
-      handleRKeyInput();
+      resetPosition();
     }
   }
 
@@ -126,23 +126,18 @@ public class Game {
     gameIsPaused = false;
   }
 
-  private void handleRKeyInput() {
-    resetPosition();
+  private void gameOver() {
+    gameOverText.gameOverUpdate();
+    resetBallAndPaddle();
   }
 
-  void retryLevel() {
-    if (gameLevel.getLives() == 0) {
-      gameOverText.gameOverUpdate();
-      resetPosition();
-      return;
-    }
+  private void resetCurrentLevel() {
+    resetPosition();
     gameLevel.decreaseLivesByOne();
-
-    resetEntireLevel();
     gameLivesText.updateLives(gameLevel.getLives());
   }
 
-  void resetPosition() {
+  private void resetPosition() {
     gameIsPaused = true;
     gamePauseText.removeText();
     gamePauseText = new PauseText(gameRoot);
@@ -150,13 +145,7 @@ public class Game {
     resetBallAndPaddle();
   }
 
-  void resetEntireLevel() {
-    resetPosition();
-    removeBlocks();
-
-    startGameAtLevelOne();
-  }
-
+  //TODO: @Anna can we remove this method? Because of refactoring for gameOver
   private void removeBlocks() {
     ArrayList<Block> allBlocks = gameLevel.getAllBlocks(SCENE_SIZE, SCENE_SIZE);
     for (Block block : allBlocks) gameRoot.getChildren().remove(block);

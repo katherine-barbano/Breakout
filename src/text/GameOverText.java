@@ -8,7 +8,7 @@ import javafx.scene.text.Text;
 
 public class GameOverText extends Text implements GameText {
 
-  public static final String GAMEOVER_TITLE = "Game Over! Click the space bar to play again.";
+  public static final String GAMEOVER_TITLE = "Game Over! Click the space bar to restart from Level 1.";
   public static final String TEXT_FONT = "ARIAL";
   public static final int TEXT_SIZE = 20;
   public static final Paint TEXT_COLOR = Color.MEDIUMVIOLETRED;
