@@ -27,12 +27,6 @@ public class Game {
   public static final int FRAMES_PER_SECOND = 60;
   public static final double SECOND_DELAY = 1.0 / FRAMES_PER_SECOND;
   public static final Paint BACKGROUND = Color.AZURE;
-  public static final String LIVES_TITLE = "Lives: ";
-  public static final int LIVES_XPOSITION = 500;
-  public static final int LIVES_YPOSITION = 40;
-  public static final String TEXT_FONT = "ARIAL";
-  public static final int TEXT_SIZE = 20;
-  public static final Paint TEXT_COLOR = Color.MEDIUMVIOLETRED;
   public static final String START_TITLE = "Click the space bar to start!";
   public static final String PAUSE_TITLE="Paused. Resume with space bar";
   public static final String GAME_OVER_MESSAGE = "Game Over! Click the space bar to play again.";
