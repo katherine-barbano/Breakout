@@ -16,6 +16,7 @@ public class PauseText extends Text implements GameText {
 
   public static final int PAUSE_XPOSITION = 20;
   public static final int PAUSE_YPOSITION = LivesText.LIVES_YPOSITION;
+  public static final String PAUSE_ID = "#pauseText";
 
   private Group gameRoot;
 
@@ -31,6 +32,7 @@ public class PauseText extends Text implements GameText {
     setY(PAUSE_YPOSITION);
     setFont(new Font(TEXT_FONT, TEXT_SIZE));
     setFill(TEXT_COLOR);
+    setId(PAUSE_ID);
   }
 
   @Override

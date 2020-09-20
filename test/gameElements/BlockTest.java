@@ -1,5 +1,6 @@
-package breakout;
+package gameElements;
 
+import breakout.Game;
 import gameElements.Ball;
 import gameElements.Block;
 import gameElements.Paddle;

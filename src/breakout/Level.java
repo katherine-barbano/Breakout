@@ -165,6 +165,10 @@ public class Level {
     levelLives = lives;
   }
 
+  public LivesText getLivesText() { return gameLivesText; }
+
+  public PauseText getPauseText() { return gamePauseText; }
+
   boolean gameIsLost() {
     return (levelLives == 0);
   }
