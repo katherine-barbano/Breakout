@@ -14,6 +14,7 @@ public class LivesText extends Text implements GameText {
   public static final String TEXT_FONT = "ARIAL";
   public static final int TEXT_SIZE = 20;
   public static final Paint TEXT_COLOR = Color.MEDIUMVIOLETRED;
+  public static final String LIVES_ID = "#livesText";
 
   private Group gameRoot;
 
@@ -30,6 +31,7 @@ public class LivesText extends Text implements GameText {
     setY(LIVES_YPOSITION);
     setFont(new Font(TEXT_FONT, TEXT_SIZE));
     setFill(TEXT_COLOR);
+    setId(LIVES_ID);
   }
 
   @Override

@@ -52,7 +52,7 @@ public class Game {
     animation.play();
   }
 
-  void step (double elapsedTime) {
+  public void step (double elapsedTime) {
     if(gameLevel.gameIsLost()) {
       gameOver();
     }
@@ -98,7 +98,15 @@ public class Game {
 
   void setLevel(int levelNumber) { this.gameLevel = new Level(gameRoot,levelNumber); }
 
-  Level getGameLevel() { return gameLevel; }
+  public Level getGameLevel() { return gameLevel; }
 
-  Scene getScene() { return gameScene; }
+  public Scene getScene() { return gameScene; }
+
+  public GameOverText getGameOverText() {
+    return gameOverText;
+  }
+
+  public Group getRoot() {
+    return gameRoot;
+  }
 }
