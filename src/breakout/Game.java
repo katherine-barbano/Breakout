@@ -126,6 +126,10 @@ public class Game {
     }
   }
 
+  /***
+   * Removes the current Level from the screen because the player lost all their lives or won the game.
+   * Shows the "game over" or "you won" screen.
+   */
   void gameOver() {
     Level currentLevel = getCurrentGameLevel();
     gameOverText.gameOverUpdate(currentLevel.levelIsWon());
