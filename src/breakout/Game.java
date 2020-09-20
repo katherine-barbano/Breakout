@@ -36,7 +36,7 @@ public class Game {
   public static final String[] NUMERICS = {"1", "2", "3", "4", "5","6","7","8","9","0"};
   public static final int LEVEL_ONE_INDEX = 0;
 
-  private Scene gameScene;
+  private final Scene gameScene;
   private Group gameRoot;
 
   private List<Level> gameLevels;
@@ -126,7 +126,11 @@ public class Game {
     }
   }
 
-  private void gameOver() {
+  /***
+   * Removes the current Level from the screen because the player lost all their lives or won the game.
+   * Shows the "game over" or "you won" screen.
+   */
+  void gameOver() {
     Level currentLevel = getCurrentGameLevel();
     gameOverText.gameOverUpdate(currentLevel.levelIsWon());
     currentLevel.removeLevel();
@@ -137,13 +141,13 @@ public class Game {
    * Assumes the level that comes first has the number "1" in its file name, and that no other levels have
    * the number 1 in the file name, and so on for level 2, 3, etc.
    */
-  void initializeGameLevels() {
+  private void initializeGameLevels() {
     try {
       //following line to list files in directory from http://zetcode.com/java/listdirectory/
       Stream filesInGame = Files.list(new File(BlockConfiguration.FILE_SOURCE_PATH + GAME_NAME).toPath());
 
       Object[] filesInGameArray = filesInGame.toArray();
-      gameLevels = new ArrayList<Level>();
+      gameLevels = new ArrayList<>();
 
       for(Object filePath:filesInGameArray) {
         int levelNumber = getLevelNumberFromFileName(filePath.toString());
@@ -213,5 +217,13 @@ public class Game {
    */
   public Group getRoot() {
     return gameRoot;
+  }
+
+  /***
+   * Get the List maintaining all the Levels in the current Game.
+   * @return List of levels in game
+   */
+  List<Level> getGameLevelsList() {
+    return gameLevels;
   }
 }

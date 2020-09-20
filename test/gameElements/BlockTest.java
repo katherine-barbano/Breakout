@@ -52,7 +52,7 @@ public class BlockTest extends DukeApplicationTest {
     int height = (int) testScene.getHeight();
     testBlock = new Block(width, height, 1);
     testBlock.setBlockHardness(2);
-    assertEquals(testBlock.getBlockColor(), Color.PALEVIOLETRED);
+    assertEquals(testBlock.getBlockColor(), Color.PALETURQUOISE);
   }
 
 }
