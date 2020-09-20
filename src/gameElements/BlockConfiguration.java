@@ -11,7 +11,7 @@ import java.util.Scanner;
  *      Methods: readTextFile, setBlockRows
  */
 public class BlockConfiguration {
-  public static final String FILE_SOURCE_PATH = "data/sample_game/";
+  public static final String FILE_SOURCE_PATH = "data/";
   public static final int NUMBER_OF_BLOCK_ROWS = Block.NUMBER_OF_BLOCK_ROWS;
 
   private String fileName; // FIXME currently unused
@@ -19,11 +19,11 @@ public class BlockConfiguration {
   private BlockRow[] configRows;
   private int numberOfBlocksRemaining; // TODO keep track of breakable blocks remaining
 
-  public BlockConfiguration () { new BlockConfiguration(""); }
-  public BlockConfiguration(String fileName) {
+  public BlockConfiguration () { new BlockConfiguration("",""); }
+  public BlockConfiguration(String gameName, String fileName) {
     this.fileName = fileName;
     this.configRows = new BlockRow[NUMBER_OF_BLOCK_ROWS];
-    String filePath = generateFilePathForFile(fileName);
+    String filePath = generateFilePathForFile(gameName, fileName);
     if (!fileName.equals("")) generateBlockRowsFromFile(filePath); // Blocks are dimensionless
   }
 
@@ -103,7 +103,7 @@ public class BlockConfiguration {
     }
   }
 
-  String generateFilePathForFile(String fileName) { return FILE_SOURCE_PATH + fileName + ".txt"; }
+  String generateFilePathForFile(String gameName, String fileName) { return FILE_SOURCE_PATH + gameName + "/" + fileName + ".txt"; }
   void setFileName(String fileName) { this.fileName = fileName; }
 
   public BlockRow[] getBlockRows() { return configRows; }

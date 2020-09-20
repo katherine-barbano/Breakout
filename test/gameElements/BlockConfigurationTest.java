@@ -32,7 +32,7 @@ public class BlockConfigurationTest extends DukeApplicationTest {
 
   @Test
   void testNumBlocksRemaining() {
-    testConfiguration = new BlockConfiguration("level_1");
+    testConfiguration = new BlockConfiguration("sample_game","level_1");
     assertEquals(testConfiguration.getNumberOfBlocksRemaining(), 60);
   }
 }
