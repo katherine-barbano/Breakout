@@ -120,9 +120,11 @@ public class MainTest extends DukeApplicationTest {
 
       startAnimation();
 
-      for(int numSteps = 0; numSteps < 3; numSteps ++) {
+      for(int numSteps = 0; numSteps < 5; numSteps ++) {
         javafxRun(() -> game.step(Game.SECOND_DELAY));
       }
+
+      ball = lookup("#ball").query();
       assertEquals(300,ball.getCenterX());
       assertEquals(555,ball.getCenterY());
     }
