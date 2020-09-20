@@ -1,5 +1,7 @@
 package breakout;
 
+import gameElements.Ball;
+import gameElements.Paddle;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
 import javafx.stage.Stage;
@@ -119,7 +121,7 @@ public class MainTest extends DukeApplicationTest {
       startAnimation();
 
       for(int numSteps = 0; numSteps < 3; numSteps ++) {
-        game.step(Game.SECOND_DELAY);
+        javafxRun(() -> game.step(Game.SECOND_DELAY));
       }
       assertEquals(300,ball.getCenterX());
       assertEquals(555,ball.getCenterY());

@@ -1,5 +1,7 @@
-package breakout;
+package gameElements;
 
+import breakout.Game;
+import javafx.scene.Group;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Circle;
@@ -22,28 +24,33 @@ public class Ball extends Circle {
   private BlockConfiguration blockConfiguration;
   private int velocityX;
   private int velocityY;
-  private boolean isPaused;
-  private int sceneWidth;
+  private Group gameRoot;
 
-  public Ball(int sceneWidthArg, Paddle paddleArg, BlockConfiguration configuration) {
-    sceneWidth = sceneWidthArg;
+  public Ball(Group gameRootArg, Paddle paddleArg, BlockConfiguration configuration) {
+    gameRoot = gameRootArg;
     paddle = paddleArg;
     blockConfiguration = configuration;
-    resetBall();
+
+    setBallProperties();
+
+    gameRoot.getChildren().add(this);
   }
 
-  public void resetBall() {
-    setCenterX(sceneWidth / 2);
+  public void setBallProperties() {
+    setCenterX(Game.SCENE_SIZE / 2);
     setCenterY(paddle.getY() - BALL_RADIUS);
     setRadius(BALL_RADIUS);
     setFill(BALL_COLOR);
     setId("ball");
     velocityX = 0;
     velocityY = NORMAL_BALL_SPEED;
-    isPaused = true;
   }
 
-  boolean updateCoordinatesAndContinue(double elapsedTime) {
+  public void removeBall() {
+    gameRoot.getChildren().remove(this);
+  }
+
+  public boolean updateCoordinatesAndContinue(double elapsedTime, boolean isPaused) {
     if (isTouchingBottomWall()) {
       return false;
     }
@@ -56,28 +63,20 @@ public class Ball extends Circle {
     return true;
   }
 
-  int getVelocityX() {
+  public int getVelocityX() {
     return velocityX;
   }
 
-  void setVelocityX(int velocityXArg) {
+  public void setVelocityX(int velocityXArg) {
     velocityX = velocityXArg;
   }
 
-  int getVelocityY() {
+  public int getVelocityY() {
     return velocityY;
   }
 
-  void setVelocityY(int velocityYArg) {
+  public void setVelocityY(int velocityYArg) {
     velocityY = velocityYArg;
-  }
-
-  void pause() {
-    isPaused = true;
-  }
-
-  void unpause() {
-    isPaused = false;
   }
 
   private boolean isTouchingBlock() {

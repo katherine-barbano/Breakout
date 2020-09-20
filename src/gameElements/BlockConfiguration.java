@@ -1,4 +1,4 @@
-package breakout;
+package gameElements;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -86,7 +86,7 @@ public class BlockConfiguration {
     }
   }
 
-  void updateConfiguration(int sceneWidth, int sceneHeight) {
+  public void updateConfiguration(int sceneWidth, int sceneHeight) {
     int blockWidth = sceneWidth / Block.BLOCKS_PER_ROW;
     int blockHeight = sceneHeight / (Block.NUMBER_OF_BLOCK_ROWS + 1);
     for (int i = 0; i < configRows.length; i++) {
@@ -106,12 +106,12 @@ public class BlockConfiguration {
   String generateFilePathForFile(String fileName) { return FILE_SOURCE_PATH + fileName + ".txt"; }
   void setFileName(String fileName) { this.fileName = fileName; }
 
-  BlockRow[] getBlockRows() { return configRows; }
+  public BlockRow[] getBlockRows() { return configRows; }
 
   void setConfigFile(File configFile) { this.configFile = configFile; }
 
   void decreaseNumberOfBlocksByOne() { numberOfBlocksRemaining--; }
   void setNumberOfBlocksRemaining(int numberOfBlocksRemaining) { this.numberOfBlocksRemaining = numberOfBlocksRemaining; }
-  int getNumberOfBlocksRemaining() { return numberOfBlocksRemaining; }
+  public int getNumberOfBlocksRemaining() { return numberOfBlocksRemaining; }
   boolean isEmpty() { return (numberOfBlocksRemaining == 0);}
 }
