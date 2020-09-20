@@ -39,7 +39,7 @@ public class GameOverText extends Text implements GameText {
 
   @Override
   public void removeText() {
-    gameRoot.getChildren().remove(this);
+    setText("");
   }
 
   @Override

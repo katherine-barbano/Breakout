@@ -20,7 +20,7 @@ public class PauseTextTest extends DukeApplicationTest {
   @Override
   public void start (Stage stage) {
     game = new Game(stage);
-    pauseText = game.getGameLevel().getPauseText();
+    pauseText = game.getCurrentGameLevel().getPauseText();
   }
 
   public void startAnimation() {

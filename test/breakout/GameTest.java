@@ -33,9 +33,9 @@ public class GameTest extends DukeApplicationTest{
 
   @Test
   void test() {
-    game.startGameAtLevelOne();
+    game.resetGameToLevelOne();
     Group testGroup = new Group();
-    level = new Level(testGroup, 1);
-    assertEquals(game.getGameLevel(), level);
+    level = new Level(testGroup, "sample_game",1);
+    assertEquals(game.getCurrentGameLevel(), level);
   }
 }

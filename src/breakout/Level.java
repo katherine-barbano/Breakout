@@ -38,13 +38,15 @@ public class Level {
    * new features to Game without having to worry about how they will affect
    * removal or addition of nodes in Game.
    * @param gameRootArg Group root for a scene
+   * @param gameName String of the directory of the Game being run within the data folder
    * @param fileName String of the filename of the Level to instantiate
    */
-  public Level(Group gameRootArg, String fileName) {
-    this.levelConfiguration = new BlockConfiguration(fileName);
+  public Level(Group gameRootArg, String gameName, String fileName) {
+    this.levelConfiguration = new BlockConfiguration(gameName, fileName);
     this.blocksInLevel = new ArrayList<>();
+    this.levelNumber = 0;
 
-    initializeLevelProperties(gameRootArg, 0);
+    initializeLevelProperties(gameRootArg);
   }
 
   /***
@@ -59,25 +61,29 @@ public class Level {
    * @param gameRootArg Group root for a scene
    * @param levelNumber Number of the level to instantiate
    */
-  public Level(Group gameRootArg, int levelNumber) {
+  public Level(Group gameRootArg, String gameName, int levelNumber) {
     this.levelConfiguration = new BlockConfiguration();
     this.blocksInLevel = new ArrayList<>();
+    this.levelNumber = levelNumber;
 
-    generateLevelConfiguration(levelNumber);
-    initializeLevelProperties(gameRootArg,levelNumber);
-
+    generateLevelConfiguration(gameName, levelNumber);
+    initializeLevelProperties(gameRootArg);
   }
 
-  private void initializeLevelProperties(Group gameRootArg, int levelNumber) {
-    this.levelNumber = levelNumber;
+  private void initializeLevelProperties(Group gameRootArg) {
     this.gameIsPaused = true;
     this.gameRoot = gameRootArg;
+  }
+
+  /***
+   * Display the current level on the screen
+   */
+  void showLevel() {
     this.gameLivesText = new LivesText(getLives(),gameRoot);
     this.gamePauseText = new PauseText(gameRoot);
 
-    initializeNewBallAndPaddle();
-
     setLives(INITIAL_NUMBER_LIVES);
+    initializeNewBallAndPaddle();
     updateBlocks(Game.SCENE_SIZE, Game.SCENE_SIZE);
     addBlocks();
   }
@@ -95,9 +101,9 @@ public class Level {
     updateBlocks((int) width, (int) height);
   }
 
-  private void generateLevelConfiguration(int levelNumber) {
+  private void generateLevelConfiguration(String gameName, int levelNumber) {
     String fileName = "level_" + levelNumber; // TODO
-    BlockConfiguration configuration = new BlockConfiguration(fileName);
+    BlockConfiguration configuration = new BlockConfiguration(gameName, fileName);
     this.levelConfiguration = configuration;
   }
 

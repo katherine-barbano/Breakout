@@ -51,7 +51,7 @@ public class LevelTest extends DukeApplicationTest {
   @Test
   void testAllBlocks() {
     Group testGroup = new Group();
-    Level level = new Level(testGroup,"testOneInput");
+    Level level = new Level(testGroup,"sample_game","testOneInput");
     int width = (int) game.getScene().getWidth();
     int height = (int) game.getScene().getHeight();
     ArrayList<Block> oneBlock = level.getAllBlocks(width, height);
@@ -66,7 +66,7 @@ public class LevelTest extends DukeApplicationTest {
     startAnimation();
     ballTouchesGround();
     ball = lookup("#ball").query();
-    assertEquals(2,game.getGameLevel().getLives());
+    assertEquals(2,game.getCurrentGameLevel().getLives());
 
     assertEquals(0,ball.getVelocityX());
     assertEquals(150,ball.getVelocityY());
@@ -91,7 +91,7 @@ public class LevelTest extends DukeApplicationTest {
   void addLivesWithLCheatKey() {
     startAnimation();
     Scene gameScene = game.getScene();
-    Level level = game.getGameLevel();
+    Level level = game.getCurrentGameLevel();
     press(gameScene, KeyCode.L);
     assertEquals(4,level.getLives());
     for(int livesLost = 0; livesLost<3; livesLost++) {
