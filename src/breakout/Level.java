@@ -72,15 +72,14 @@ public class Level {
     this.levelNumber = levelNumber;
     this.gameIsPaused = true;
     this.gameRoot = gameRootArg;
+    this.gameLivesText = new LivesText(getLives(),gameRoot);
+    this.gamePauseText = new PauseText(gameRoot);
 
     initializeNewBallAndPaddle();
 
     setLives(INITIAL_NUMBER_LIVES);
     updateBlocks(Game.SCENE_SIZE, Game.SCENE_SIZE);
     addBlocks();
-
-    this.gamePauseText = new PauseText(gameRoot);
-    this.gameLivesText = new LivesText(getLives(),gameRoot);
   }
 
   private void addBlocks() {
@@ -133,7 +132,6 @@ public class Level {
    */
   void resetCurrentLevel() {
     decreaseLivesByOne();
-    gameLivesText.updateLives(getLives());
     resetPosition();
   }
 
@@ -161,6 +159,9 @@ public class Level {
     }
     else if(code == KeyCode.R) {
       resetPosition();
+    }
+    else if(code == KeyCode.L) {
+      setLives(levelLives+1);
     }
   }
 
@@ -231,10 +232,11 @@ public class Level {
 
   private void setLives(int lives) {
     levelLives = lives;
+    gameLivesText.updateLives(lives);
   }
 
   private void decreaseLivesByOne() {
-    levelLives--;
+    setLives(levelLives-1);
   }
 
   /***
