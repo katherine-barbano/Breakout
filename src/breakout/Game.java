@@ -10,6 +10,7 @@ import javafx.animation.Timeline;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
+import javafx.scene.input.MouseButton;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.stage.Stage;
@@ -33,6 +34,7 @@ public class Game {
   public static final Paint BACKGROUND = Color.AZURE;
   public static final String GAME_NAME = "sample_game_no_powerups";
   public static final String[] NUMERICS = {"1", "2", "3", "4", "5","6","7","8","9","0"};
+  public static final int LEVEL_ONE_INDEX = 0;
 
   private Scene gameScene;
   private Group gameRoot;
@@ -85,7 +87,7 @@ public class Game {
   }
 
   /***
-   * Sets up the gameRoot, starts the game at the first Level, and sets up event handler for key inputs
+   * Sets up the gameRoot, starts the game at the first Level, and sets up event handler for key and mouse inputs
    * @return Scene to be set as the gameScene
    */
   private Scene setupScene () {
@@ -93,20 +95,34 @@ public class Game {
     gameOverText = new GameOverText(gameRoot);
 
     initializeGameLevels();
-    resetGameToLevelOne();
+    resetGameToLevel(LEVEL_ONE_INDEX);
 
     Scene scene = new Scene(gameRoot, SCENE_SIZE, SCENE_SIZE, BACKGROUND);
     scene.setOnKeyPressed(e -> handleKeyInput(e.getCode()));
+    scene.setOnMouseClicked(e -> handleMouseInput(e.getButton()));
     return scene;
   }
 
   private void handleKeyInput(KeyCode code) {
     Level currentLevel = getCurrentGameLevel();
     if(code == KeyCode.SPACE && currentLevel.gameIsLost()) {
-      resetGameToLevelOne();
+      resetGameToLevel(LEVEL_ONE_INDEX);
     }
     else {
       currentLevel.handleKeyInput(code);
+    }
+  }
+
+  private void handleMouseInput(MouseButton button) {
+    //left mouse click
+    if(button == MouseButton.PRIMARY && currentGameLevelIndex!=LEVEL_ONE_INDEX) {
+      getCurrentGameLevel().removeLevel();
+      resetGameToLevel(currentGameLevelIndex-1);
+    }
+    //right mouse click
+    else if(button == MouseButton.SECONDARY && currentGameLevelIndex!=gameLevels.size()-1) {
+      getCurrentGameLevel().removeLevel();
+      resetGameToLevel(currentGameLevelIndex+1);
     }
   }
 
@@ -150,9 +166,14 @@ public class Game {
     return -1;
   }
 
-  void resetGameToLevelOne() {
+  /***
+   * Resets and shows the level number given in the argument.
+   * LevelIndex should be start indexed at 0.
+   * @param levelIndex Index in Levels to show
+   */
+  void resetGameToLevel(int levelIndex) {
     gameOverText.removeText();
-    currentGameLevelIndex = 0;
+    setLevelNumber(levelIndex);
     showCurrentLevel();
   }
 
