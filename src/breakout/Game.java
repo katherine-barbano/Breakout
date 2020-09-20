@@ -126,7 +126,7 @@ public class Game {
     }
   }
 
-  private void gameOver() {
+  void gameOver() {
     Level currentLevel = getCurrentGameLevel();
     gameOverText.gameOverUpdate(currentLevel.levelIsWon());
     currentLevel.removeLevel();

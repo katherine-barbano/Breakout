@@ -12,18 +12,11 @@ import static org.junit.jupiter.api.Assertions.*;
 import util.DukeApplicationTest;
 
 public class GameTest extends DukeApplicationTest{
-  private Level level;
   private Game game;
-  private Ball ball;
-  private Paddle paddle;
-  private Block block;
 
   @Override
   public void start (Stage stage) {
     game = new Game(stage);
-
-    ball = lookup("#ball").query();
-    paddle = lookup("#paddle").query();
   }
 
   public void startAnimation() {
@@ -32,10 +25,11 @@ public class GameTest extends DukeApplicationTest{
   }
 
   @Test
-  void test() {
-    game.resetGameToLevel(0);
-    Group testGroup = new Group();
-    level = new Level(testGroup, "sample_game",1);
-    assertEquals(game.getCurrentGameLevel(), level);
+  void resetGameToLevelOne() {
+    javafxRun(() -> {
+      game.gameOver();
+      game.resetGameToLevel(0);
+      assertEquals(game.getCurrentGameLevel().getLevelNumber(), 1);
+    });
   }
 }

@@ -52,7 +52,7 @@ public class LevelTest extends DukeApplicationTest {
   @Test
   void testAllBlocks() {
     Group testGroup = new Group();
-    Level level = new Level(testGroup,"sample_game","testOneInput");
+    Level level = new Level(testGroup,"game_for_testing","testOneInput");
     int width = (int) game.getScene().getWidth();
     int height = (int) game.getScene().getHeight();
     List<Block> oneBlock = level.getAllBlocks();
