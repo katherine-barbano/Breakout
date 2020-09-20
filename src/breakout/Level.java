@@ -36,32 +36,34 @@ public class Level {
   private Paddle gamePaddle;
 
   public Level(Group gameRootArg, String fileName) {
-    this.levelLives = INITIAL_NUMBER_LIVES;
-    this.levelNumber = 0;
     this.levelConfiguration = new BlockConfiguration(fileName);
     this.blocksInLevel = new ArrayList<>();
-    this.gameIsPaused = true;
 
-    gameRoot = gameRootArg;
-    gamePauseText = new PauseText(gameRoot);
-    gameLivesText = new LivesText(getLives(),gameRoot);
-
-    initializeNewBallAndPaddle();
+    initializeLevelProperties(gameRootArg, 0);
   }
 
   public Level(Group gameRootArg, int levelNumber) {
-    this.levelLives = INITIAL_NUMBER_LIVES;
-    this.levelNumber = levelNumber;
     this.levelConfiguration = new BlockConfiguration();
     this.blocksInLevel = new ArrayList<>();
-    generateLevelConfiguration(levelNumber);
-    this.gameIsPaused = true;
 
-    gameRoot = gameRootArg;
-    gamePauseText = new PauseText(gameRoot);
-    gameLivesText = new LivesText(getLives(),gameRoot);
+    generateLevelConfiguration(levelNumber);
+    initializeLevelProperties(gameRootArg,levelNumber);
+
+  }
+
+  private void initializeLevelProperties(Group gameRootArg, int levelNumber) {
+    this.levelNumber = levelNumber;
+    this.gameIsPaused = true;
+    this.gameRoot = gameRootArg;
 
     initializeNewBallAndPaddle();
+
+    setLives(INITIAL_NUMBER_LIVES);
+    updateBlocks(Game.SCENE_SIZE, Game.SCENE_SIZE);
+    addBlocks();
+
+    this.gamePauseText = new PauseText(gameRoot);
+    this.gameLivesText = new LivesText(getLives(),gameRoot);
   }
 
   private void generateLevelConfiguration(int levelNumber) {
