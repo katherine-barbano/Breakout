@@ -3,6 +3,7 @@ package breakout;
 import gameElements.Ball;
 import gameElements.Block;
 import gameElements.Paddle;
+import java.util.List;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
@@ -19,11 +20,6 @@ public class GameTest extends DukeApplicationTest{
   @Override
   public void start (Stage stage) {
     game = new Game(stage);
-  }
-
-  public void startAnimation() {
-    Scene myScene = game.getScene();
-    press(myScene, KeyCode.SPACE);
   }
 
   @Test
@@ -56,5 +52,15 @@ public class GameTest extends DukeApplicationTest{
       click(game.getScene(), 200, 200);
     }
     assertEquals(game.getCurrentGameLevel().getLevelNumber(), 1);
+  }
+
+  @Test
+  void verifyInitialLevelsList() {
+    List<Level> actualLevelList = game.getGameLevelsList();
+    assertEquals(3, actualLevelList.size());
+    for (int levelIndex = 0; levelIndex < 3; levelIndex++) {
+      Level levelAtIndex = actualLevelList.get(levelIndex);
+      assertEquals(levelIndex+1, levelAtIndex.getLevelNumber());
+    }
   }
 }

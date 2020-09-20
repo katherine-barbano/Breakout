@@ -8,7 +8,6 @@ import gameElements.Paddle;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.scene.Group;
-import javafx.scene.Node;
 import javafx.scene.input.KeyCode;
 import text.LivesText;
 import text.PauseText;
