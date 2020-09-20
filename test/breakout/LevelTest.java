@@ -11,10 +11,11 @@ import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
+
+import text.GameOverText;
 import util.DukeApplicationTest;
 
 public class LevelTest extends DukeApplicationTest {
-  private Level level;
   private Game game;
 
   private Ball ball;
@@ -50,7 +51,7 @@ public class LevelTest extends DukeApplicationTest {
   @Test
   void testAllBlocks() {
     Group testGroup = new Group();
-    level = new Level(testGroup,"testOneInput");
+    Level level = new Level(testGroup,"testOneInput");
     int width = (int) game.getScene().getWidth();
     int height = (int) game.getScene().getHeight();
     ArrayList<Block> oneBlock = level.getAllBlocks(width, height);
@@ -84,5 +85,22 @@ public class LevelTest extends DukeApplicationTest {
     for(int numSteps = 0; numSteps < 3; numSteps ++) {
       javafxRun(() -> game.step(Game.SECOND_DELAY));
     }
+  }
+
+  @Test
+  void addLivesWithLCheatKey() {
+    startAnimation();
+    Scene gameScene = game.getScene();
+    Level level = game.getGameLevel();
+    press(gameScene, KeyCode.L);
+    assertEquals(4,level.getLives());
+    for(int livesLost = 0; livesLost<3; livesLost++) {
+      ballTouchesGround();
+      press(gameScene, KeyCode.SPACE);
+    }
+    assertEquals(1,level.getLives());
+    ballTouchesGround();
+    GameOverText gameOverText = lookup("#gameOverText").query();
+    assertEquals("Game Over! Tap the space bar to restart from Level 1.",gameOverText.getText());
   }
 }
