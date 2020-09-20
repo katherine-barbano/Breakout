@@ -4,6 +4,7 @@ import gameElements.Ball;
 import gameElements.Block;
 import gameElements.Paddle;
 import java.util.ArrayList;
+import java.util.List;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
@@ -54,7 +55,7 @@ public class LevelTest extends DukeApplicationTest {
     Level level = new Level(testGroup,"sample_game","testOneInput");
     int width = (int) game.getScene().getWidth();
     int height = (int) game.getScene().getHeight();
-    ArrayList<Block> oneBlock = level.getAllBlocks(width, height);
+    List<Block> oneBlock = level.getAllBlocks();
     assertTrue(oneBlock.size() == 1);
     Block block = oneBlock.get(0);
     assertEquals(block.getBlockColor(), Color.PALETURQUOISE);

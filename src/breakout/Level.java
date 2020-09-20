@@ -6,7 +6,9 @@ import gameElements.BlockConfiguration;
 import gameElements.BlockRow;
 import gameElements.Paddle;
 import java.util.ArrayList;
+import java.util.List;
 import javafx.scene.Group;
+import javafx.scene.Node;
 import javafx.scene.input.KeyCode;
 import text.LivesText;
 import text.PauseText;
@@ -73,6 +75,8 @@ public class Level {
   private void initializeLevelProperties(Group gameRootArg) {
     this.gameIsPaused = true;
     this.gameRoot = gameRootArg;
+    updateBlocks(Game.SCENE_SIZE, Game.SCENE_SIZE);
+    addAllBlocksToList(Game.SCENE_SIZE, Game.SCENE_SIZE);
   }
 
   /***
@@ -84,12 +88,11 @@ public class Level {
 
     setLives(INITIAL_NUMBER_LIVES);
     initializeNewBallAndPaddle();
-    updateBlocks(Game.SCENE_SIZE, Game.SCENE_SIZE);
-    addBlocks();
+    addBlocksToRoot();
   }
 
-  private void addBlocks() {
-    ArrayList<Block> allBlocks = getAllBlocks(Game.SCENE_SIZE, Game.SCENE_SIZE);
+  private void addBlocksToRoot() {
+    List<Block> allBlocks = getAllBlocks();
     gameRoot.getChildren().addAll(allBlocks);
   }
 
@@ -109,7 +112,7 @@ public class Level {
 
   // FIXME: Do you think this should be in BlockConfiguration instead?
   // yes I think we should put this in BlockConfiguration, and probably also split this into some helper methods
-  ArrayList<Block> getAllBlocks(int sceneWidth, int sceneHeight) {
+  void addAllBlocksToList(int sceneWidth, int sceneHeight) {
     int blockWidth = sceneWidth / Block.BLOCKS_PER_ROW;
     int blockHeight =
         (sceneHeight - Paddle.VERTICAL_PADDLE_OFFSET_FROM_BOTTOM - Paddle.PADDLE_HEIGHT) / (
@@ -126,6 +129,15 @@ public class Level {
 
       }
     }
+  }
+
+  /***
+   * Gets a List of all the blocks that have been added
+   * to the level from block configuration. Does not
+   * add this list to the root yet.
+   * @return List of blocks in the level
+   */
+  List<Block> getAllBlocks() {
     return this.blocksInLevel;
   }
 
@@ -224,7 +236,7 @@ public class Level {
 
   //TODO: add to BlockConfiguration @Anna
   private void removeBlocks() {
-    ArrayList<Block> allBlocks = getAllBlocks(Game.SCENE_SIZE, Game.SCENE_SIZE);
+    List<Block> allBlocks = getAllBlocks();
     for (Block block : allBlocks) gameRoot.getChildren().remove(block);
   }
 
