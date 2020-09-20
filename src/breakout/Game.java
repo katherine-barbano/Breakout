@@ -112,34 +112,34 @@ public class Game {
   }
 
   /***
-   *
-   * @param levelNumber
+   * Sets the level currently running to a new Level object with given levelNumber.
+   * @param levelNumber int of the level number to run
    */
   void setLevel(int levelNumber) { this.gameLevel = new Level(gameRoot,levelNumber); }
 
   /***
-   *
-   * @return
+   * Gets the Level object currently running.
+   * @return Level object currently running
    */
   public Level getGameLevel() { return gameLevel; }
 
   /***
-   *
-   * @return
+   * Gets the Scene currently running the Game.
+   * @return Scene object
    */
   public Scene getScene() { return gameScene; }
 
   /***
-   *
-   * @return
+   * Gets the gameOverText object currently in the Game.
+   * @return gameOverText object
    */
   public GameOverText getGameOverText() {
     return gameOverText;
   }
 
   /***
-   *
-   * @return
+   * Gets the Group object currently running the Game.
+   * @return Group root object
    */
   public Group getRoot() {
     return gameRoot;

@@ -12,13 +12,9 @@ import text.LivesText;
 import text.PauseText;
 
 /***
- * Purpose: Contains private field for a BlockConfiguration. Maintains
- * number of lives left. Starts a game if the user hits the space bar. Maintains
- * cheat keys. Ends game if lives run out, or ends the current Level
- * if BlockConfiguration does not contain any more Blocks.
- *
- * Method: endGame, finishLevel, setLives, decreaseLivesByOne
- *         gameIsLost, levelIsWon
+ * Maintains gameElements for a single level of the game. Handles removal and addition of gameElements
+ * to the Group. Handles pausing/unpausing the game, maintains the number of lives left in the level,
+ * maintains an instance of Ball and Paddle, and maintains blocks on the screen from a BlockConfiguration.
  */
 public class Level {
 
@@ -27,7 +23,7 @@ public class Level {
   private int levelLives;
   private int levelNumber;
   private BlockConfiguration levelConfiguration;
-  private final ArrayList<Block> blocksInLevel;
+  private final ArrayList<Block> blocksInLevel;//TODO: is it possible that we can put blocksInLevel into BlockConfiguration?
   private boolean gameIsPaused;
   private PauseText gamePauseText;
   private LivesText gameLivesText;
@@ -35,6 +31,15 @@ public class Level {
   private Ball gameBall; // TODO extension: List<Ball> myBalls, to accomodate multi-gameBall powerups
   private Paddle gamePaddle;
 
+  /***
+   * Constructor for giving a filename directly for the Level.
+   * Takes Group as an argument since this class directly handles
+   * adding and removing nodes from the Scene, making it easier to add
+   * new features to Game without having to worry about how they will affect
+   * removal or addition of nodes in Game.
+   * @param gameRootArg Group root for a scene
+   * @param fileName String of the filename of the Level to instantiate
+   */
   public Level(Group gameRootArg, String fileName) {
     this.levelConfiguration = new BlockConfiguration(fileName);
     this.blocksInLevel = new ArrayList<>();
@@ -42,6 +47,18 @@ public class Level {
     initializeLevelProperties(gameRootArg, 0);
   }
 
+  /***
+   * Constructor for giving a level number directly for the Level.
+   * Takes Group as an argument since this class directly handles
+   * adding and removing nodes from the Scene, making it easier to add
+   * new features to Game without having to worry about how they will affect
+   * removal or addition of nodes in Game.
+   *
+   * Assumes the first level has the number "1" in its file name, and that no other levels have
+   * the number 1 in the file name.
+   * @param gameRootArg Group root for a scene
+   * @param levelNumber Number of the level to instantiate
+   */
   public Level(Group gameRootArg, int levelNumber) {
     this.levelConfiguration = new BlockConfiguration();
     this.blocksInLevel = new ArrayList<>();
@@ -64,6 +81,19 @@ public class Level {
 
     this.gamePauseText = new PauseText(gameRoot);
     this.gameLivesText = new LivesText(getLives(),gameRoot);
+  }
+
+  private void addBlocks() {
+    ArrayList<Block> allBlocks = getAllBlocks(Game.SCENE_SIZE, Game.SCENE_SIZE);
+    gameRoot.getChildren().addAll(allBlocks);
+  }
+
+  private void updateBlocks(int width, int height) {
+    levelConfiguration.updateConfiguration(width, height);
+  }
+
+  private void updateBlocks(double width, double height) {
+    updateBlocks((int) width, (int) height);
   }
 
   private void generateLevelConfiguration(int levelNumber) {
@@ -94,16 +124,36 @@ public class Level {
     return this.blocksInLevel;
   }
 
+  /***
+   * Handles updating lives, ball and paddle position, and text when the Level
+   * needs to be reset.
+   *
+   * Call this when the ball touches the ground and there are still lives left, or
+   * when pressing the "r" cheat key.
+   */
   void resetCurrentLevel() {
     decreaseLivesByOne();
     gameLivesText.updateLives(getLives());
     resetPosition();
   }
 
+  /***
+   * Returns whether the ball's position is not touching the ground, meaning
+   * it is in a position that allows the game to continue. Also updates
+   * the coordinates of the ball.
+   *
+   * Should be called by step in Game.
+   * @param elapsedTime time elapsed in a single step
+   * @return true if ball is valid and Level should continue
+   */
   boolean isBallValid(double elapsedTime) {
     return gameBall.updateCoordinatesAndContinue(elapsedTime, gameIsPaused);
   }
 
+  /***
+   * Handles key input relating to cheat keys and paddle control.
+   * @param code KeyCode input by player
+   */
   void handleKeyInput(KeyCode code) {
     gamePaddle.handleKeyInput(code, gameIsPaused);
     if(code == KeyCode.SPACE) {
@@ -152,53 +202,11 @@ public class Level {
     initializeNewBallAndPaddle();
   }
 
-  void finishLevel() {
-  } // TODO
-
-  void decreaseLivesByOne() {
-    levelLives--;
-  }
-
-  int getLives() {
-    return levelLives;
-  }
-
-  void setLives(int lives) {
-    levelLives = lives;
-  }
-
-  public LivesText getLivesText() { return gameLivesText; }
-
-  public PauseText getPauseText() { return gamePauseText; }
-
-  boolean gameIsLost() {
-    return (levelLives == 0);
-  }
-
-  void updateBlocks(int width, int height) {
-    levelConfiguration.updateConfiguration(width, height);
-  }
-
-  void updateBlocks(double width, double height) {
-    updateBlocks((int) width, (int) height);
-  }
-
-  boolean levelIsWon() {
-    return (levelConfiguration.getNumberOfBlocksRemaining() == 0);
-  }
-
-  BlockConfiguration getLevelConfiguration() {
-    return levelConfiguration;
-  }
-
-  int getLevelNumber() {
-    return levelNumber;
-  }
-
-  void setLevelNumber(int levelNumber) {
-    this.levelNumber = levelNumber;
-  }
-
+  /***
+   * Called by Game class to remove all nodes from the current Level
+   * from the root. This effectively removes the entire Level from
+   * the Scene.
+   */
   void removeLevel() {
     gameLivesText.removeText();
     gamePauseText.removeText();
@@ -207,14 +215,73 @@ public class Level {
     removeBlocks();
   }
 
-  void addBlocks() {
-    ArrayList<Block> allBlocks = getAllBlocks(Game.SCENE_SIZE, Game.SCENE_SIZE);
-    gameRoot.getChildren().addAll(allBlocks);
-  }
-
-  //TODO:add to BlockConfiguration
+  //TODO: add to BlockConfiguration @Anna
   private void removeBlocks() {
     ArrayList<Block> allBlocks = getAllBlocks(Game.SCENE_SIZE, Game.SCENE_SIZE);
     for (Block block : allBlocks) gameRoot.getChildren().remove(block);
+  }
+
+  /***
+   * Number of lives left in the Level
+   * @return number of lives
+   */
+  int getLives() {
+    return levelLives;
+  }
+
+  private void setLives(int lives) {
+    levelLives = lives;
+  }
+
+  private void decreaseLivesByOne() {
+    levelLives--;
+  }
+
+  /***
+   * Returns the gameLivesText object for unit testing.
+   * @return LivesText object for the Level
+   */
+  public LivesText getLivesText() { return gameLivesText; }
+
+  /***
+   * Returns the gamePauseText object for unit testing.
+   * @return PauseText object for the Level
+   */
+  public PauseText getPauseText() { return gamePauseText; }
+
+  /***
+   * Returns whether there are 0 blocks left
+   * @return true if game is won
+   */
+  boolean levelIsWon() {
+    return (levelConfiguration.getNumberOfBlocksRemaining() == 0);
+  }
+
+  /***
+   * Returns whether there are 0 lives left
+   * @return true if the game is lost
+   */
+  boolean gameIsLost() {
+    return (levelLives == 0);
+  }
+
+  private BlockConfiguration getLevelConfiguration() {
+    return levelConfiguration;
+  }
+
+  /***
+   * Returns which level is currently being run
+   * @return int level number
+   */
+  int getLevelNumber() {
+    return levelNumber;
+  }
+
+  /***
+   * Sets the level number that is currently being run
+   * @param levelNumber int level number
+   */
+  void setLevelNumber(int levelNumber) {
+    this.levelNumber = levelNumber;
   }
 }
