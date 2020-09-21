@@ -166,6 +166,7 @@ public class Ball extends Circle {
     return false;
   }
 
+  //TODO: can we move this method to Block, like how the isTouching method for Paddle was moved to that class?
   private boolean isTouchingSingleBlock(Block block) {
     double R = BALL_RADIUS;
     double Xcoord = getCenterX();
