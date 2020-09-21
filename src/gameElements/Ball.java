@@ -12,7 +12,7 @@ import javafx.scene.shape.Circle;
  * bottom of the screen. Bounces off all other walls of the screen, as well as
  * the Paddle and other Blocks.
  *
- * Method: isOnScreen, breakBlock, isTouchingBlock, isTouchingPaddle
+ * Method: isOnScreen, breakBlock, isTouchingBlockInBlockConfiguration, isTouchingPaddle
  */
 public class Ball extends Circle {
 
@@ -25,6 +25,7 @@ public class Ball extends Circle {
   private int velocityX;
   private int velocityY;
   private Group gameRoot;
+  private boolean velocityCanBeUpdated = true;
 
   public Ball(Group gameRootArg, Paddle paddleArg, BlockConfiguration configuration) {
     gameRoot = gameRootArg;
@@ -57,10 +58,25 @@ public class Ball extends Circle {
     if (!isPaused) {
       updateVelocityX();
       updateVelocityY();
-      setCenterX(getCenterX() + velocityX * elapsedTime);
-      setCenterY(getCenterY() + velocityY * elapsedTime);
+      updatePositionX(elapsedTime);
+      updatePositionY(elapsedTime);
     }
     return true;
+  }
+
+  private void updatePositionX(double elapsedTime) {
+    double edgeOfBall = paddle.getWidth()/2 + BALL_RADIUS;
+    if(paddle.isTouchingPaddleLeftSide(this)) {
+      setCenterX(paddle.getCenterX()-edgeOfBall);
+    }
+    else if(paddle.isTouchingPaddleRightSide(this)) {
+      setCenterX(paddle.getCenterX()+edgeOfBall);
+    }
+    setCenterX(getCenterX() + velocityX * elapsedTime);
+  }
+
+  private void updatePositionY(double elapsedTime) {
+    setCenterY(getCenterY() + velocityY * elapsedTime);
   }
 
   public int getVelocityX() {
@@ -79,19 +95,79 @@ public class Ball extends Circle {
     velocityY = velocityYArg;
   }
 
-  private boolean isTouchingBlock() {
+  private void updateVelocityX() {
+    updateVelocityXForWallTouch();
+    updateVelocityXForPaddleHits();
+    updateVelocityCanBeUpdated();
+  }
+
+  private void updateVelocityXForWallTouch() {
+    if (isTouchingSideWall()) {
+      velocityX = velocityX * -1;
+    }
+  }
+
+  private void updateVelocityXForPaddleHits() {
+    boolean isTouchingPaddleTop = paddle.isTouchingPaddleTop(this);
+    boolean isTouchingPaddleRight = paddle.isTouchingPaddleRightSide(this);
+    boolean isTouchingPaddleLeft = paddle.isTouchingPaddleLeftSide(this);
+
+    if(!velocityCanBeUpdated) {
+      return;
+    }
+    else if (isTouchingPaddleTop && velocityCanBeUpdated) {
+      velocityX = getVelocityXFromPaddleHit();
+    }
+    else if (isTouchingPaddleLeft && velocityX >=0 && velocityCanBeUpdated) {
+      velocityX = velocityX + 100;
+    }
+    else if (isTouchingPaddleRight && velocityX <0 && velocityCanBeUpdated) {
+      velocityX = velocityX * -1 + 100;
+    }
+    else if (isTouchingPaddleLeft && velocityX >0 && velocityCanBeUpdated) {
+      velocityX = velocityX * -1 - 100;
+    }
+    else if (isTouchingPaddleLeft && velocityX <=0 && velocityCanBeUpdated) {
+      velocityX = velocityX -100;
+    }
+    velocityCanBeUpdated = false;
+  }
+
+  private void updateVelocityCanBeUpdated() {
+    boolean notTouchingPaddleSides = !paddle.isTouchingPaddleLeftSide(this) && !paddle.isTouchingPaddleRightSide(this);
+    boolean notTouchingPaddleTop = !paddle.isTouchingPaddleTop(this);
+    if (notTouchingPaddleTop && notTouchingPaddleSides) {
+      velocityCanBeUpdated = true;
+    }
+  }
+
+  private void updateVelocityY() {
+    boolean notTouchingPaddleSides = !paddle.isTouchingPaddleRightSide(this) && !paddle.isTouchingPaddleLeftSide(this);
+    if (paddle.isTouchingPaddleTop(this) && notTouchingPaddleSides) {
+      velocityY = velocityY * -1;
+    }
+    if (isTouchingTopWall()) {
+      velocityY = velocityY * -1;
+    }
+    if (isTouchingBlockInBlockConfiguration()) {
+      velocityY *= -1;
+    }
+  }
+
+  private boolean isTouchingBlockInBlockConfiguration() {
     for (int i = 0; i < blockConfiguration.getBlockRows().length; i++) {
       BlockRow row = blockConfiguration.getBlockRows()[i];
       for (int j = 0; j < row.getRowOfBlocks().length; j++) {
         Block tempBlock = row.getRowOfBlocks()[j];
         if (tempBlock.getBlockHardness() == 0) continue;
-        if (isTouching(tempBlock)) return true;
+        if (isTouchingSingleBlock(tempBlock)) return true;
       }
     }
     return false;
   }
 
-  boolean isTouching(Block block) {
+  //TODO: can we move this method to Block, like how the isTouching method for Paddle was moved to that class?
+  private boolean isTouchingSingleBlock(Block block) {
     double R = BALL_RADIUS;
     double Xcoord = getCenterX();
     double Ycoord = getCenterY();
@@ -108,61 +184,11 @@ public class Ball extends Circle {
     return (Dx * Dx + Dy * Dy) <= R*R;
   }
 
-  private void updateVelocityX() {
-    if (isTouchingSideWall()) {
-      velocityX = velocityX * -1;
-    }
-    if (isTouchingPaddleSide()) {
-      velocityX = velocityX * -1;
-    }
-    if (isTouchingPaddleTop()) {
-      velocityX = getVelocityXFromPaddleHit();
-    }
-  }
-
-  private void updateVelocityY() {
-    if (isTouchingPaddleTop()) {
-      velocityY = velocityY * -1;
-    }
-    if (isTouchingTopWall()) {
-      velocityY = velocityY * -1;
-    }
-    if (isTouchingBlock()) {
-      velocityY *= -1;
-    }
-  }
-
-  //TODO: modify the physics
   private int getVelocityXFromPaddleHit() {
     double distanceFromPaddleCenter = getCenterX() - paddle.getCenterX();
     double angleRatio = distanceFromPaddleCenter / paddle.getWidth();
     double angleRadians = Math.toRadians(angleRatio * 90);
     return (int) (velocityY * Math.sin(angleRadians));
-  }
-
-  //TODO: fix for edges of ball that are not in center
-  private boolean isTouchingPaddleTop() {
-    boolean hitsInCorrectXCoordinates = paddle.getX() < getCenterX() &&
-        getCenterX() < paddle.getX() + paddle.getWidth();
-    boolean hitsInCorrectYCoordinate = paddle.getY() < getCenterY() + BALL_RADIUS;
-    return hitsInCorrectYCoordinate && hitsInCorrectXCoordinates;
-  }
-
-  private boolean isTouchingPaddleSide() {
-    boolean hitsLeftSideOfPaddleXCoordinate = getCenterX() + BALL_RADIUS > paddle.getX()
-        && getCenterX() < paddle.getX();
-    boolean hitsRightSideOfPaddleXCoordinate = getCenterX() - BALL_RADIUS < paddle.getX() +
-        paddle.getWidth() && getCenterX() > paddle.getX() + paddle.getWidth();
-
-    boolean hitsWithinTopOfPaddle = paddle.getY() < getCenterY() + BALL_RADIUS;
-    boolean hitsWithinBottomOfPaddle =
-        paddle.getY() + paddle.getHeight() > getCenterY() - BALL_RADIUS;
-
-    boolean hitsInCorrectXCoordinate =
-        hitsLeftSideOfPaddleXCoordinate || hitsRightSideOfPaddleXCoordinate;
-    boolean hitsWithinYCoordinate = hitsWithinTopOfPaddle && hitsWithinBottomOfPaddle;
-
-    return hitsWithinYCoordinate && hitsInCorrectXCoordinate;
   }
 
   private boolean isTouchingTopWall() {
@@ -178,6 +204,6 @@ public class Ball extends Circle {
 
   //assumes Scene has already been instantiated in Game so that it can use the getScene method
   private boolean isTouchingBottomWall() {
-    return getCenterY() + BALL_RADIUS > getScene().getHeight();
+    return getCenterY() + BALL_RADIUS >= getScene().getHeight();
   }
 }
