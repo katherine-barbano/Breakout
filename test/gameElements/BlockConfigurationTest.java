@@ -12,16 +12,14 @@ import static org.junit.jupiter.api.Assertions.*;
 import util.DukeApplicationTest;
 
 public class BlockConfigurationTest extends DukeApplicationTest {
-  private BlockConfiguration testConfiguration;
-  private Block block;
   private Game game;
   private Ball ball;
   private Paddle paddle;
+  private BlockConfiguration testConfiguration;
 
   @Override
   public void start (Stage stage) {
     game = new Game(stage);
-    testConfiguration = game.getCurrentGameLevel().getLevelConfiguration();
 
     ball = lookup("#ball").query();
     paddle = lookup("#paddle").query();
@@ -37,11 +35,13 @@ public class BlockConfigurationTest extends DukeApplicationTest {
   // FIXME: is counting 0 hardness blocks which it should not do
   @Test
   void testNumBlocksRemaining() {
+    testConfiguration = game.getCurrentGameLevel().getLevelConfiguration();
     assertEquals(60, testConfiguration.getNumberOfBlocksRemaining());
   }
 
   @Test
   void testNumBlocksRemainingWhenBlockIsRemoved() {
+    testConfiguration = game.getCurrentGameLevel().getLevelConfiguration();
     startAnimation();
 
     for(int numSteps = 0; numSteps < 150; numSteps ++) {

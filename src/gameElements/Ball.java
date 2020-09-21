@@ -156,10 +156,11 @@ public class Ball extends Circle {
 
   private boolean isTouchingBlockInBlockConfiguration() {
     for (int i = 0; i < blockConfiguration.getBlockRows().length; i++) {
-      BlockRow row = blockConfiguration.getBlockRows()[i];
-      for (int j = 0; j < row.getRowOfBlocks().length; j++) {
-        Block tempBlock = row.getRowOfBlocks()[j];
-        if (tempBlock.getBlockHardness() == 0) continue;
+      BlockRow blockRow = blockConfiguration.getBlockRows()[i];
+      if (blockRow == null) continue;
+      for (int j = 0; j < blockRow.getRowOfBlocks().length; j++) {
+        Block tempBlock = blockRow.getRowOfBlocks()[j];
+        if (tempBlock== null || tempBlock.getBlockHardness() == 0) continue;
         if (tempBlock.isTouchingCircle(this)){
           blockConfiguration.decrementBlock(tempBlock);
           return true;

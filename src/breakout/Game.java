@@ -75,15 +75,21 @@ public class Game {
    */
   public void step (double elapsedTime) {
     Level currentLevel = getCurrentGameLevel();
-    if(currentLevel.gameIsLost()) {
+    if (currentLevel.gameIsLost() || gameIsWon()) {
       gameOver();
-    }
-    else {
+    } else if (currentLevel.levelIsWon()) {
+      currentLevel.removeLevel();
+      resetGameToLevel(currentGameLevelIndex+1);
+    } else {
       boolean ballIsValid = currentLevel.isBallValid(elapsedTime);
       if (!ballIsValid) {
         currentLevel.resetCurrentLevel();
       }
     }
+  }
+
+  private boolean gameIsWon() {
+    return getCurrentGameLevel().levelIsWon() && currentGameLevelIndex == gameLevels.size();
   }
 
   /***

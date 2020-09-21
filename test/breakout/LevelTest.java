@@ -55,7 +55,7 @@ public class LevelTest extends DukeApplicationTest {
     Level level = new Level(testGroup,"game_for_testing","testOneInput");
     int width = (int) game.getScene().getWidth();
     int height = (int) game.getScene().getHeight();
-    List<Block> oneBlock = level.getAllBlocks();
+    List<Block> oneBlock = level.getLevelConfiguration().getBlocksAsList();
     assertTrue(oneBlock.size() == 1);
     Block block = oneBlock.get(0);
     assertEquals(block.getBlockColor(), Color.PALETURQUOISE);

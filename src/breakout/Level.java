@@ -24,7 +24,6 @@ public class Level {
   private int levelLives;
   private int levelNumber;
   private BlockConfiguration levelConfiguration;
-  private final ArrayList<Block> blocksInLevel;//TODO: is it possible that we can put blocksInLevel into BlockConfiguration?
   private boolean gameIsPaused;
   private PauseText gamePauseText;
   private LivesText gameLivesText;
@@ -44,7 +43,6 @@ public class Level {
    */
   public Level(Group gameRootArg, String gameName, String fileName) {
     this.levelConfiguration = new BlockConfiguration(gameName, fileName);
-    this.blocksInLevel = new ArrayList<>();
     this.levelNumber = 0;
 
     initializeLevelProperties(gameRootArg);
@@ -64,7 +62,6 @@ public class Level {
    */
   public Level(Group gameRootArg, String gameName, int levelNumber) {
     this.levelConfiguration = new BlockConfiguration();
-    this.blocksInLevel = new ArrayList<>();
     this.levelNumber = levelNumber;
 
     generateLevelConfiguration(gameName, levelNumber);
@@ -74,8 +71,8 @@ public class Level {
   private void initializeLevelProperties(Group gameRootArg) {
     this.gameIsPaused = true;
     this.gameRoot = gameRootArg;
-    updateBlocks(Game.SCENE_SIZE, Game.SCENE_SIZE);
-    addAllBlocksToList(Game.SCENE_SIZE, Game.SCENE_SIZE);
+    this.levelConfiguration.updateConfiguration(Game.SCENE_SIZE, Game.SCENE_SIZE);
+    System.out.println("Level has " + levelConfiguration.getNumberOfBlocksRemaining() + " blocks");
   }
 
   /***
@@ -91,53 +88,14 @@ public class Level {
   }
 
   private void addBlocksToRoot() {
-    List<Block> allBlocks = getAllBlocks();
+    List<Block> allBlocks = levelConfiguration.getBlocksAsList();
     gameRoot.getChildren().addAll(allBlocks);
-  }
-
-  private void updateBlocks(int width, int height) {
-    levelConfiguration.updateConfiguration(width, height);
-  }
-
-  private void updateBlocks(double width, double height) {
-    updateBlocks((int) width, (int) height);
   }
 
   private void generateLevelConfiguration(String gameName, int levelNumber) {
     String fileName = "level_" + levelNumber; // TODO
     BlockConfiguration configuration = new BlockConfiguration(gameName, fileName);
     this.levelConfiguration = configuration;
-  }
-
-  // FIXME: Do you think this should be in BlockConfiguration instead?
-  // yes I think we should put this in BlockConfiguration, and probably also split this into some helper methods
-  void addAllBlocksToList(int sceneWidth, int sceneHeight) {
-    int blockWidth = sceneWidth / Block.BLOCKS_PER_ROW;
-    int blockHeight =
-        (sceneHeight - Paddle.VERTICAL_PADDLE_OFFSET_FROM_BOTTOM - Paddle.PADDLE_HEIGHT) / (
-            Block.NUMBER_OF_BLOCK_ROWS + 1);
-    for (int y = 0; y < Block.NUMBER_OF_BLOCK_ROWS; y++) { // each BlockRow
-      for (int x = 0; x < Block.BLOCKS_PER_ROW; x++) { // element in block row
-        BlockRow row = levelConfiguration.getBlockRows()[y];
-        Block block = row.getRowOfBlocks()[x];
-        if (block.getBlockHardness() != 0) {
-          block.updatePosition(blockWidth, blockHeight, x * blockWidth, y * blockHeight);
-          block.updateBlockColor();
-          blocksInLevel.add(block);
-        }
-
-      }
-    }
-  }
-
-  /***
-   * Gets a List of all the blocks that have been added
-   * to the level from block configuration. Does not
-   * add this list to the root yet.
-   * @return List of blocks in the level
-   */
-  List<Block> getAllBlocks() {
-    return this.blocksInLevel;
   }
 
   /***
@@ -230,13 +188,7 @@ public class Level {
     gamePauseText.removeText();
     gamePaddle.removePaddle();
     gameBall.removeBall();
-    removeBlocks();
-  }
-
-  //TODO: add to BlockConfiguration @Anna
-  private void removeBlocks() {
-    List<Block> allBlocks = getAllBlocks();
-    for (Block block : allBlocks) gameRoot.getChildren().remove(block);
+    levelConfiguration.removeAllBlocks();
   }
 
   /***
