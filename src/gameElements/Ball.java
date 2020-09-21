@@ -58,16 +58,25 @@ public class Ball extends Circle {
     if (!isPaused) {
       updateVelocityX();
       updateVelocityY();
-      if(isTouchingPaddleLeftSide()) {
-        setCenterX(paddle.getCenterX()-paddle.getWidth()/2-BALL_RADIUS);
-      }
-      else if(isTouchingPaddleRightSide()) {
-        setCenterX(paddle.getCenterX()+paddle.getWidth()/2+BALL_RADIUS);
-      }
-      setCenterX(getCenterX() + velocityX * elapsedTime);
-      setCenterY(getCenterY() + velocityY * elapsedTime);
+      updatePositionX(elapsedTime);
+      updatePositionY(elapsedTime);
     }
     return true;
+  }
+
+  private void updatePositionX(double elapsedTime) {
+    double edgeOfBall = paddle.getWidth()/2 + BALL_RADIUS;
+    if(paddle.isTouchingPaddleLeftSide(this)) {
+      setCenterX(paddle.getCenterX()-edgeOfBall);
+    }
+    else if(paddle.isTouchingPaddleRightSide(this)) {
+      setCenterX(paddle.getCenterX()+edgeOfBall);
+    }
+    setCenterX(getCenterX() + velocityX * elapsedTime);
+  }
+
+  private void updatePositionY(double elapsedTime) {
+    setCenterY(getCenterY() + velocityY * elapsedTime);
   }
 
   public int getVelocityX() {
@@ -87,49 +96,54 @@ public class Ball extends Circle {
   }
 
   private void updateVelocityX() {
-    System.out.println("begin: "+velocityX);
+    updateVelocityXForWallTouch();
+    updateVelocityXForPaddleHits();
+    updateVelocityCanBeUpdated();
+  }
+
+  private void updateVelocityXForWallTouch() {
     if (isTouchingSideWall()) {
       velocityX = velocityX * -1;
     }
-    if (isTouchingPaddleTop() && velocityCanBeUpdated) {
-      System.out.println("yo");
+  }
+
+  private void updateVelocityXForPaddleHits() {
+    boolean isTouchingPaddleTop = paddle.isTouchingPaddleTop(this);
+    boolean isTouchingPaddleRight = paddle.isTouchingPaddleRightSide(this);
+    boolean isTouchingPaddleLeft = paddle.isTouchingPaddleLeftSide(this);
+
+    if(!velocityCanBeUpdated) {
+      return;
+    }
+    else if (isTouchingPaddleTop && velocityCanBeUpdated) {
       velocityX = getVelocityXFromPaddleHit();
-      System.out.println(velocityX);
-      velocityCanBeUpdated=false;
     }
-    else if (isTouchingPaddleRightSide() && velocityX >=0 && velocityCanBeUpdated) {
-      System.out.println("gah");
+    else if (isTouchingPaddleLeft && velocityX >=0 && velocityCanBeUpdated) {
       velocityX = velocityX + 100;
-      System.out.println(velocityX);
-      velocityCanBeUpdated = false;
     }
-    else if (isTouchingPaddleRightSide() && velocityX <0 && velocityCanBeUpdated) {
-      System.out.println("hello");
+    else if (isTouchingPaddleRight && velocityX <0 && velocityCanBeUpdated) {
       velocityX = velocityX * -1 + 100;
-      System.out.println(velocityX);
-      velocityCanBeUpdated = false;
     }
-    else if (isTouchingPaddleLeftSide() && velocityX >0 && velocityCanBeUpdated) {
-      System.out.println("ok");
+    else if (isTouchingPaddleLeft && velocityX >0 && velocityCanBeUpdated) {
       velocityX = velocityX * -1 - 100;
-      System.out.println(velocityX);
-      velocityCanBeUpdated = false;
     }
-    else if (isTouchingPaddleLeftSide() && velocityX <=0 && velocityCanBeUpdated) {
-      System.out.println("bruh");
+    else if (isTouchingPaddleLeft && velocityX <=0 && velocityCanBeUpdated) {
       velocityX = velocityX -100;
-      System.out.println(velocityX);
-      velocityCanBeUpdated = false;
     }
-    if ((!isTouchingPaddleLeftSide() && !isTouchingPaddleRightSide()) && !isTouchingPaddleTop()) {
-      System.out.println("here");
+    velocityCanBeUpdated = false;
+  }
+
+  private void updateVelocityCanBeUpdated() {
+    boolean notTouchingPaddleSides = !paddle.isTouchingPaddleLeftSide(this) && !paddle.isTouchingPaddleRightSide(this);
+    boolean notTouchingPaddleTop = !paddle.isTouchingPaddleTop(this);
+    if (notTouchingPaddleTop && notTouchingPaddleSides) {
       velocityCanBeUpdated = true;
     }
-
   }
 
   private void updateVelocityY() {
-    if (isTouchingPaddleTop() && !isTouchingPaddleRightSide() && !isTouchingPaddleLeftSide()) {
+    boolean notTouchingPaddleSides = !paddle.isTouchingPaddleRightSide(this) && !paddle.isTouchingPaddleLeftSide(this);
+    if (paddle.isTouchingPaddleTop(this) && notTouchingPaddleSides) {
       velocityY = velocityY * -1;
     }
     if (isTouchingTopWall()) {
@@ -169,94 +183,11 @@ public class Ball extends Circle {
     return (Dx * Dx + Dy * Dy) <= R*R;
   }
 
-
-  //TODO: modify the physics
   private int getVelocityXFromPaddleHit() {
     double distanceFromPaddleCenter = getCenterX() - paddle.getCenterX();
     double angleRatio = distanceFromPaddleCenter / paddle.getWidth();
     double angleRadians = Math.toRadians(angleRatio * 90);
     return (int) (velocityY * Math.sin(angleRadians));
-  }
-
-  //TODO: fix for edges of ball that are not in center
-  private boolean isTouchingPaddleTop() {
-
-    double R = BALL_RADIUS;
-    double Xcoord = getCenterX();
-    double Ycoord = getCenterY();
-    double width = paddle.getWidth();
-    double height = paddle.getHeight();
-    double xPos = paddle.getX();
-    double yPos = paddle.getY();
-
-    // from https://www.geeksforgeeks.org/check-if-any-point-overlaps-the-given-circle-and-rectangle/
-    double Xn = Math.max(xPos, Math.min(Xcoord, (xPos+width)));
-    double Yn = Math.max(yPos, Math.min(Ycoord, (yPos + height)));
-    double Dx = Xn - Xcoord;
-    double Dy = Yn - Ycoord;
-    return (Dx * Dx + Dy * Dy) <= R*R;
-
-
-    /*boolean hitsInCorrectXCoordinates = paddle.getX() < getCenterX() &&
-        getCenterX() < paddle.getX() + paddle.getWidth();
-    boolean hitsInCorrectYCoordinate = paddle.getY() < getCenterY() + BALL_RADIUS;
-    return hitsInCorrectYCoordinate && hitsInCorrectXCoordinates;*/
-  }
-
-  private boolean isTouchingPaddleLeftSide() {
-    double R = BALL_RADIUS;
-    double Xcoord = getCenterX();
-    double Ycoord = getCenterY();
-    double width = paddle.getWidth();
-    double height = paddle.getHeight();
-    double xPos = paddle.getX();
-    double yPos = paddle.getY();
-
-    // from https://www.geeksforgeeks.org/check-if-any-point-overlaps-the-given-circle-and-rectangle/
-    double Xn = Math.max(xPos, Math.min(Xcoord, (xPos+width)));
-    double Yn = Math.max(yPos, Math.min(Ycoord, (yPos + height)));
-    double Dx = Xn - Xcoord;
-    double Dy = Yn - Ycoord;
-    //return (Dx * Dx + Dy * Dy) <= R*R;
-    return (Dx * Dx + Dy * Dy) <= R*R && (Xn==paddle.getCenterX()-paddle.getWidth()/2);
-  }
-
-  private boolean isTouchingPaddleRightSide() {
-
-
-    double R = BALL_RADIUS;
-    double Xcoord = getCenterX();
-    double Ycoord = getCenterY();
-    double width = paddle.getWidth();
-    double height = paddle.getHeight();
-    double xPos = paddle.getX();
-    double yPos = paddle.getY();
-
-    // from https://www.geeksforgeeks.org/check-if-any-point-overlaps-the-given-circle-and-rectangle/
-    double Xn = Math.max(xPos, Math.min(Xcoord, (xPos+width)));
-    double Yn = Math.max(yPos, Math.min(Ycoord, (yPos + height)));
-    double Dx = Xn - Xcoord;
-    double Dy = Yn - Ycoord;
-    //return (Dx * Dx + Dy * Dy) <= R*R;
-    return (Dx * Dx + Dy * Dy) <= R*R && ( Xn==paddle.getCenterX()+paddle.getWidth()/2);
-
-
-
-
-    /*boolean hitsLeftSideOfPaddleXCoordinate = getCenterX() + BALL_RADIUS > paddle.getX()
-        && getCenterX() < paddle.getX();
-    boolean hitsRightSideOfPaddleXCoordinate = getCenterX() - BALL_RADIUS < paddle.getX() +
-        paddle.getWidth() && getCenterX() > paddle.getX() + paddle.getWidth();
-
-    boolean hitsWithinTopOfPaddle = paddle.getY() < getCenterY() + BALL_RADIUS;
-    boolean hitsWithinBottomOfPaddle =
-        paddle.getY() + paddle.getHeight() > getCenterY() - BALL_RADIUS;
-
-    boolean hitsInCorrectXCoordinate =
-        hitsLeftSideOfPaddleXCoordinate || hitsRightSideOfPaddleXCoordinate;
-    boolean hitsWithinYCoordinate = hitsWithinTopOfPaddle && hitsWithinBottomOfPaddle;
-
-    return hitsWithinYCoordinate && hitsInCorrectXCoordinate;*/
   }
 
   private boolean isTouchingTopWall() {

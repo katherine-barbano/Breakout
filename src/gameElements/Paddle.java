@@ -6,6 +6,7 @@ import javafx.scene.Node;
 import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
+import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 
 /***
@@ -81,5 +82,42 @@ public class Paddle extends Rectangle{
 
   double getCenterX() {
     return getX() + getWidth()/2;
+  }
+
+  //TODO: fix for edges of ball that are not in center
+  boolean isTouchingPaddleTop(Circle collisionCircle) {
+    double R = collisionCircle.getRadius();
+    double Xcoord = collisionCircle.getCenterX();
+    double Ycoord = collisionCircle.getCenterY();
+    double xPos = this.getX();
+    double yPos = this.getY();
+
+    // from https://www.geeksforgeeks.org/check-if-any-point-overlaps-the-given-circle-and-rectangle/
+    double Xn = Math.max(xPos, Math.min(Xcoord, (xPos + this.getWidth())));
+    double Yn = Math.max(yPos, Math.min(Ycoord, (yPos + this.getHeight())));
+    double Dx = Xn - Xcoord;
+    double Dy = Yn - Ycoord;
+
+    return (Dx * Dx + Dy * Dy) <= R*R;
+  }
+
+  boolean isTouchingPaddleLeftSide(Circle collisionCircle) {
+    double xPos = this.getX();
+    double xCoord = collisionCircle.getCenterX();
+    double Xn = calculateXn(xPos, xCoord);
+    boolean touchingLeftSide = Xn==this.getCenterX()-this.getWidth()/2;
+    return isTouchingPaddleTop(collisionCircle) && touchingLeftSide;
+  }
+
+  boolean isTouchingPaddleRightSide(Circle collisionCircle) {
+    double xPos = this.getX();
+    double xCoord = collisionCircle.getCenterX();
+    double Xn = calculateXn(xPos, xCoord);
+    boolean touchingRightSide = Xn==this.getCenterX()+this.getWidth()/2;
+    return isTouchingPaddleTop(collisionCircle) && touchingRightSide;
+  }
+
+  private double calculateXn(double xPos, double xCoord) {
+    return Math.max(xPos, Math.min(xCoord, (xPos + this.getWidth())));
   }
 }
