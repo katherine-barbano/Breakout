@@ -1,7 +1,9 @@
 package gameElements;
 
+import breakout.Game;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
+import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 
 /***
@@ -14,6 +16,7 @@ import javafx.scene.shape.Rectangle;
  */
 public class Block extends Rectangle {
 
+  public static final Paint BLOCK_COLOR_INVISIBLE = Game.BACKGROUND;
   public static final Paint BLOCK_COLOR_ONE = Color.PALETURQUOISE;
   public static final Paint BLOCK_COLOR_TWO = Color.PALEVIOLETRED;
   public static final Paint BLOCK_COLOR_THREE = Color.PURPLE;
@@ -54,14 +57,12 @@ public class Block extends Rectangle {
   }
 
   Paint getBlockColor(int blockHardness) {
-    if (blockHardness == 1) {
-      return BLOCK_COLOR_ONE;
-    } else if (blockHardness == 2) {
-      return BLOCK_COLOR_TWO;
-    } else if (blockHardness == 3) {
-      return BLOCK_COLOR_THREE;
-    } else {
-      return Color.BLACK; // Error color, should never appear
+    switch (blockHardness) {
+      case 0 : return BLOCK_COLOR_INVISIBLE;
+      case 1 : return BLOCK_COLOR_ONE;
+      case 2: return BLOCK_COLOR_TWO;
+      case 3: return BLOCK_COLOR_THREE;
+      default : throw new IllegalStateException("Unexpected value: " + blockHardness);
     }
   }
 
@@ -70,6 +71,23 @@ public class Block extends Rectangle {
     setHeight(blockHeight);
     setX(xOffset);
     setY(yOffset);
+  }
+
+  public boolean isTouchingCircle(Circle collisionCircle) {
+    double R = Ball.BALL_RADIUS;
+    double Xcoord = collisionCircle.getCenterX();
+    double Ycoord = collisionCircle.getCenterY();
+    double width = getWidth();
+    double height = getHeight();
+    double xPos = getX();
+    double yPos = getY();
+
+    // from https://www.geeksforgeeks.org/check-if-any-point-overlaps-the-given-circle-and-rectangle/
+    double Xn = Math.max(xPos, Math.min(Xcoord, (xPos+width)));
+    double Yn = Math.max(yPos, Math.min(Ycoord, (yPos + height)));
+    double Dx = Xn - Xcoord;
+    double Dy = Yn - Ycoord;
+    return (Dx * Dx + Dy * Dy) <= R*R;
   }
 
   public int getBlockHardness() {
@@ -90,5 +108,10 @@ public class Block extends Rectangle {
 
   public void setBlockColor(Paint blockColor) {
     this.blockColor = blockColor;
+  }
+  public void removeFromScene() {
+    setDimensions(0,0);
+    setX(0.0);
+    setY(0.0);
   }
 }

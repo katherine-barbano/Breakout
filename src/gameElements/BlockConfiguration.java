@@ -70,16 +70,19 @@ public class BlockConfiguration {
     return blocks;
   }
 
-  // TODO: this method isn't currently used, but will be for collisions later
   void decrementBlock(Block block) {
     for (int i = 0; i < configRows.length; i++) {
       BlockRow row = configRows[i];
       for (int j = 0; j < row.getRowOfBlocks().length; j++) {
         Block currentBlock = row.getRowOfBlocks()[j];
         if (currentBlock.equals(block)) {
-          currentBlock.decreaseHardnessByOne();
-          if (currentBlock.getBlockHardness() == 0) {
-            // TODO delete block
+          if (currentBlock.getBlockHardness() > 1) {
+            currentBlock.decreaseHardnessByOne();
+            currentBlock.updateBlockColor();
+          }
+          else {
+            currentBlock.removeFromScene();
+            decreaseNumberOfBlocksByOne();
           }
         }
       }
@@ -114,4 +117,9 @@ public class BlockConfiguration {
   void setNumberOfBlocksRemaining(int numberOfBlocksRemaining) { this.numberOfBlocksRemaining = numberOfBlocksRemaining; }
   public int getNumberOfBlocksRemaining() { return numberOfBlocksRemaining; }
   boolean isEmpty() { return (numberOfBlocksRemaining == 0);}
+  Block getBlock(int row, int col) {
+    BlockRow blockRow = getBlockRows()[row];
+    Block block = blockRow.getRowOfBlocks()[col];
+    return block;
+  }
 }

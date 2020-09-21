@@ -160,28 +160,13 @@ public class Ball extends Circle {
       for (int j = 0; j < row.getRowOfBlocks().length; j++) {
         Block tempBlock = row.getRowOfBlocks()[j];
         if (tempBlock.getBlockHardness() == 0) continue;
-        if (isTouchingSingleBlock(tempBlock)) return true;
+        if (tempBlock.isTouchingCircle(this)){
+          blockConfiguration.decrementBlock(tempBlock);
+          return true;
+        }
       }
     }
     return false;
-  }
-
-  //TODO: can we move this method to Block, like how the isTouching method for Paddle was moved to that class?
-  private boolean isTouchingSingleBlock(Block block) {
-    double R = BALL_RADIUS;
-    double Xcoord = getCenterX();
-    double Ycoord = getCenterY();
-    double width = block.getWidth();
-    double height = block.getHeight();
-    double xPos = block.getX();
-    double yPos = block.getY();
-
-    // from https://www.geeksforgeeks.org/check-if-any-point-overlaps-the-given-circle-and-rectangle/
-    double Xn = Math.max(xPos, Math.min(Xcoord, (xPos+width)));
-    double Yn = Math.max(yPos, Math.min(Ycoord, (yPos + height)));
-    double Dx = Xn - Xcoord;
-    double Dy = Yn - Ycoord;
-    return (Dx * Dx + Dy * Dy) <= R*R;
   }
 
   private int getVelocityXFromPaddleHit() {

@@ -13,6 +13,7 @@ import util.DukeApplicationTest;
 
 public class BlockConfigurationTest extends DukeApplicationTest {
   private BlockConfiguration testConfiguration;
+  private Block block;
   private Game game;
   private Ball ball;
   private Paddle paddle;
@@ -20,6 +21,7 @@ public class BlockConfigurationTest extends DukeApplicationTest {
   @Override
   public void start (Stage stage) {
     game = new Game(stage);
+    testConfiguration = game.getCurrentGameLevel().getLevelConfiguration();
 
     ball = lookup("#ball").query();
     paddle = lookup("#paddle").query();
@@ -30,9 +32,21 @@ public class BlockConfigurationTest extends DukeApplicationTest {
     press(myScene, KeyCode.SPACE);
   }
 
+
+  // FIXME: both of these tests are recording 72, which means the blockConfig
+  // FIXME: is counting 0 hardness blocks which it should not do
   @Test
   void testNumBlocksRemaining() {
-    testConfiguration = new BlockConfiguration("sample_game","level_1");
-    assertEquals(testConfiguration.getNumberOfBlocksRemaining(), 60);
+    assertEquals(60, testConfiguration.getNumberOfBlocksRemaining());
+  }
+
+  @Test
+  void testNumBlocksRemainingWhenBlockIsRemoved() {
+    startAnimation();
+
+    for(int numSteps = 0; numSteps < 150; numSteps ++) {
+      javafxRun(() -> game.step(Game.SECOND_DELAY));
+    }
+    assertEquals(59, testConfiguration.getNumberOfBlocksRemaining());
   }
 }

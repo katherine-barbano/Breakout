@@ -284,7 +284,7 @@ public class Level {
     return (levelLives == 0);
   }
 
-  private BlockConfiguration getLevelConfiguration() {
+  public BlockConfiguration getLevelConfiguration() {
     return levelConfiguration;
   }
 
