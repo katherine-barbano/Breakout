@@ -1,6 +1,7 @@
 package gameElements;
 
 import breakout.Game;
+import breakout.Level;
 import javafx.scene.Group;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
@@ -22,15 +23,16 @@ public class Ball extends Circle {
 
   private final Paddle paddle;
   private BlockConfiguration blockConfiguration;
+  private int ballScore;
   private int velocityX;
   private int velocityY;
   private Group gameRoot;
   private boolean velocityCanBeUpdated = true;
 
-  public Ball(Group gameRootArg, Paddle paddleArg, BlockConfiguration configuration) {
+  public Ball(Group gameRootArg, Paddle paddleArg, Level levelArg) {
     gameRoot = gameRootArg;
     paddle = paddleArg;
-    blockConfiguration = configuration;
+    blockConfiguration = levelArg.getLevelConfiguration();
 
     setBallProperties();
 
@@ -38,6 +40,7 @@ public class Ball extends Circle {
   }
 
   public void setBallProperties() {
+    setScore(0);
     setCenterX(Game.SCENE_SIZE / 2);
     setCenterY(paddle.getY() - BALL_RADIUS);
     setRadius(BALL_RADIUS);
@@ -163,6 +166,7 @@ public class Ball extends Circle {
         if (tempBlock== null || tempBlock.getBlockHardness() == 0) continue;
         if (tempBlock.isTouchingCircle(this)){
           blockConfiguration.decrementBlock(tempBlock);
+          increaseScoreBy(10);
           return true;
         }
       }
@@ -192,4 +196,8 @@ public class Ball extends Circle {
   private boolean isTouchingBottomWall() {
     return getCenterY() + BALL_RADIUS >= getScene().getHeight();
   }
+
+  public void setScore(int i) { ballScore = i; }
+  public void increaseScoreBy(int i) { ballScore+= i; }
+  public int getScore() { return ballScore; }
 }

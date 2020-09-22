@@ -3,14 +3,13 @@ package breakout;
 import gameElements.Ball;
 import gameElements.Block;
 import gameElements.BlockConfiguration;
-import gameElements.BlockRow;
 import gameElements.Paddle;
-import java.util.ArrayList;
 import java.util.List;
 import javafx.scene.Group;
 import javafx.scene.input.KeyCode;
 import text.LivesText;
 import text.PauseText;
+import text.ScoreText;
 
 /***
  * Maintains gameElements for a single level of the game. Handles removal and addition of gameElements
@@ -23,10 +22,12 @@ public class Level {
 
   private int levelLives;
   private int levelNumber;
+  private int prevBallScore;
   private BlockConfiguration levelConfiguration;
   private boolean gameIsPaused;
   private PauseText gamePauseText;
   private LivesText gameLivesText;
+  private ScoreText gameScoreText;
   private Group gameRoot;
   private Ball gameBall; // TODO extension: List<Ball> myBalls, to accomodate multi-gameBall powerups
   private Paddle gamePaddle;
@@ -44,6 +45,7 @@ public class Level {
   public Level(Group gameRootArg, String gameName, String fileName) {
     this.levelConfiguration = new BlockConfiguration(gameName, fileName);
     this.levelNumber = 0;
+    this.prevBallScore = 0;
 
     initializeLevelProperties(gameRootArg);
   }
@@ -62,6 +64,7 @@ public class Level {
    */
   public Level(Group gameRootArg, String gameName, int levelNumber) {
     this.levelConfiguration = new BlockConfiguration();
+    this.levelConfiguration.setLevel(this);
     this.levelNumber = levelNumber;
 
     generateLevelConfiguration(gameName, levelNumber);
@@ -81,6 +84,7 @@ public class Level {
   void showLevel() {
     this.gameLivesText = new LivesText(getLives(),gameRoot);
     this.gamePauseText = new PauseText(gameRoot);
+    this.gameScoreText = new ScoreText(gameRoot);
 
     setLives(INITIAL_NUMBER_LIVES);
     initializeNewBallAndPaddle();
@@ -106,6 +110,7 @@ public class Level {
    * when pressing the "r" cheat key.
    */
   void resetCurrentLevel() {
+    prevBallScore += gameBall.getScore();
     decreaseLivesByOne();
     resetPosition();
   }
@@ -169,7 +174,7 @@ public class Level {
 
   private void initializeNewBallAndPaddle() {
     gamePaddle = new Paddle(gameRoot);
-    gameBall = new Ball (gameRoot, gamePaddle, getLevelConfiguration());
+    gameBall = new Ball (gameRoot, gamePaddle, this);
   }
 
   private void resetBallAndPaddle() {
@@ -236,6 +241,10 @@ public class Level {
     return (levelLives == 0);
   }
 
+  /***
+   * Returns the level's block configuration
+   * @return BlockConfiguration levelConfiguration
+   */
   public BlockConfiguration getLevelConfiguration() {
     return levelConfiguration;
   }
@@ -255,4 +264,12 @@ public class Level {
   void setLevelNumber(int levelNumber) {
     this.levelNumber = levelNumber;
   }
+
+  void setScore(int i) { gameScoreText.updateScore(i); }
+
+  int getScore() { return prevBallScore + gameBall.getScore(); }
+
+  public void removeScore() { gameScoreText.removeText(); }
+
+  public ScoreText getScoreText() { return gameScoreText; }
 }

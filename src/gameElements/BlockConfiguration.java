@@ -1,5 +1,6 @@
 package gameElements;
 
+import breakout.Level;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
@@ -16,9 +17,10 @@ public class BlockConfiguration {
   public static final String FILE_SOURCE_PATH = "data/";
   public static final int NUMBER_OF_BLOCK_ROWS = Block.NUMBER_OF_BLOCK_ROWS;
 
+  private Level myLevel;
   private File configFile;
   private BlockRow[] configRows;
-  private int numberOfBlocksRemaining; // TODO keep track of breakable blocks remaining
+  private int numberOfBlocksRemaining;
 
   public BlockConfiguration () { new BlockConfiguration("",""); }
   public BlockConfiguration(String gameName, String fileName) {
@@ -148,5 +150,13 @@ public class BlockConfiguration {
       block.removeFromScene();
     }
     setNumberOfBlocksRemaining(0);
+  }
+
+  public Level getLevel() {
+    return myLevel;
+  }
+
+  public void setLevel(Level myLevel) {
+    this.myLevel = myLevel;
   }
 }

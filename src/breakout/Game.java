@@ -40,6 +40,8 @@ public class Game {
   private Group gameRoot;
 
   private List<Level> gameLevels;
+  private int previousLevelScore;
+  private int totalScore;
   private int currentGameLevelIndex;
   private GameOverText gameOverText;
 
@@ -76,9 +78,11 @@ public class Game {
   public void step (double elapsedTime) {
     Level currentLevel = getCurrentGameLevel();
     if (currentLevel.gameIsLost() || gameIsWon()) {
+      currentLevel.removeLevel();
       gameOver();
     } else if (currentLevel.levelIsWon()) {
       currentLevel.removeLevel();
+      previousLevelScore = totalScore;
       resetGameToLevel(currentGameLevelIndex+1);
     } else {
       boolean ballIsValid = currentLevel.isBallValid(elapsedTime);
@@ -86,6 +90,12 @@ public class Game {
         currentLevel.resetCurrentLevel();
       }
     }
+    updateGameScore(currentLevel);
+  }
+
+  void updateGameScore(Level level) {
+    int levelScore = level.getScore();
+    level.setScore(levelScore);
   }
 
   private boolean gameIsWon() {
@@ -100,6 +110,8 @@ public class Game {
     gameRoot = new Group();
     gameOverText = new GameOverText(gameRoot);
 
+    previousLevelScore = 0;
+    totalScore = 0;
     initializeGameLevels();
     resetGameToLevel(LEVEL_ONE_INDEX);
 
@@ -138,7 +150,8 @@ public class Game {
    */
   void gameOver() {
     Level currentLevel = getCurrentGameLevel();
-    gameOverText.gameOverUpdate(currentLevel.levelIsWon());
+    currentLevel.removeScore();
+    gameOverText.gameOverUpdate(gameIsWon());
     currentLevel.removeLevel();
   }
 
