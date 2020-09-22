@@ -6,6 +6,7 @@ import gameElements.BlockConfiguration;
 import gameElements.BlockRow;
 import gameElements.Paddle;
 import gameElements.PaddlePowerUp;
+import gameElements.PowerUp;
 import java.util.List;
 import javafx.scene.Group;
 import javafx.scene.input.KeyCode;
@@ -198,6 +199,17 @@ public class Level {
     }
   }
 
+  void dropFoundPowerUps(double elapsedTime) {
+    List<PowerUp> powerUps = levelConfiguration.getVisiblePowerUps();
+    for (PowerUp fallingPowerUp: powerUps) {
+      fallingPowerUp.updateLocation(elapsedTime, gameIsPaused);
+      if (gamePaddle.isTouchingPaddleTop(fallingPowerUp)){
+        fallingPowerUp.setPaddle(gamePaddle);
+        fallingPowerUp.givePowerUp();
+      }
+    }
+  }
+
   /***
    * Called by Game class to remove all nodes from the current Level
    * from the root. This effectively removes the entire Level from
@@ -224,7 +236,8 @@ public class Level {
     gameLivesText.updateLives(lives);
   }
 
-  private void decreaseLivesByOne() {
+  // made public for unit testing
+  public void decreaseLivesByOne() {
     setLives(levelLives-1);
   }
 

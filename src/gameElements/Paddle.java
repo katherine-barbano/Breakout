@@ -78,7 +78,7 @@ public class Paddle extends Rectangle{
   }
 
   //TODO: fix for edges of ball that are not in center
-  boolean isTouchingPaddleTop(Circle collisionCircle) {
+  public boolean isTouchingPaddleTop(Circle collisionCircle) {
     double R = collisionCircle.getRadius();
     double Xcoord = collisionCircle.getCenterX();
     double Ycoord = collisionCircle.getCenterY();

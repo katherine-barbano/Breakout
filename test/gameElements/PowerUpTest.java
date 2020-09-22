@@ -31,9 +31,30 @@ public class PowerUpTest extends DukeApplicationTest {
   @Test
   void testPowerUpsOnFirstRow(){
     startAnimation();
-    for(int numSteps = 0; numSteps < 100; numSteps ++) {
+    for(int numSteps = 0; numSteps < 150; numSteps ++) {
       javafxRun(() -> game.step(Game.SECOND_DELAY));
     }
     assertEquals(140, paddle.getWidth());
+  }
+
+  // assumes two paddlePowerUps are hit; that is,
+  // shows the paddle will only extend its width once.
+  @Test
+  void testPaddleOnlyExtendsOnce() {
+    startAnimation();
+    for(int numSteps = 0; numSteps < 300; numSteps ++) {
+      javafxRun(() -> game.step(Game.SECOND_DELAY));
+    }
+    assertEquals(140, paddle.getWidth());
+  }
+
+  @Test
+  void testPaddleWidthResets() {
+    startAnimation();
+    for(int numSteps = 0; numSteps < 150; numSteps ++) {
+      javafxRun(() -> game.step(Game.SECOND_DELAY));
+    }
+    game.getCurrentGameLevel().decreaseLivesByOne();
+    assertEquals(70, paddle.getWidth());
   }
 }

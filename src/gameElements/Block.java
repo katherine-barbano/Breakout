@@ -118,6 +118,8 @@ public class Block extends Rectangle {
   }
 
   boolean hasPowerUp() { return randomPowerUp != null; }
+  boolean hasReleasedPowerUp() { return randomPowerUp.isReleased(); }
   public void setPowerUp(PowerUp powerUp) { randomPowerUp = powerUp; }
+  PowerUp getPowerUp() { return randomPowerUp; }
   void releasePowerUp() { randomPowerUp.showInScene(); }
 }

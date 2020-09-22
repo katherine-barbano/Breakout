@@ -144,6 +144,20 @@ public class BlockConfiguration {
     return blockList;
   }
 
+  public List<PowerUp> getVisiblePowerUps() {
+    List<PowerUp> powerUpList = new ArrayList<>();
+    for (BlockRow blockRow : configRows) {
+      if (blockRow != null && blockRow.getRowOfBlocks() != null) {
+        for (Block block : blockRow.getRowOfBlocks()) {
+          if (block != null && block.hasPowerUp() && block.hasReleasedPowerUp()) {
+            powerUpList.add(block.getPowerUp());
+          }
+        }
+      }
+    }
+    return powerUpList;
+  }
+
   public void removeAllBlocks() {
     List<Block> blockList = getBlocksAsList();
     for (Block block : blockList) {

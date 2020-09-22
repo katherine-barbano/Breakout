@@ -85,6 +85,7 @@ public class Game {
       previousLevelScore = totalScore;
       resetGameToLevel(currentGameLevelIndex+1);
     } else {
+      currentLevel.dropFoundPowerUps(elapsedTime);
       boolean ballIsValid = currentLevel.isBallValid(elapsedTime);
       if (!ballIsValid) {
         currentLevel.resetCurrentLevel();
