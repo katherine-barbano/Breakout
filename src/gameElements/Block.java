@@ -25,6 +25,7 @@ public class Block extends Rectangle {
 
   private int blockHardness;
   private Paint blockColor;
+  private PowerUp randomPowerUp;
 
   public Block() {
   }
@@ -32,6 +33,7 @@ public class Block extends Rectangle {
   public Block(int sceneWidth, int sceneHeight, int blockHardness) {
     setDimensions(sceneWidth, sceneHeight);
     this.blockHardness = blockHardness;
+
     updateBlockColor();
     setFill(blockColor);
     setId("block");
@@ -114,4 +116,8 @@ public class Block extends Rectangle {
     setX(0.0);
     setY(0.0);
   }
+
+  boolean hasPowerUp() { return randomPowerUp != null; }
+  public void setPowerUp(PowerUp powerUp) { randomPowerUp = powerUp; }
+  void releasePowerUp() { randomPowerUp.showInScene(); }
 }

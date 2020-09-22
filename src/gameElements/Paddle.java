@@ -23,7 +23,6 @@ public class Paddle extends Rectangle{
   public static final int VERTICAL_PADDLE_OFFSET_FROM_BOTTOM = 30;
   public static final int PADDLE_SPEED = 10;
 
-  private int paddleWidth;
   private Group gameRoot;
 
   public Paddle(Group gameRootArg) {
@@ -36,14 +35,9 @@ public class Paddle extends Rectangle{
     gameRoot.getChildren().remove(this);
   }
 
-  //for power up later
-  void extendPaddleWidth() {
-    paddleWidth = NORMAL_PADDLE_WIDTH * 2;
-  }
-
-  //for power up later
+  void extendPaddleWidth() { setWidth(NORMAL_PADDLE_WIDTH * 2); }
   void setNormalPaddleWidth() {
-    paddleWidth = NORMAL_PADDLE_WIDTH;
+    setWidth(NORMAL_PADDLE_WIDTH);
   }
 
   public void setPaddleProperties() {
@@ -53,7 +47,6 @@ public class Paddle extends Rectangle{
     setHeight(PADDLE_HEIGHT);
     setFill(PADDLE_COLOR);
     setId("paddle");
-    paddleWidth = NORMAL_PADDLE_WIDTH;
   }
 
   public void handleKeyInput(KeyCode code, boolean isPaused) {

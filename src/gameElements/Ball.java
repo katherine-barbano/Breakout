@@ -165,13 +165,19 @@ public class Ball extends Circle {
         Block tempBlock = blockRow.getRowOfBlocks()[j];
         if (tempBlock== null || tempBlock.getBlockHardness() == 0) continue;
         if (tempBlock.isTouchingCircle(this)){
-          blockConfiguration.decrementBlock(tempBlock);
-          increaseScoreBy(10);
+          respondToBlockCollision(tempBlock);
           return true;
         }
       }
     }
     return false;
+  }
+
+  private void respondToBlockCollision(Block block) {
+    blockConfiguration.decrementBlock(block);
+    increaseScoreBy(10);
+    if (block.hasPowerUp())
+      block.releasePowerUp();
   }
 
   private int getVelocityXFromPaddleHit() {

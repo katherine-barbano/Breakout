@@ -3,7 +3,9 @@ package breakout;
 import gameElements.Ball;
 import gameElements.Block;
 import gameElements.BlockConfiguration;
+import gameElements.BlockRow;
 import gameElements.Paddle;
+import gameElements.PaddlePowerUp;
 import java.util.List;
 import javafx.scene.Group;
 import javafx.scene.input.KeyCode;
@@ -75,6 +77,7 @@ public class Level {
     this.gameIsPaused = true;
     this.gameRoot = gameRootArg;
     this.levelConfiguration.updateConfiguration(Game.SCENE_SIZE, Game.SCENE_SIZE);
+    randomlyAssignPowerUps();
     System.out.println("Level has " + levelConfiguration.getNumberOfBlocksRemaining() + " blocks");
   }
 
@@ -181,6 +184,18 @@ public class Level {
     gamePaddle.removePaddle();
     gameBall.removeBall();
     initializeNewBallAndPaddle();
+  }
+
+  void randomlyAssignPowerUps() {
+    // TODO: this isn't random for testing purposes and Game- Basic
+    BlockRow firstRow = levelConfiguration.getBlockRows()[6];
+    Block[] blocks = firstRow.getRowOfBlocks();
+    for (int i = 0; i < blocks.length; i++) {
+      if (blocks[i] != null) {
+        PaddlePowerUp powerUp = new PaddlePowerUp(gameRoot, gamePaddle, blocks[i]);
+        blocks[i].setPowerUp(powerUp);
+      }
+    }
   }
 
   /***
