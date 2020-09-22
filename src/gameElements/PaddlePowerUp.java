@@ -27,18 +27,18 @@ public class PaddlePowerUp extends PowerUp{
     setIsReleased(false);
     setRadius(BALL_RADIUS);
     setFill(PADDLE_POWER_UP_COLOR);
-    setId("paddle power up");
+    setId("Paddle power up");
   }
 
   private double GetXCenterOfBlock(Block block) {
     double x = block.getX();
     double width = block.getWidth();
-    return x + (width) / 2;
+    return x + ((width) / 2);
   }
 
   private double GetYCenterOfBlock(Block block) {
     double y = block.getY();
     double height = block.getHeight();
-    return y + (height) / 2;
+    return y + ((height) / 2);
   }
 }
