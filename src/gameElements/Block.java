@@ -22,6 +22,7 @@ public class Block extends Rectangle {
   public static final Paint BLOCK_COLOR_THREE = Color.PURPLE;
   public static final int BLOCKS_PER_ROW = 12;
   public static final int NUMBER_OF_BLOCK_ROWS = 8;
+  public static final int BLOCK_HARDNESS_ONE = 1;
 
   private int blockHardness;
   private Paint blockColor;

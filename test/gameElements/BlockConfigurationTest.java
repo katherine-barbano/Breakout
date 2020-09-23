@@ -49,4 +49,9 @@ public class BlockConfigurationTest extends DukeApplicationTest {
     }
     assertEquals(59, testConfiguration.getNumberOfBlocksRemaining());
   }
+
+  @Test
+  void testPowerUpsExist() {
+    // TODO
+  }
 }

@@ -78,7 +78,7 @@ public class Level {
     this.gameIsPaused = true;
     this.gameRoot = gameRootArg;
     this.levelConfiguration.updateConfiguration(Game.SCENE_SIZE, Game.SCENE_SIZE);
-    randomlyAssignPowerUps();
+    //randomlyAssignPowerUps();
     System.out.println("Level has " + levelConfiguration.getNumberOfBlocksRemaining() + " blocks");
   }
 
@@ -187,7 +187,7 @@ public class Level {
     initializeNewBallAndPaddle();
   }
 
-  void randomlyAssignPowerUps() {
+  /*void randomlyAssignPowerUps() {
     // TODO: this isn't random for testing purposes and Game- Basic
     BlockRow firstRow = levelConfiguration.getBlockRows()[6];
     Block[] blocks = firstRow.getRowOfBlocks();
@@ -197,7 +197,7 @@ public class Level {
         blocks[i].setPowerUp(powerUp);
       }
     }
-  }
+  }*/
 
   void dropFoundPowerUps(double elapsedTime) {
     List<PowerUp> powerUps = levelConfiguration.getVisiblePowerUps();
@@ -300,4 +300,9 @@ public class Level {
   public void removeScore() { gameScoreText.removeText(); }
 
   public ScoreText getScoreText() { return gameScoreText; }
+
+  public Group getGameRoot() { return gameRoot; }
+  public void setGameRoot(Group gameRoot) { this.gameRoot = gameRoot; }
+  public Paddle getGamePaddle() { return gamePaddle; }
+  public void setGamePaddle(Paddle gamePaddle) { this.gamePaddle = gamePaddle; }
 }

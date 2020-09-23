@@ -57,4 +57,24 @@ public class PowerUpTest extends DukeApplicationTest {
     game.getCurrentGameLevel().decreaseLivesByOne();
     assertEquals(70, paddle.getWidth());
   }
+
+  @Test
+  void testBallSlowsDown() {
+    // TODO
+  }
+
+  @Test
+  void testBallSlowsDownOnce() {
+    // TODO
+  }
+
+  @Test
+  void testBallBreakerWorks() {
+    // TODO
+  }
+
+  @Test
+  void testBallBreakerAppliesOnce() {
+    // TODO
+  }
 }

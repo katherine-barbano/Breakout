@@ -19,26 +19,12 @@ public class PaddlePowerUp extends PowerUp{
 
   @Override
   void setProperties() {
-    double centerX = GetXCenterOfBlock(getOwnerBlock());
-    double centerY = GetYCenterOfBlock(getOwnerBlock());
-    setCenterX(centerX);
-    setCenterY(centerY);
-
-    setIsReleased(false);
-    setRadius(BALL_RADIUS);
+    super.setProperties();
     setFill(PADDLE_POWER_UP_COLOR);
     setId("Paddle power up");
   }
 
-  private double GetXCenterOfBlock(Block block) {
-    double x = block.getX();
-    double width = block.getWidth();
-    return x + ((width) / 2);
-  }
 
-  private double GetYCenterOfBlock(Block block) {
-    double y = block.getY();
-    double height = block.getHeight();
-    return y + ((height) / 2);
-  }
+
+
 }

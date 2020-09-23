@@ -55,17 +55,32 @@ public class BlockConfiguration {
 
     for (int i = 0; i < hardnessArray.length; i++) {
       String hardness = hardnessArray[i];
-      int hardValue = Integer.parseInt(hardness);
-      if (hardValue > 0) {
-        blockArray[i] = new Block();
-        blockArray[i].setBlockHardness(hardValue);
-        numberOfBlocksRemaining++;
-      }
+      Block newBlock = buildBlockWithHardness(hardness);
+      blockArray[i] = newBlock;
     }
-
     FilledBlockRow blockRow = new FilledBlockRow();
     blockRow.setBlocks(blockArray);
     return blockRow;
+  }
+
+  Block buildBlockWithHardness(String hardness) {
+    Block createdBlock = null;
+    char hardnessChar = hardness.charAt(0);
+    if (Character.isDigit(hardnessChar)) {
+      int hardValue = Integer.parseInt(hardness);
+      if (hardValue > 0) {
+        createdBlock  = new Block();
+        createdBlock.setBlockHardness(hardValue);
+        numberOfBlocksRemaining++;
+      }
+    } else {
+      createdBlock = new Block();
+      createdBlock.setBlockHardness(Block.BLOCK_HARDNESS_ONE);
+      PowerUp createdPowerUp = PowerUp.makePowerUp(hardnessChar, myLevel, createdBlock);
+      createdBlock.setPowerUp(createdPowerUp);
+      numberOfBlocksRemaining++;
+    }
+    return createdBlock;
   }
 
   void decrementBlock(Block block) {
