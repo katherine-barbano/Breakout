@@ -29,6 +29,7 @@ public class Block extends Rectangle {
   private Paint blockColor;
   private PowerUp randomPowerUp;
   private boolean hasPowerUp;
+  private boolean hasReleasedPowerUp;
 
   public Block() {}
   public Block(int sceneWidth, int sceneHeight, int blockHardness) {
@@ -123,11 +124,25 @@ public class Block extends Rectangle {
   public boolean hasPowerUp() { return hasPowerUp; }
   public void setHasPowerUp(boolean powerUpBoolean) { hasPowerUp = powerUpBoolean; }
 
-  boolean hasReleasedPowerUp() { return randomPowerUp!= null && randomPowerUp.isReleased(); }
+  public boolean hasReleasedPowerUp() { return (randomPowerUp!= null && hasPowerUp && hasReleasedPowerUp); }
+  public void setHasReleasedPowerUp(boolean hasReleasedPowerUp) {
+    this.hasReleasedPowerUp = hasReleasedPowerUp;
+    randomPowerUp.setIsReleased(true);
+  }
   public void setPowerUp(PowerUp powerUp) { randomPowerUp = powerUp; }
   public PowerUp getPowerUp() { return randomPowerUp; }
   void releasePowerUp() {
     randomPowerUp.showInScene();
-    setHasPowerUp(false);
   }
+
+  // assumes that owner block is already calibrated
+  public void setDimensionsPowerUp() {
+    if (this.hasPowerUp()) {
+      randomPowerUp.setOwnerBlock(this);
+      randomPowerUp.setProperties();
+    }
+  }
+
+  public void updateLocationAndVelocity(double elapsedTime, boolean gameIsPaused) { }
+  public int getVelocity() { return 0; }
 }

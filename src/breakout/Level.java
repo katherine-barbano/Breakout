@@ -4,6 +4,7 @@ import gameElements.Ball;
 import gameElements.Block;
 import gameElements.BlockConfiguration;
 import gameElements.BlockRow;
+import gameElements.MovingBlock;
 import gameElements.Paddle;
 import gameElements.PaddlePowerUp;
 import gameElements.PowerUp;
@@ -46,7 +47,7 @@ public class Level {
    * @param fileName String of the filename of the Level to instantiate
    */
   public Level(Group gameRootArg, String gameName, String fileName) {
-    this.levelConfiguration = new BlockConfiguration(gameName, fileName);
+    this.levelConfiguration = new BlockConfiguration(gameName, fileName, this);
     this.levelNumber = 0;
     this.prevBallScore = 0;
 
@@ -90,7 +91,7 @@ public class Level {
   /***
    * Display the current level on the screen
    */
-  void showLevel() {
+  public void showLevel() {
     this.gameLivesText = new LivesText(getLives(),gameRoot);
     this.gamePauseText = new PauseText(gameRoot);
     this.gameScoreText = new ScoreText(gameRoot);
@@ -100,9 +101,11 @@ public class Level {
     addBlocksToRoot();
   }
 
-  private void addBlocksToRoot() {
+  public void addBlocksToRoot() {
     List<Block> allBlocks = levelConfiguration.getBlocksAsList();
-    gameRoot.getChildren().addAll(allBlocks);
+    for (Block block : allBlocks) {
+      if (!gameRoot.getChildren().contains(block)) gameRoot.getChildren().add(block);
+    }
   }
 
   /***
@@ -186,26 +189,22 @@ public class Level {
     initializeNewBallAndPaddle();
   }
 
-  /*void randomlyAssignPowerUps() {
-    // TODO: this isn't random for testing purposes and Game- Basic
-    BlockRow firstRow = levelConfiguration.getBlockRows()[6];
-    Block[] blocks = firstRow.getRowOfBlocks();
-    for (int i = 0; i < blocks.length; i++) {
-      if (blocks[i] != null) {
-        PaddlePowerUp powerUp = new PaddlePowerUp(gameRoot, gamePaddle, blocks[i]);
-        blocks[i].setPowerUp(powerUp);
-      }
-    }
-  }*/
-
   void dropFoundPowerUps(double elapsedTime) {
     List<PowerUp> powerUps = levelConfiguration.getVisiblePowerUps();
     for (PowerUp fallingPowerUp: powerUps) {
       fallingPowerUp.updateLocation(elapsedTime, gameIsPaused);
       if (gamePaddle.isTouchingPaddleTop(fallingPowerUp)){
         fallingPowerUp.setPaddle(gamePaddle);
+        fallingPowerUp.setGameBall(gameBall);
         fallingPowerUp.givePowerUp();
       }
+    }
+  }
+
+  void updatePositionMovingBlocks(double elapsedTime) {
+    List<Block> movingBlocks = levelConfiguration.getMovingBlocks();
+    for (Block movingBlock : movingBlocks) {
+      movingBlock.updateLocationAndVelocity(elapsedTime, gameIsPaused);
     }
   }
 
@@ -304,6 +303,10 @@ public class Level {
 
   public Group getGameRoot() { return gameRoot; }
   public void setGameRoot(Group gameRoot) { this.gameRoot = gameRoot; }
+
   public Paddle getGamePaddle() { return gamePaddle; }
   public void setGamePaddle(Paddle gamePaddle) { this.gamePaddle = gamePaddle; }
+
+  public Ball getGameBall() { return this.gameBall; }
+  public void setGameBall(Ball ball) { this.gameBall = ball; }
 }

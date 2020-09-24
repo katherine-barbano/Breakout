@@ -62,4 +62,9 @@ public class PaddleTest extends DukeApplicationTest {
 
     assertEquals(570, paddle.getY());
   }
+
+  @Test
+  void testPaddlePowerUpWorks() {
+
+  }
 }

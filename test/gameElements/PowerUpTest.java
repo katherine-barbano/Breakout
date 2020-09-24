@@ -61,23 +61,37 @@ public class PowerUpTest extends DukeApplicationTest {
 
   @Test
   void testBallSlowsDown() {
+    startAnimation();
     Level testLevel = new Level(game.getRoot(), "power_up_test_data", "slowBallPowerUp");
     game.setCurrentGameLevel(testLevel);
-    assertEquals(8, testLevel.getLevelConfiguration().getNumberOfPowerUps());
+    testLevel.addBlocksToRoot();
+    for(int numSteps = 0; numSteps < 150; numSteps ++) {
+      javafxRun(() -> game.step(Game.SECOND_DELAY));
+    }
+    assertEquals(75, game.getCurrentGameLevel().getGameBall().getVelocityY());
   }
 
   @Test
   void testBallSlowsDownOnce() {
-    // TODO
+    startAnimation();
+    Level testLevel = new Level(game.getRoot(), "power_up_test_data", "slowBallPowerUp");
+    game.setCurrentGameLevel(testLevel);
+    testLevel.addBlocksToRoot();
+    for(int numSteps = 0; numSteps < 300; numSteps ++) {
+      javafxRun(() -> game.step(Game.SECOND_DELAY));
+    }
+    assertEquals(75, game.getCurrentGameLevel().getGameBall().getVelocityY());
   }
 
   @Test
   void testBallBreakerWorks() {
-    // TODO
-  }
+    game.setupScene(); // FIXME made public
+    Level testLevel = new Level(game.getRoot(), "power_up_test_data", "breakerBallPowerUp");
+    game.setCurrentGameLevel(testLevel);
 
-  @Test
-  void testBallBreakerAppliesOnce() {
-    // TODO
+    testLevel.addBlocksToRoot();
+    testLevel.showLevel(); // FIXME made public
+
+    assertEquals(true, game.getCurrentGameLevel().getGameBall().isBreakerBall());
   }
 }

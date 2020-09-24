@@ -13,6 +13,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import text.GameOverText;
@@ -36,12 +37,12 @@ public class Game {
   public static final String GAME_NAME = "sample_game";
   public static final String[] NUMERICS = {"1", "2", "3", "4", "5","6","7","8","9","0"};
   public static final int LEVEL_ONE_INDEX = 0;
+  public static final int FINAL_LEVEL_INDEX = 2;
 
   private final Scene gameScene;
   private Group gameRoot;
 
   private List<Level> gameLevels;
-  private int previousLevelScore;
   private int totalScore;
   private int currentGameLevelIndex;
   private GameOverText gameOverText;
@@ -83,10 +84,10 @@ public class Game {
       gameOver();
     } else if (currentLevel.levelIsWon()) {
       currentLevel.removeLevel();
-      previousLevelScore = totalScore;
       resetGameToLevel(currentGameLevelIndex+1);
     } else {
       currentLevel.dropFoundPowerUps(elapsedTime);
+      currentLevel.updatePositionMovingBlocks(elapsedTime);
       boolean ballIsValid = currentLevel.isBallValid(elapsedTime);
       if (!ballIsValid) {
         currentLevel.resetCurrentLevel();
@@ -100,19 +101,14 @@ public class Game {
     level.setScore(levelScore);
   }
 
-  private boolean gameIsWon() {
-    return getCurrentGameLevel().levelIsWon() && currentGameLevelIndex == gameLevels.size();
-  }
-
   /***
    * Sets up the gameRoot, starts the game at the first Level, and sets up event handler for key and mouse inputs
    * @return Scene to be set as the gameScene
    */
-  private Scene setupScene () {
+  public Scene setupScene() {
     gameRoot = new Group();
     gameOverText = new GameOverText(gameRoot);
 
-    previousLevelScore = 0;
     totalScore = 0;
     initializeGameLevels();
     resetGameToLevel(LEVEL_ONE_INDEX);
@@ -191,37 +187,41 @@ public class Game {
     return -1;
   }
 
-  /***
-   * Resets and shows the level number given in the argument.
-   * LevelIndex should be start indexed at 0.
-   * @param levelIndex Index in Levels to show
-   */
-  public void resetGameToLevel(int levelIndex) {
-    gameOverText.removeText();
-    setLevelNumber(levelIndex);
-    showCurrentLevel();
-  }
-
-  /***
-   * Sets the index of the level currently running to a new levelNumber.
-   * @param levelNumber int of the level number to run
-   */
-  public void setLevelNumber(int levelNumber) { currentGameLevelIndex = levelNumber; }
-  public int getLevelNumber() { return currentGameLevelIndex; }
-
-
   private void showCurrentLevel() {
     Level currentLevel = gameLevels.get(currentGameLevelIndex);
     currentLevel.setGameRoot(gameRoot);
     currentLevel.showLevel();
   }
 
+  private boolean indexIsOutOfBounds(int index) {
+    return (index < LEVEL_ONE_INDEX) || (index > FINAL_LEVEL_INDEX);
+  }
+
+  private boolean gameIsWon() {
+    return getCurrentGameLevel().levelIsWon() && currentGameLevelIndex == gameLevels.size();
+  }
+
+  // Getters and setters:
   /***
    * Gets the Level object currently running.
    * @return Level object currently running
    */
-  public Level getCurrentGameLevel() { return gameLevels.get(currentGameLevelIndex); }
+  public Level getCurrentGameLevel() {
+    if (indexIsOutOfBounds(currentGameLevelIndex)) return gameLevels.get(LEVEL_ONE_INDEX);
+    return gameLevels.get(currentGameLevelIndex);
+  }
 
+  /***
+   * Resets and shows the level number given in the argument.
+   * LevelIndex should be start indexed at 0.
+   * @param levelIndex Index in Levels to show
+   */
+  public void resetGameToLevel(int levelIndex) {
+    if (indexIsOutOfBounds(levelIndex)) return;
+    gameOverText.removeText();
+    setLevelNumber(levelIndex);
+    showCurrentLevel();
+  }
 
   /**
    * Sets the Level object currently running to levelArg.
@@ -229,9 +229,11 @@ public class Game {
    * Unit testing purposes only.
    */
   public void setCurrentGameLevel(Level levelArg) {
+    gameOverText.removeText();
     levelArg.setGameRoot(gameRoot);
     levelArg.showLevel();
   }
+
   /***
    * Gets the Scene currently running the Game.
    * @return Scene object
@@ -245,6 +247,7 @@ public class Game {
   public GameOverText getGameOverText() {
     return gameOverText;
   }
+  public void setGameOverText(GameOverText text) { this.gameOverText = text; }
 
   /***
    * Gets the Group object currently running the Game.
@@ -253,12 +256,21 @@ public class Game {
   public Group getRoot() {
     return gameRoot;
   }
+  public void setRoot(Group root) { this.gameRoot = root; }
 
   /***
    * Get the List maintaining all the Levels in the current Game.
    * @return List of levels in game
    */
-  List<Level> getGameLevelsList() {
+  public List<Level> getGameLevelsList() {
     return gameLevels;
   }
+  public void setGameLevels(List<Level> levels) { this.gameLevels = levels; }
+
+  /***
+   * Sets the index of the level currently running to a new levelNumber.
+   * @param levelNumber int of the level number to run
+   */
+  public void setLevelNumber(int levelNumber) { currentGameLevelIndex = levelNumber; }
+  public int getLevelNumber() { return currentGameLevelIndex; }
 }

@@ -10,6 +10,7 @@ public abstract class PowerUp extends Circle {
 
   private Group gameRoot;
   protected Paddle gamePaddle;
+  private Ball gameBall;
   private Block ownerBlock;
   private PowerUpType powerUpType;
   private int velocityY;
@@ -19,7 +20,8 @@ public abstract class PowerUp extends Circle {
     BREAKER_BALL,
     PADDLE,
     MOVING_BLOCK,
-    SLOW_BALL
+    SLOW_BALL,
+    P_LAST // shouldn't be reached
   }
 
   public PowerUp(Group gameRootArg, Paddle paddleArg, Block blockArg) {
@@ -30,44 +32,12 @@ public abstract class PowerUp extends Circle {
   }
 
   public PowerUp(Level level, Block blockArg) {
-    // assumes level is not null
-    //PowerUp(level.getGameRoot(), level.getGamePaddle(), blockArg); FIXME: can you look at this? I'm not sure how to make this constructor a one liner.
     gameRoot = level.getGameRoot();
     gamePaddle = level.getGamePaddle();
     ownerBlock = blockArg;
     setProperties();
 
-    gameRoot.getChildren().add(this);
-  }
-
-  public static PowerUp makePowerUp(char hardnessChar, Level level, Block createdBlock) {
-    PowerUp powerUp;
-    Group gameRoot = level.getGameRoot();
-    Paddle gamePaddle = level.getGamePaddle();
-    Block ownerBlock = createdBlock;
-    switch (hardnessChar) {
-      case 'S':
-        powerUp = new SlowBallPowerUp(gameRoot, gamePaddle, ownerBlock);
-        powerUp.setPowerUpType(PowerUpType.SLOW_BALL);
-        break;
-      case 'P':
-        powerUp = new PaddlePowerUp(gameRoot, gamePaddle, ownerBlock);
-        powerUp.setPowerUpType(PowerUpType.PADDLE);
-        break;
-      case 'B':
-        powerUp = new BreakerBallPowerUp(gameRoot, gamePaddle, ownerBlock);
-        powerUp.setPowerUpType(PowerUpType.BREAKER_BALL);
-        break;
-      case 'M':
-        ownerBlock = new MovingBlock();
-        powerUp = new MovingBlockPowerUp(gameRoot, gamePaddle, ownerBlock);
-        powerUp.setPowerUpType(PowerUpType.MOVING_BLOCK);
-        break;
-      default:
-        throw new IllegalStateException("Unexpected value: " + hardnessChar);
-    }
-    gameRoot.getChildren().add(powerUp);
-    return powerUp;
+    //gameRoot.getChildren().add(this);
   }
 
   public abstract void givePowerUp();
@@ -85,17 +55,17 @@ public abstract class PowerUp extends Circle {
   public void showInScene() {
     velocityY = POWER_UP_DROP_SPEED;
     setIsReleased(true);
-    // FIXME GAME ROOT!!!
     addToScene();
   }
 
   public void updateLocation(double elapsedTime, boolean isPaused) {
-    if (isTouchingPaddle()) {
-      givePowerUp();
-      removeFromScene();
+    if (!isPaused) {
+      updatePositionY(elapsedTime);
+      if (isTouchingPaddle()) {
+        givePowerUp();
+        removeFromScene();
+      } else if (isTouchingBottomWall()) removeFromScene();
     }
-    else if (isTouchingBottomWall()) removeFromScene();
-    else if (!isPaused) updatePositionY(elapsedTime);
   }
 
   private boolean isTouchingPaddle() {
@@ -149,6 +119,9 @@ public abstract class PowerUp extends Circle {
   public int getVelocityY() { return velocityY; }
   public void setVelocityY(int velocityY) { this.velocityY = velocityY; }
 
-  public void setPowerUpType(PowerUpType type) { this.powerUpType = powerUpType; }
-  public PowerUpType getPowerUpType() { return powerUpType; }
+  public void setPowerUpType(PowerUpType type) { this.powerUpType = type; }
+  public PowerUpType getPowerUpType() { return this.powerUpType; }
+
+  public Ball getGameBall() { return this.gameBall; }
+  public void setGameBall(Ball ball) { this.gameBall = ball; }
 }

@@ -1,11 +1,13 @@
 package gameElements;
 
 import breakout.Level;
+import gameElements.PowerUp.PowerUpType;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+import javafx.scene.Group;
 
 /***
  *      Purpose: Reads in a text file into an array (size 8) of BlockRows
@@ -112,7 +114,7 @@ public class BlockConfiguration {
   private Block makeBlockWithPowerUp(char hardnessChar) {
     Block createdBlock = new Block();
     createdBlock.setRandomHardness();
-    PowerUp createdPowerUp = PowerUp.makePowerUp(hardnessChar, myLevel, createdBlock);
+    PowerUp createdPowerUp = makePowerUp(hardnessChar, myLevel, createdBlock);
     createdBlock.setPowerUp(createdPowerUp);
     createdBlock.setHasPowerUp(true);
     numberOfPowerUps++;
@@ -120,19 +122,47 @@ public class BlockConfiguration {
     return createdBlock;
   }
 
-  void decrementBlock(Block block) {
+  private PowerUp makePowerUp(char hardnessChar, Level level, Block createdBlock) {
+    Group gameRoot = level.getGameRoot();
+    Paddle gamePaddle = level.getGamePaddle();
+
+    PowerUp powerUp;
+    switch (hardnessChar) {
+      case 'S':
+        powerUp = new SlowBallPowerUp(gameRoot, gamePaddle, createdBlock);
+        powerUp.setPowerUpType(PowerUpType.SLOW_BALL);
+        break;
+      case 'P':
+        powerUp = new PaddlePowerUp(gameRoot, gamePaddle, createdBlock);
+        powerUp.setPowerUpType(PowerUpType.PADDLE);
+        break;
+      case 'B':
+        powerUp = new BreakerBallPowerUp(gameRoot, gamePaddle, createdBlock);
+        powerUp.setPowerUpType(PowerUpType.BREAKER_BALL);
+        break;
+      case 'M':
+        powerUp = new MovingBlockPowerUp(gameRoot, gamePaddle, createdBlock);
+        powerUp.setPowerUpType(PowerUpType.MOVING_BLOCK);
+        break;
+      default:
+        throw new IllegalStateException("Unexpected value: " + hardnessChar);
+    }
+    //gameRoot.getChildren().add(powerUp);
+    return powerUp;
+  }
+
+  void decrementBlock(Block block, Ball ball) {
     for (int i = 0; i < configRows.length; i++) {
       BlockRow row = configRows[i];
       for (int j = 0; j < row.getRowOfBlocks().length; j++) {
         Block currentBlock = row.getRowOfBlocks()[j];
         if (currentBlock != null && currentBlock.equals(block)) {
-          if (currentBlock.getBlockHardness() > 1) {
-            currentBlock.decreaseHardnessByOne();
-            currentBlock.updateBlockColor();
-          }
-          else {
+          if (currentBlock.getBlockHardness() == 1 || ball.isBreakerBall()) {
             currentBlock.removeFromScene();
             decreaseNumberOfBlocksByOne();
+          } else {
+            currentBlock.decreaseHardnessByOne();
+            currentBlock.updateBlockColor();
           }
         }
       }
@@ -158,6 +188,7 @@ public class BlockConfiguration {
           blocks[j].setDimensions(sceneWidth,sceneHeight);
           blocks[j].setX(blockWidth*j);
           blocks[j].setY(blockHeight*i);
+          blocks[j].setDimensionsPowerUp();
         }
         blocks[j].updateBlockColor();
       }
@@ -174,11 +205,13 @@ public class BlockConfiguration {
   void setNumberOfBlocksRemaining(int numberOfBlocksRemaining) { this.numberOfBlocksRemaining = numberOfBlocksRemaining; }
   public int getNumberOfBlocksRemaining() { return numberOfBlocksRemaining; }
   boolean isEmpty() { return (numberOfBlocksRemaining == 0);}
+
   Block getBlock(int row, int col) {
     BlockRow blockRow = getBlockRows()[row];
     Block block = blockRow.getRowOfBlocks()[col];
     return block;
   }
+
   int getBlockHeight(int sceneHeight) {
     return (sceneHeight - Paddle.VERTICAL_PADDLE_OFFSET_FROM_BOTTOM - Paddle.PADDLE_HEIGHT) /
         (Block.NUMBER_OF_BLOCK_ROWS + 1);
@@ -201,13 +234,28 @@ public class BlockConfiguration {
     for (BlockRow blockRow : configRows) {
       if (blockRow != null && blockRow.getRowOfBlocks() != null) {
         for (Block block : blockRow.getRowOfBlocks()) {
-          if (block != null && block.hasPowerUp() && block.hasReleasedPowerUp()) {
+          if (block != null && block.hasReleasedPowerUp()) {
+
             powerUpList.add(block.getPowerUp());
           }
         }
       }
     }
     return powerUpList;
+  }
+
+  public List<Block> getMovingBlocks() {
+    List<Block> movingBlockList = new ArrayList<>();
+    for (BlockRow blockRow : configRows) {
+      if (blockRow != null && blockRow instanceof MovingBlockRow) {
+        Block[] movingBlocks = blockRow.getRowOfBlocks();
+        for (Block block : movingBlocks) {
+          if (block != null && block instanceof MovingBlock)
+            movingBlockList.add((MovingBlock) block); // FIXME: cast is redundant
+        }
+      }
+    }
+    return movingBlockList;
   }
 
   boolean containsMovingBlock(String fileLine) {

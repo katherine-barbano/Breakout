@@ -10,10 +10,14 @@ public class BreakerBallPowerUp extends PowerUp {
 
   public BreakerBallPowerUp(Group gameRootArg, Paddle paddleArg, Block blockArg) {
     super(gameRootArg, paddleArg, blockArg);
+    setPowerUpType(PowerUpType.BREAKER_BALL);
   }
 
-  @Override // TODO: Has to deal with ball, idk how to deal
-  public void givePowerUp() { }
+  public void givePowerUp() {
+    if (getGameBall() != null) {
+      getGameBall().setIsBreakerBall(true);
+    }
+  }
 
   @Override
   void setProperties() {

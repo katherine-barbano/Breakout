@@ -10,11 +10,14 @@ public class SlowBallPowerUp extends PowerUp {
 
   public SlowBallPowerUp(Group gameRootArg, Paddle paddleArg, Block blockArg) {
     super(gameRootArg, paddleArg, blockArg);
+    setPowerUpType(PowerUpType.SLOW_BALL);
   }
 
   @Override
   public void givePowerUp() {
-    // TODO: I want to talk with you about velocity logic with Ball before implementing
+    if (getGameBall() != null) {
+      getGameBall().setVelocityY(Ball.SLOW_BALL_SPEED);
+    }
   }
 
   @Override

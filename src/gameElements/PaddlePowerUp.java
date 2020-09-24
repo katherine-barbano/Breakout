@@ -10,6 +10,7 @@ public class PaddlePowerUp extends PowerUp{
 
   public PaddlePowerUp(Group gameRootArg, Paddle paddleArg, Block blockArg) {
     super(gameRootArg, paddleArg, blockArg);
+    setPowerUpType(PowerUpType.PADDLE);
   }
 
   @Override

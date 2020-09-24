@@ -21,6 +21,7 @@ public class Ball extends Circle {
   public static final Paint BALL_COLOR = Color.RED;
   public static final int BALL_RADIUS = 15;
   public static final int NORMAL_BALL_SPEED = 150;
+  public static final int SLOW_BALL_SPEED = 75;
 
   private final Paddle paddle;
   private BlockConfiguration blockConfiguration;
@@ -29,6 +30,7 @@ public class Ball extends Circle {
   private int velocityY;
   private Group gameRoot;
   private boolean velocityCanBeUpdated = true;
+  private boolean isBreakerBall = false;
 
   public Ball(Group gameRootArg, Paddle paddleArg, Level levelArg) {
     gameRoot = gameRootArg;
@@ -153,7 +155,7 @@ public class Ball extends Circle {
     if (isTouchingTopWall()) {
       velocityY = velocityY * -1;
     }
-    if (isTouchingBlockInBlockConfiguration()) {
+    if (isTouchingBlockInBlockConfiguration() && !isBreakerBall) {
       velocityY *= -1;
     }
   }
@@ -175,16 +177,32 @@ public class Ball extends Circle {
   }
 
   private void respondToBlockCollision(Block block) {
-    blockConfiguration.decrementBlock(block);
     increaseScoreBy(10);
+
     if (block.hasPowerUp()) {
       PowerUpType powerUpType = block.getPowerUp().getPowerUpType();
       if (powerUpType == PowerUpType.MOVING_BLOCK) {
         increaseScoreBy(MovingBlockPowerUp.MOVING_BLOCK_SCORE_VALUE);
-      } else {
-        block.releasePowerUp();
+      } else if (block.getBlockHardness() == Block.MINIMUM_HARDNESS) {
+        handleFoundPowerUpInBlock(block);
       }
     }
+    blockConfiguration.decrementBlock(block, this);
+  }
+
+  private void handleFoundPowerUpInBlock(Block block) {
+    PowerUpType powerUpType = block.getPowerUp().getPowerUpType();
+      switch (powerUpType) {
+        case SLOW_BALL -> block.getPowerUp().setGameBall(this); // FIXME
+        case BREAKER_BALL -> block.getPowerUp().setGameBall(this);
+        case MOVING_BLOCK -> increaseScoreBy(MovingBlockPowerUp.MOVING_BLOCK_SCORE_VALUE);
+        case PADDLE -> paddle.setWidth(paddle.getWidth());
+        case P_LAST -> throw new IllegalStateException("This shouldn't be reached");
+      }
+      if (powerUpType != PowerUpType.MOVING_BLOCK) {
+        block.releasePowerUp();
+        block.setHasReleasedPowerUp(true);
+      }
   }
 
   private int getVelocityXFromPaddleHit() {
@@ -210,7 +228,9 @@ public class Ball extends Circle {
     return getCenterY() + BALL_RADIUS >= getScene().getHeight();
   }
 
-  public void setScore(int i) { ballScore = i; }
-  public void increaseScoreBy(int i) { ballScore+= i; }
-  public int getScore() { return ballScore; }
+  public void setScore(int i) { this.ballScore = i; }
+  public void increaseScoreBy(int i) { this.ballScore+= i; }
+  public int getScore() { return this.ballScore; }
+  public void setIsBreakerBall(boolean isBreakerBall) { this.isBreakerBall = isBreakerBall; }
+  public boolean isBreakerBall() { return this.isBreakerBall; }
 }

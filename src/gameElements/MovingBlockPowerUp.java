@@ -10,6 +10,7 @@ public class MovingBlockPowerUp extends PowerUp{
 
   public MovingBlockPowerUp(Group gameRootArg, Paddle paddleArg, Block blockArg) {
     super(gameRootArg, paddleArg, blockArg);
+    setPowerUpType(PowerUpType.MOVING_BLOCK);
   }
 
   @Override
