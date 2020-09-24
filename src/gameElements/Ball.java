@@ -193,10 +193,10 @@ public class Ball extends Circle {
   private void handleFoundPowerUpInBlock(Block block) {
     PowerUpType powerUpType = block.getPowerUp().getPowerUpType();
       switch (powerUpType) {
-        case SLOW_BALL, BREAKER_BALL -> block.getPowerUp().setGameBall(this);
-        case MOVING_BLOCK -> increaseScoreBy(MovingBlockPowerUp.MOVING_BLOCK_SCORE_VALUE);
-        case PADDLE -> paddle.setWidth(paddle.getWidth());
-        case P_LAST -> throw new IllegalStateException("This shouldn't be reached");
+        case SLOW_BALL, BREAKER_BALL : block.getPowerUp().setGameBall(this);
+        case MOVING_BLOCK : increaseScoreBy(MovingBlockPowerUp.MOVING_BLOCK_SCORE_VALUE);
+        case PADDLE : paddle.setWidth(paddle.getWidth());
+        case P_LAST : throw new IllegalStateException("This shouldn't be reached");
       }
       if (powerUpType != PowerUpType.MOVING_BLOCK) {
         block.releasePowerUp();
