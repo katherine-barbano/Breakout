@@ -11,26 +11,16 @@ public abstract class PowerUp extends Circle {
   private Group gameRoot;
   protected Paddle gamePaddle;
   private Block ownerBlock;
+  private PowerUpType powerUpType;
   private int velocityY;
   private boolean isReleased;
 
-  public static PowerUp makePowerUp(char hardnessChar, Level myLevel, Block createdBlock) {
-    PowerUp powerUp;
-    Group gameRoot = myLevel.getGameRoot();
-    Paddle gamePaddle = myLevel.getGamePaddle();
-    Block ownerBlock = createdBlock;
-    switch (hardnessChar) {
-      case 'S': powerUp = new SlowBallPowerUp(gameRoot, gamePaddle, ownerBlock);
-      case 'P': powerUp = new PaddlePowerUp(gameRoot, gamePaddle, ownerBlock);
-      case 'B': powerUp = new BreakerBallPowerUp(gameRoot, gamePaddle, ownerBlock);
-        break;
-      default:
-        throw new IllegalStateException("Unexpected value: " + hardnessChar);
-    }
-    return powerUp;
+  public enum PowerUpType {
+    BREAKER_BALL,
+    PADDLE,
+    MOVING_BLOCK,
+    SLOW_BALL
   }
-
-  public abstract void givePowerUp();
 
   public PowerUp(Group gameRootArg, Paddle paddleArg, Block blockArg) {
     gameRoot = gameRootArg;
@@ -39,12 +29,48 @@ public abstract class PowerUp extends Circle {
     setProperties();
   }
 
-  public PowerUp(char powerUpType, Level level, Block ownerBlock) {
+  public PowerUp(Level level, Block blockArg) {
+    // assumes level is not null
+    //PowerUp(level.getGameRoot(), level.getGamePaddle(), blockArg); FIXME: can you look at this? I'm not sure how to make this constructor a one liner.
     gameRoot = level.getGameRoot();
     gamePaddle = level.getGamePaddle();
-    ownerBlock = ownerBlock;
+    ownerBlock = blockArg;
+    setProperties();
 
+    gameRoot.getChildren().add(this);
   }
+
+  public static PowerUp makePowerUp(char hardnessChar, Level level, Block createdBlock) {
+    PowerUp powerUp;
+    Group gameRoot = level.getGameRoot();
+    Paddle gamePaddle = level.getGamePaddle();
+    Block ownerBlock = createdBlock;
+    switch (hardnessChar) {
+      case 'S':
+        powerUp = new SlowBallPowerUp(gameRoot, gamePaddle, ownerBlock);
+        powerUp.setPowerUpType(PowerUpType.SLOW_BALL);
+        break;
+      case 'P':
+        powerUp = new PaddlePowerUp(gameRoot, gamePaddle, ownerBlock);
+        powerUp.setPowerUpType(PowerUpType.PADDLE);
+        break;
+      case 'B':
+        powerUp = new BreakerBallPowerUp(gameRoot, gamePaddle, ownerBlock);
+        powerUp.setPowerUpType(PowerUpType.BREAKER_BALL);
+        break;
+      case 'M':
+        ownerBlock = new MovingBlock();
+        powerUp = new MovingBlockPowerUp(gameRoot, gamePaddle, ownerBlock);
+        powerUp.setPowerUpType(PowerUpType.MOVING_BLOCK);
+        break;
+      default:
+        throw new IllegalStateException("Unexpected value: " + hardnessChar);
+    }
+    gameRoot.getChildren().add(powerUp);
+    return powerUp;
+  }
+
+  public abstract void givePowerUp();
 
   void setProperties() {
     double centerX = GetXCenterOfBlock(getOwnerBlock());
@@ -59,6 +85,7 @@ public abstract class PowerUp extends Circle {
   public void showInScene() {
     velocityY = POWER_UP_DROP_SPEED;
     setIsReleased(true);
+    // FIXME GAME ROOT!!!
     addToScene();
   }
 
@@ -95,7 +122,14 @@ public abstract class PowerUp extends Circle {
     return y + ((height) / 2);
   }
 
-  private void addToScene() { if (! gameRoot.getChildren().contains(this)) gameRoot.getChildren().add(this); }
+  private void addToScene() {
+    assert (this != null); // FIXME for testing
+    assert (gameRoot != null);
+    assert (gameRoot.getChildren() != null);
+    if (! gameRoot.getChildren().contains(this)) {
+      gameRoot.getChildren().add(this);
+    }
+  }
   public void removeFromScene() { gameRoot.getChildren().remove(this); }
 
   private void updatePositionY(double elapsedTime) { setCenterY(getCenterY() + velocityY * elapsedTime); }
@@ -114,4 +148,7 @@ public abstract class PowerUp extends Circle {
 
   public int getVelocityY() { return velocityY; }
   public void setVelocityY(int velocityY) { this.velocityY = velocityY; }
+
+  public void setPowerUpType(PowerUpType type) { this.powerUpType = powerUpType; }
+  public PowerUpType getPowerUpType() { return powerUpType; }
 }

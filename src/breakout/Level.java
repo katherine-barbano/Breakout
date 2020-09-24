@@ -69,6 +69,7 @@ public class Level {
     this.levelConfiguration = new BlockConfiguration();
     this.levelConfiguration.setLevel(this);
     this.levelNumber = levelNumber;
+    this.gameRoot = gameRootArg;
 
     generateLevelConfiguration(gameName, levelNumber);
     initializeLevelProperties(gameRootArg);
@@ -76,10 +77,14 @@ public class Level {
 
   private void initializeLevelProperties(Group gameRootArg) {
     this.gameIsPaused = true;
-    this.gameRoot = gameRootArg;
     this.levelConfiguration.updateConfiguration(Game.SCENE_SIZE, Game.SCENE_SIZE);
-    //randomlyAssignPowerUps();
     System.out.println("Level has " + levelConfiguration.getNumberOfBlocksRemaining() + " blocks");
+  }
+
+  private void generateLevelConfiguration(String gameName, int levelNumber) {
+    String fileName = "level_" + levelNumber; // TODO
+    BlockConfiguration configuration = new BlockConfiguration(gameName, fileName, this);
+    this.levelConfiguration = configuration;
   }
 
   /***
@@ -98,12 +103,6 @@ public class Level {
   private void addBlocksToRoot() {
     List<Block> allBlocks = levelConfiguration.getBlocksAsList();
     gameRoot.getChildren().addAll(allBlocks);
-  }
-
-  private void generateLevelConfiguration(String gameName, int levelNumber) {
-    String fileName = "level_" + levelNumber; // TODO
-    BlockConfiguration configuration = new BlockConfiguration(gameName, fileName);
-    this.levelConfiguration = configuration;
   }
 
   /***
@@ -276,6 +275,8 @@ public class Level {
   public BlockConfiguration getLevelConfiguration() {
     return levelConfiguration;
   }
+
+  public void setLevelConfiguration(BlockConfiguration blockConfiguration) { this.levelConfiguration = blockConfiguration; }
 
   /***
    * Returns which level is currently being run

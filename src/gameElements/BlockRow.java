@@ -1,12 +1,20 @@
 package gameElements;
-
+import static gameElements.Block.BLOCKS_PER_ROW;
 /***
  *      Interface for a row of blocks in the block configuration. Its subclasses,
  *      MovingBlock and FilledBlockRow, should be instantiated.
  *
  *      Method: displayBlocks
  */
-public interface BlockRow {
+public abstract class BlockRow {
 
-  abstract Block[] getRowOfBlocks();
+  private Block[] rowOfBlocks;
+
+  public BlockRow() {
+    rowOfBlocks = new Block[BLOCKS_PER_ROW];
+  }
+
+  public Block[] getRowOfBlocks() { return rowOfBlocks; }
+  public void setRowOfBlocks(Block[] rowOfBlocks) { this.rowOfBlocks = rowOfBlocks; }
+
 }

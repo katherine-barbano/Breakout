@@ -32,7 +32,8 @@ public class Game {
   public static final int FRAMES_PER_SECOND = 60;
   public static final double SECOND_DELAY = 1.0 / FRAMES_PER_SECOND;
   public static final Paint BACKGROUND = Color.AZURE;
-  public static final String GAME_NAME = "sample_game_no_powerups";
+  //public static final String GAME_NAME = "sample_game_no_powerups";
+  public static final String GAME_NAME = "sample_game";
   public static final String[] NUMERICS = {"1", "2", "3", "4", "5","6","7","8","9","0"};
   public static final int LEVEL_ONE_INDEX = 0;
 
@@ -195,7 +196,7 @@ public class Game {
    * LevelIndex should be start indexed at 0.
    * @param levelIndex Index in Levels to show
    */
-  void resetGameToLevel(int levelIndex) {
+  public void resetGameToLevel(int levelIndex) {
     gameOverText.removeText();
     setLevelNumber(levelIndex);
     showCurrentLevel();
@@ -205,10 +206,14 @@ public class Game {
    * Sets the index of the level currently running to a new levelNumber.
    * @param levelNumber int of the level number to run
    */
-  void setLevelNumber(int levelNumber) { currentGameLevelIndex = levelNumber; }
+  public void setLevelNumber(int levelNumber) { currentGameLevelIndex = levelNumber; }
+  public int getLevelNumber() { return currentGameLevelIndex; }
+
 
   private void showCurrentLevel() {
-    gameLevels.get(currentGameLevelIndex).showLevel();
+    Level currentLevel = gameLevels.get(currentGameLevelIndex);
+    currentLevel.setGameRoot(gameRoot);
+    currentLevel.showLevel();
   }
 
   /***
@@ -217,6 +222,16 @@ public class Game {
    */
   public Level getCurrentGameLevel() { return gameLevels.get(currentGameLevelIndex); }
 
+
+  /**
+   * Sets the Level object currently running to levelArg.
+   * @param levelArg level to be displayed
+   * Unit testing purposes only.
+   */
+  public void setCurrentGameLevel(Level levelArg) {
+    levelArg.setGameRoot(gameRoot);
+    levelArg.showLevel();
+  }
   /***
    * Gets the Scene currently running the Game.
    * @return Scene object

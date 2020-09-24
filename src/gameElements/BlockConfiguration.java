@@ -21,15 +21,19 @@ public class BlockConfiguration {
   private File configFile;
   private BlockRow[] configRows;
   private int numberOfBlocksRemaining;
+  private int numberOfPowerUps;
 
   public BlockConfiguration () { new BlockConfiguration("",""); }
-  public BlockConfiguration(String gameName, String fileName) {
+  public BlockConfiguration(String gameName, String fileName) { new BlockConfiguration(gameName, fileName, null); }
+  public BlockConfiguration(String gameName, String fileName, Level level) {
+    setLevel(level);
     this.configRows = new BlockRow[NUMBER_OF_BLOCK_ROWS];
     if (!fileName.equals("")) {
       String filePath = generateFilePathForFile(gameName, fileName);
       generateBlockRowsFromFile(filePath); // Blocks are dimensionless
     }
   }
+
 
   void generateBlockRowsFromFile(String filePath) {
     try {
@@ -38,13 +42,39 @@ public class BlockConfiguration {
       for (int i = 0; i < NUMBER_OF_BLOCK_ROWS; i++) {
         if (fileReader.hasNextLine()) {
           String fileLine = fileReader.nextLine();
-          FilledBlockRow rowForFileLine = convertFileLineToBlockRow(fileLine);
-          configRows[i] = rowForFileLine;
+          if (containsMovingBlock(fileLine)) {
+            MovingBlockRow movingBlockRow = convertFileLineToMovingBlockRow(fileLine);
+            configRows[i] = movingBlockRow;
+          }
+          else {
+            FilledBlockRow rowForFileLine = convertFileLineToBlockRow(fileLine);
+            configRows[i] = rowForFileLine;
+          }
         }
       }
     } catch (FileNotFoundException e) {
       e.printStackTrace();
     }
+  }
+
+  private MovingBlockRow convertFileLineToMovingBlockRow(String fileLine) {
+    String[] hardnessArray = fileLine.split(" ");
+    Block[] blockArray = new Block[Block.BLOCKS_PER_ROW];
+    assert (blockArray.length == hardnessArray.length);
+
+    for (int i = 0; i < hardnessArray.length; i++) {
+      String hardness = hardnessArray[i];
+      if (hardness.equals("M")) {
+        MovingBlock onlyBlockThisRow = new MovingBlock();
+        onlyBlockThisRow.setRandomHardness();
+        blockArray[i] = onlyBlockThisRow;
+      } else {}
+      // TODO: this ^ should never happen
+    }
+
+    MovingBlockRow movingBlockRow = new MovingBlockRow();
+    movingBlockRow.setRowOfBlocks(blockArray);
+    return movingBlockRow;
   }
 
   // Assumes that fileRow is of format "X X X ".."X X X"
@@ -59,7 +89,7 @@ public class BlockConfiguration {
       blockArray[i] = newBlock;
     }
     FilledBlockRow blockRow = new FilledBlockRow();
-    blockRow.setBlocks(blockArray);
+    blockRow.setRowOfBlocks(blockArray);
     return blockRow;
   }
 
@@ -74,12 +104,19 @@ public class BlockConfiguration {
         numberOfBlocksRemaining++;
       }
     } else {
-      createdBlock = new Block();
-      createdBlock.setBlockHardness(Block.BLOCK_HARDNESS_ONE);
-      PowerUp createdPowerUp = PowerUp.makePowerUp(hardnessChar, myLevel, createdBlock);
-      createdBlock.setPowerUp(createdPowerUp);
-      numberOfBlocksRemaining++;
+      createdBlock = makeBlockWithPowerUp(hardnessChar);
     }
+    return createdBlock;
+  }
+
+  private Block makeBlockWithPowerUp(char hardnessChar) {
+    Block createdBlock = new Block();
+    createdBlock.setRandomHardness();
+    PowerUp createdPowerUp = PowerUp.makePowerUp(hardnessChar, myLevel, createdBlock);
+    createdBlock.setPowerUp(createdPowerUp);
+    createdBlock.setHasPowerUp(true);
+    numberOfPowerUps++;
+    numberOfBlocksRemaining++;
     return createdBlock;
   }
 
@@ -173,6 +210,13 @@ public class BlockConfiguration {
     return powerUpList;
   }
 
+  boolean containsMovingBlock(String fileLine) {
+    for (char key : fileLine.toCharArray()) {
+      if (key == 'M') return true;
+    }
+    return false;
+  }
+
   public void removeAllBlocks() {
     List<Block> blockList = getBlocksAsList();
     for (Block block : blockList) {
@@ -184,8 +228,8 @@ public class BlockConfiguration {
   public Level getLevel() {
     return myLevel;
   }
+  public void setLevel(Level myLevel) { this.myLevel = myLevel; }
 
-  public void setLevel(Level myLevel) {
-    this.myLevel = myLevel;
-  }
+  public int getNumberOfPowerUps() { return numberOfPowerUps; }
+  public void setNumberOfPowerUps(int powerUps) { this.numberOfPowerUps = powerUps; }
 }

@@ -22,19 +22,18 @@ public class Block extends Rectangle {
   public static final Paint BLOCK_COLOR_THREE = Color.PURPLE;
   public static final int BLOCKS_PER_ROW = 12;
   public static final int NUMBER_OF_BLOCK_ROWS = 8;
-  public static final int BLOCK_HARDNESS_ONE = 1;
+  public static final int MINIMUM_HARDNESS = 1;
+  public static final int MAXIMUM_HARDNESS = 3;
 
   private int blockHardness;
   private Paint blockColor;
   private PowerUp randomPowerUp;
+  private boolean hasPowerUp;
 
-  public Block() {
-  }
-
+  public Block() {}
   public Block(int sceneWidth, int sceneHeight, int blockHardness) {
     setDimensions(sceneWidth, sceneHeight);
-    this.blockHardness = blockHardness;
-
+    setBlockHardness(blockHardness);
     updateBlockColor();
     setFill(blockColor);
     setId("block");
@@ -96,31 +95,39 @@ public class Block extends Rectangle {
   public int getBlockHardness() {
     return blockHardness;
   }
-
   public void setBlockHardness(int blockHardness) {
     this.blockHardness = blockHardness;
   }
-
-  void decreaseHardnessByOne() {
-    blockHardness--;
+  // using Math.random()
+  // used https://stackoverflow.com/questions/363681/how-do-i-generate-random-integers-within-a-specific-range-in-java
+  public void setRandomHardness() {
+    int inclusiveRange = Block.MAXIMUM_HARDNESS - Block.MINIMUM_HARDNESS + 1;
+    int randomHardness = Block.MINIMUM_HARDNESS + (int)(Math.random() * inclusiveRange);
+    setBlockHardness(randomHardness);
   }
+  void decreaseHardnessByOne() { setBlockHardness(blockHardness-1); }
 
   public Paint getBlockColor() {
     return blockColor;
   }
-
   public void setBlockColor(Paint blockColor) {
     this.blockColor = blockColor;
   }
+
   public void removeFromScene() {
     setDimensions(0,0);
     setX(0.0);
     setY(0.0);
   }
 
-  boolean hasPowerUp() { return randomPowerUp != null; }
-  boolean hasReleasedPowerUp() { return randomPowerUp.isReleased(); }
+  public boolean hasPowerUp() { return hasPowerUp; }
+  public void setHasPowerUp(boolean powerUpBoolean) { hasPowerUp = powerUpBoolean; }
+
+  boolean hasReleasedPowerUp() { return randomPowerUp!= null && randomPowerUp.isReleased(); }
   public void setPowerUp(PowerUp powerUp) { randomPowerUp = powerUp; }
-  PowerUp getPowerUp() { return randomPowerUp; }
-  void releasePowerUp() { randomPowerUp.showInScene(); }
+  public PowerUp getPowerUp() { return randomPowerUp; }
+  void releasePowerUp() {
+    randomPowerUp.showInScene();
+    setHasPowerUp(false);
+  }
 }

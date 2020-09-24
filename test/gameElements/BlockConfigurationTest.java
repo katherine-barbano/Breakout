@@ -12,6 +12,8 @@ import static org.junit.jupiter.api.Assertions.*;
 import util.DukeApplicationTest;
 
 public class BlockConfigurationTest extends DukeApplicationTest {
+  public static final String GAME_TYPE = "sample_game";
+
   private Game game;
   private Ball ball;
   private Paddle paddle;
@@ -20,7 +22,7 @@ public class BlockConfigurationTest extends DukeApplicationTest {
   @Override
   public void start (Stage stage) {
     game = new Game(stage);
-
+    game.setLevelNumber(Game.LEVEL_ONE_INDEX);
     ball = lookup("#ball").query();
     paddle = lookup("#paddle").query();
   }
@@ -30,9 +32,6 @@ public class BlockConfigurationTest extends DukeApplicationTest {
     press(myScene, KeyCode.SPACE);
   }
 
-
-  // FIXME: both of these tests are recording 72, which means the blockConfig
-  // FIXME: is counting 0 hardness blocks which it should not do
   @Test
   void testNumBlocksRemaining() {
     testConfiguration = game.getCurrentGameLevel().getLevelConfiguration();
@@ -44,7 +43,7 @@ public class BlockConfigurationTest extends DukeApplicationTest {
     testConfiguration = game.getCurrentGameLevel().getLevelConfiguration();
     startAnimation();
 
-    for(int numSteps = 0; numSteps < 150; numSteps ++) {
+    for(int numSteps = 0; numSteps < 75; numSteps ++) {
       javafxRun(() -> game.step(Game.SECOND_DELAY));
     }
     assertEquals(59, testConfiguration.getNumberOfBlocksRemaining());
@@ -52,6 +51,20 @@ public class BlockConfigurationTest extends DukeApplicationTest {
 
   @Test
   void testPowerUpsExist() {
-    // TODO
+    testConfiguration = game.getCurrentGameLevel().getLevelConfiguration();
+    startAnimation();
+
+    for(int numSteps = 0; numSteps < 75; numSteps ++) {
+      javafxRun(() -> game.step(Game.SECOND_DELAY));
+    }
+
+    assertEquals(0, testConfiguration.getNumberOfPowerUps());
+  }
+
+  @Test
+  void testPowerUpsLevelTwo() {
+    game.setLevelNumber(Game.LEVEL_ONE_INDEX + 1);
+    testConfiguration = game.getCurrentGameLevel().getLevelConfiguration();
+    assertEquals(4, testConfiguration.getNumberOfPowerUps());
   }
 }

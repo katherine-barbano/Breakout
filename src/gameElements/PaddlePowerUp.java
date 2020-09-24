@@ -24,7 +24,4 @@ public class PaddlePowerUp extends PowerUp{
     setId("Paddle power up");
   }
 
-
-
-
 }

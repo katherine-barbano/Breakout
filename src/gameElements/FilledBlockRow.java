@@ -11,14 +11,10 @@ import static gameElements.Block.BLOCKS_PER_ROW;
  *
  *   Method: setBlocks, displayBlocks
  */
-public class FilledBlockRow implements BlockRow {
-  private Block[] rowOfBlocks;
+public class FilledBlockRow extends BlockRow {
 
   public FilledBlockRow () {
-    rowOfBlocks = new Block[BLOCKS_PER_ROW];
+    super();
   }
 
-  @Override
-  public Block[] getRowOfBlocks() { return (rowOfBlocks == null) ? new Block[BLOCKS_PER_ROW] : rowOfBlocks; }
-  void setBlocks(Block[] blocks) { this.rowOfBlocks = blocks; }
 }

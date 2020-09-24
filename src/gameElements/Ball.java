@@ -2,6 +2,7 @@ package gameElements;
 
 import breakout.Game;
 import breakout.Level;
+import gameElements.PowerUp.PowerUpType;
 import javafx.scene.Group;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
@@ -176,8 +177,14 @@ public class Ball extends Circle {
   private void respondToBlockCollision(Block block) {
     blockConfiguration.decrementBlock(block);
     increaseScoreBy(10);
-    if (block.hasPowerUp())
-      block.releasePowerUp();
+    if (block.hasPowerUp()) {
+      PowerUpType powerUpType = block.getPowerUp().getPowerUpType();
+      if (powerUpType == PowerUpType.MOVING_BLOCK) {
+        increaseScoreBy(MovingBlockPowerUp.MOVING_BLOCK_SCORE_VALUE);
+      } else {
+        block.releasePowerUp();
+      }
+    }
   }
 
   private int getVelocityXFromPaddleHit() {

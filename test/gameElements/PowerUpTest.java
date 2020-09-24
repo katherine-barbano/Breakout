@@ -3,6 +3,7 @@ package gameElements;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import breakout.Game;
+import breakout.Level;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
 import javafx.stage.Stage;
@@ -60,7 +61,9 @@ public class PowerUpTest extends DukeApplicationTest {
 
   @Test
   void testBallSlowsDown() {
-    // TODO
+    Level testLevel = new Level(game.getRoot(), "power_up_test_data", "slowBallPowerUp");
+    game.setCurrentGameLevel(testLevel);
+    assertEquals(8, testLevel.getLevelConfiguration().getNumberOfPowerUps());
   }
 
   @Test
