@@ -125,45 +125,36 @@ public class BlockConfiguration {
   private PowerUp makePowerUp(char hardnessChar, Level level, Block createdBlock) {
     Group gameRoot = level.getGameRoot();
     Paddle gamePaddle = level.getGamePaddle();
-
     PowerUp powerUp;
     switch (hardnessChar) {
       case 'S':
         powerUp = new SlowBallPowerUp(gameRoot, gamePaddle, createdBlock);
-        powerUp.setPowerUpType(PowerUpType.SLOW_BALL);
         break;
       case 'P':
         powerUp = new PaddlePowerUp(gameRoot, gamePaddle, createdBlock);
-        powerUp.setPowerUpType(PowerUpType.PADDLE);
         break;
       case 'B':
         powerUp = new BreakerBallPowerUp(gameRoot, gamePaddle, createdBlock);
-        powerUp.setPowerUpType(PowerUpType.BREAKER_BALL);
         break;
       case 'M':
         powerUp = new MovingBlockPowerUp(gameRoot, gamePaddle, createdBlock);
-        powerUp.setPowerUpType(PowerUpType.MOVING_BLOCK);
         break;
       default:
         throw new IllegalStateException("Unexpected value: " + hardnessChar);
     }
-    //gameRoot.getChildren().add(powerUp);
     return powerUp;
   }
 
   void decrementBlock(Block block, Ball ball) {
-    for (int i = 0; i < configRows.length; i++) {
-      BlockRow row = configRows[i];
-      for (int j = 0; j < row.getRowOfBlocks().length; j++) {
-        Block currentBlock = row.getRowOfBlocks()[j];
-        if (currentBlock != null && currentBlock.equals(block)) {
-          if (currentBlock.getBlockHardness() == 1 || ball.isBreakerBall()) {
-            currentBlock.removeFromScene();
-            decreaseNumberOfBlocksByOne();
-          } else {
-            currentBlock.decreaseHardnessByOne();
-            currentBlock.updateBlockColor();
-          }
+    List<Block> blocks = getBlocksAsList(); // FIXME
+    for (Block currentBlock : blocks) {
+      if (currentBlock != null && currentBlock.equals(block)) {
+        if (currentBlock.getBlockHardness() == 1 || ball.isBreakerBall()) {
+          currentBlock.removeFromScene();
+          decreaseNumberOfBlocksByOne();
+        } else {
+          currentBlock.decreaseHardnessByOne();
+          currentBlock.updateBlockColor();
         }
       }
     }
@@ -177,7 +168,8 @@ public class BlockConfiguration {
   public void updateConfiguration(int sceneWidth, int sceneHeight) {
     int blockWidth = sceneWidth / Block.BLOCKS_PER_ROW;
     int blockHeight = sceneHeight / (Block.NUMBER_OF_BLOCK_ROWS + 1);
-
+    // TODO: utilize getBlocksAsList()
+    // make delta i,j matrices to assign X and Y?
     for (int i = 0; i < configRows.length; i++) {
       BlockRow blockRow = configRows[i];
       if (blockRow == null) continue;

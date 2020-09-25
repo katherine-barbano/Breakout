@@ -36,8 +36,6 @@ public abstract class PowerUp extends Circle {
     gamePaddle = level.getGamePaddle();
     ownerBlock = blockArg;
     setProperties();
-
-    //gameRoot.getChildren().add(this);
   }
 
   public abstract void givePowerUp();
