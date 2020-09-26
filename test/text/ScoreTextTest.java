@@ -12,14 +12,13 @@ import util.DukeApplicationTest;
 
 public class ScoreTextTest extends DukeApplicationTest {
   private Game game;
-  private Ball ball;
-  private ScoreText scoreText;
+  private GameText scoreText;
   private Scene myScene;
 
   @Override
   public void start (Stage stage) {
     game = new Game(stage);
-    scoreText = game.getCurrentGameLevel().getScoreText();
+    scoreText = game.getScoreText();
   }
 
   public void startAnimation() {

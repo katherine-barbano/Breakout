@@ -13,13 +13,15 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
-import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import text.GameOverText;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import text.GameText;
+import text.ScoreText;
+import text.StatusText;
 
 /***
  * Handles the game flow over multiple Levels. Creates and initializes the Scene, Group, and
@@ -34,7 +36,8 @@ public class Game {
   public static final double SECOND_DELAY = 1.0 / FRAMES_PER_SECOND;
   public static final Paint BACKGROUND = Color.AZURE;
   //public static final String GAME_NAME = "sample_game_no_powerups";
-  public static final String GAME_NAME = "sample_game";
+  //public static final String GAME_NAME = "sample_game";
+  public static final String GAME_NAME = "game_for_testing_main";
   public static final String[] NUMERICS = {"1", "2", "3", "4", "5","6","7","8","9","0"};
   public static final int LEVEL_ONE_INDEX = 0;
   public static final int FINAL_LEVEL_INDEX = 2;
@@ -45,7 +48,8 @@ public class Game {
   private List<Level> gameLevels;
   private int totalScore;
   private int currentGameLevelIndex;
-  private GameOverText gameOverText;
+  private GameText gameOverText;
+  private GameText scoreText;
 
   /***
    * Constructor initializes gameScene and gameRoot, including key inputs,
@@ -80,12 +84,12 @@ public class Game {
   public void step (double elapsedTime) {
     Level currentLevel = getCurrentGameLevel();
     if (currentLevel.gameIsLost() || gameIsWon()) {
-      currentLevel.removeLevel();
       gameOver();
-    } else if (currentLevel.levelIsWon()) {
-      currentLevel.removeLevel();
+    }
+    else if (currentLevel.levelIsWon()) {
       resetGameToLevel(currentGameLevelIndex+1);
-    } else {
+    }
+    else {
       currentLevel.dropFoundPowerUps(elapsedTime);
       currentLevel.updatePositionMovingBlocks(elapsedTime);
       boolean ballIsValid = currentLevel.isBallValid(elapsedTime);
@@ -96,9 +100,12 @@ public class Game {
     updateGameScore(currentLevel);
   }
 
-  void updateGameScore(Level level) {
-    int levelScore = level.getScore();
-    level.setScore(levelScore);
+  public void updateGameScore(Level level) {
+    totalScore = level.getScore();
+
+    StatusText subclassUpdateValueText = (StatusText) scoreText;
+    subclassUpdateValueText.updateValue(totalScore);
+    scoreText = subclassUpdateValueText;
   }
 
   /***
@@ -106,12 +113,13 @@ public class Game {
    * @return Scene to be set as the gameScene
    */
   public Scene setupScene() {
+    totalScore = 0;
     gameRoot = new Group();
     gameOverText = new GameOverText(gameRoot);
+    scoreText = new ScoreText(totalScore,gameRoot);
 
-    totalScore = 0;
     initializeGameLevels();
-    resetGameToLevel(LEVEL_ONE_INDEX);
+    resetGameToLevelFirstTime(LEVEL_ONE_INDEX);
 
     Scene scene = new Scene(gameRoot, SCENE_SIZE, SCENE_SIZE, BACKGROUND);
     scene.setOnKeyPressed(e -> handleKeyInput(e.getCode()));
@@ -132,12 +140,10 @@ public class Game {
   private void handleMouseInput(MouseButton button) {
     //left mouse click
     if(button == MouseButton.PRIMARY && currentGameLevelIndex!=LEVEL_ONE_INDEX) {
-      getCurrentGameLevel().removeLevel();
       resetGameToLevel(currentGameLevelIndex-1);
     }
     //right mouse click
     else if(button == MouseButton.SECONDARY && currentGameLevelIndex!=gameLevels.size()-1) {
-      getCurrentGameLevel().removeLevel();
       resetGameToLevel(currentGameLevelIndex+1);
     }
   }
@@ -148,8 +154,12 @@ public class Game {
    */
   void gameOver() {
     Level currentLevel = getCurrentGameLevel();
-    currentLevel.removeScore();
-    gameOverText.gameOverUpdate(gameIsWon());
+    scoreText.removeText();
+
+    GameOverText subclassGameOverText = (GameOverText) gameOverText;
+    subclassGameOverText.gameOverUpdate(gameIsWon());
+    gameOverText = subclassGameOverText;
+
     currentLevel.removeLevel();
   }
 
@@ -198,7 +208,7 @@ public class Game {
   }
 
   private boolean gameIsWon() {
-    return getCurrentGameLevel().levelIsWon() && currentGameLevelIndex == gameLevels.size();
+    return getCurrentGameLevel().levelIsWon() && currentGameLevelIndex == gameLevels.size()-1;
   }
 
   // Getters and setters:
@@ -216,11 +226,21 @@ public class Game {
    * LevelIndex should be start indexed at 0.
    * @param levelIndex Index in Levels to show
    */
-  public void resetGameToLevel(int levelIndex) {
-    if (indexIsOutOfBounds(levelIndex)) return;
+  public void resetGameToLevelFirstTime(int levelIndex) {
+    if (indexIsOutOfBounds(levelIndex)) {
+      return;
+    }
+    initializeGameLevels();
     gameOverText.removeText();
     setLevelNumber(levelIndex);
     showCurrentLevel();
+    Level newLevel = gameLevels.get(levelIndex);
+    newLevel.increaseBallScore(totalScore);
+  }
+
+  public void resetGameToLevel(int levelIndex) {
+    getCurrentGameLevel().removeLevel();
+    resetGameToLevelFirstTime(levelIndex);
   }
 
   /**
@@ -231,6 +251,7 @@ public class Game {
   public void setCurrentGameLevel(Level levelArg) {
     gameOverText.removeText();
     levelArg.setGameRoot(gameRoot);
+    levelArg.increaseBallScore(totalScore);
     levelArg.showLevel();
   }
 
@@ -244,7 +265,7 @@ public class Game {
    * Gets the gameOverText object currently in the Game.
    * @return gameOverText object
    */
-  public GameOverText getGameOverText() {
+  public GameText getGameOverText() {
     return gameOverText;
   }
   public void setGameOverText(GameOverText text) { this.gameOverText = text; }
@@ -271,6 +292,11 @@ public class Game {
    * Sets the index of the level currently running to a new levelNumber.
    * @param levelNumber int of the level number to run
    */
-  public void setLevelNumber(int levelNumber) { currentGameLevelIndex = levelNumber; }
+  public void setLevelNumber(int levelNumber) {
+    currentGameLevelIndex = levelNumber;
+  }
   public int getLevelNumber() { return currentGameLevelIndex; }
+  public GameText getScoreText() {
+    return scoreText;
+  }
 }

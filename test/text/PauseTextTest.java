@@ -14,7 +14,7 @@ import util.DukeApplicationTest;
 public class PauseTextTest extends DukeApplicationTest {
   private Game game;
   private Ball ball;
-  private PauseText pauseText;
+  private GameText pauseText;
   private Scene myScene;
 
   @Override

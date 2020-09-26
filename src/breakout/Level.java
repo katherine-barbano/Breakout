@@ -3,17 +3,16 @@ package breakout;
 import gameElements.Ball;
 import gameElements.Block;
 import gameElements.BlockConfiguration;
-import gameElements.BlockRow;
-import gameElements.MovingBlock;
 import gameElements.Paddle;
-import gameElements.PaddlePowerUp;
 import gameElements.PowerUp;
 import java.util.List;
 import javafx.scene.Group;
 import javafx.scene.input.KeyCode;
+import text.GameText;
 import text.LivesText;
 import text.PauseText;
 import text.ScoreText;
+import text.StatusText;
 
 /***
  * Maintains gameElements for a single level of the game. Handles removal and addition of gameElements
@@ -29,9 +28,8 @@ public class Level {
   private int prevBallScore;
   private BlockConfiguration levelConfiguration;
   private boolean gameIsPaused;
-  private PauseText gamePauseText;
-  private LivesText gameLivesText;
-  private ScoreText gameScoreText;
+  private GameText gamePauseText;
+  private GameText gameLivesText;
   private Group gameRoot;
   private Ball gameBall; // TODO extension: List<Ball> myBalls, to accomodate multi-gameBall powerups
   private Paddle gamePaddle;
@@ -94,7 +92,6 @@ public class Level {
   public void showLevel() {
     this.gameLivesText = new LivesText(getLives(),gameRoot);
     this.gamePauseText = new PauseText(gameRoot);
-    this.gameScoreText = new ScoreText(gameRoot);
 
     setLives(INITIAL_NUMBER_LIVES);
     initializeNewBallAndPaddle();
@@ -161,12 +158,18 @@ public class Level {
   }
 
   private void pauseGame() {
-    gamePauseText.startPause();
+    PauseText subclassPauseText = (PauseText) gamePauseText;
+    subclassPauseText.startPause();
+    gamePauseText = subclassPauseText;
+
     gameIsPaused = true;
   }
 
   private void unpauseGame() {
-    gamePauseText.endPause();
+    PauseText subclassPauseText = (PauseText) gamePauseText;
+    subclassPauseText.endPause();
+    gamePauseText = subclassPauseText;
+
     gameIsPaused = false;
   }
 
@@ -231,7 +234,10 @@ public class Level {
 
   private void setLives(int lives) {
     levelLives = lives;
-    gameLivesText.updateLives(lives);
+
+    LivesText subclassLivesText = (LivesText) gameLivesText;
+    subclassLivesText.updateValue(lives);
+    gameLivesText = subclassLivesText;
   }
 
   // made public for unit testing
@@ -243,13 +249,13 @@ public class Level {
    * Returns the gameLivesText object for unit testing.
    * @return LivesText object for the Level
    */
-  public LivesText getLivesText() { return gameLivesText; }
+  public GameText getLivesText() { return gameLivesText; }
 
   /***
    * Returns the gamePauseText object for unit testing.
    * @return PauseText object for the Level
    */
-  public PauseText getPauseText() { return gamePauseText; }
+  public GameText getPauseText() { return gamePauseText; }
 
   /***
    * Returns whether there are 0 blocks left
@@ -293,13 +299,10 @@ public class Level {
     this.levelNumber = levelNumber;
   }
 
-  void setScore(int i) { gameScoreText.updateScore(i); }
-
   int getScore() { return prevBallScore + gameBall.getScore(); }
-
-  public void removeScore() { gameScoreText.removeText(); }
-
-  public ScoreText getScoreText() { return gameScoreText; }
+  void increaseBallScore(int points) {
+    gameBall.increaseScoreBy(points);
+  }
 
   public Group getGameRoot() { return gameRoot; }
   public void setGameRoot(Group gameRoot) { this.gameRoot = gameRoot; }

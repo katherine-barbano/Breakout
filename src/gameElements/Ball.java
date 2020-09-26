@@ -3,6 +3,7 @@ package gameElements;
 import breakout.Game;
 import breakout.Level;
 import gameElements.PowerUp.PowerUpType;
+import java.util.List;
 import javafx.scene.Group;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
@@ -38,7 +39,6 @@ public class Ball extends Circle {
     blockConfiguration = levelArg.getLevelConfiguration();
 
     setBallProperties();
-
     gameRoot.getChildren().add(this);
   }
 
@@ -62,6 +62,11 @@ public class Ball extends Circle {
       return false;
     }
     if (!isPaused) {
+      if (isTouchingBlockInBlockConfiguration()) {
+        updateVelocityXForBlockHit();
+        updateVelocityYForBlockHit();
+        respondToBlockCollision();
+      }
       updateVelocityX();
       updateVelocityY();
       updatePositionX(elapsedTime);
@@ -79,6 +84,15 @@ public class Ball extends Circle {
       setCenterX(paddle.getCenterX()+edgeOfBall);
     }
     setCenterX(getCenterX() + velocityX * elapsedTime);
+  }
+
+  private void updateCenterXForPaddle(double edgeOfBall){
+    if(paddle.isTouchingPaddleLeftSide(this)) {
+      setCenterX(paddle.getCenterX()-edgeOfBall);
+    }
+    else if(paddle.isTouchingPaddleRightSide(this)) {
+      setCenterX(paddle.getCenterX()+edgeOfBall);
+    }
   }
 
   private void updatePositionY(double elapsedTime) {
@@ -121,6 +135,7 @@ public class Ball extends Circle {
     if(!velocityCanBeUpdated) {
       return;
     }
+    // FIXME: can we extract this into a helper method?
     else if (isTouchingPaddleTop && velocityCanBeUpdated) {
       velocityX = getVelocityXFromPaddleHit();
     }
@@ -139,6 +154,22 @@ public class Ball extends Circle {
     velocityCanBeUpdated = false;
   }
 
+  private void updateVelocityXForBlockHit() {
+    Block touchedBlock = getBlockBallIsTouching();
+    if (touchedBlock == null) return;
+    if (touchedBlock.isTouchingLeftOrRight(this)) {
+        velocityX *= -1;
+    }
+  }
+
+  private void updateVelocityYForBlockHit() {
+    Block touchedBlock = getBlockBallIsTouching();
+    if (touchedBlock == null) return;
+    if (touchedBlock.isTouchingBottomOrTop(this)) {
+      velocityY *= -1;
+    }
+  }
+
   private void updateVelocityCanBeUpdated() {
     boolean notTouchingPaddleSides = !paddle.isTouchingPaddleLeftSide(this) && !paddle.isTouchingPaddleRightSide(this);
     boolean notTouchingPaddleTop = !paddle.isTouchingPaddleTop(this);
@@ -155,30 +186,36 @@ public class Ball extends Circle {
     if (isTouchingTopWall()) {
       velocityY = velocityY * -1;
     }
-    if (isTouchingBlockInBlockConfiguration() && !isBreakerBall) {
-      velocityY *= -1;
-    }
   }
 
   private boolean isTouchingBlockInBlockConfiguration() {
-    for (int i = 0; i < blockConfiguration.getBlockRows().length; i++) {
-      BlockRow blockRow = blockConfiguration.getBlockRows()[i];
-      if (blockRow == null) continue;
-      for (int j = 0; j < blockRow.getRowOfBlocks().length; j++) {
-        Block tempBlock = blockRow.getRowOfBlocks()[j];
-        if (tempBlock== null || tempBlock.getBlockHardness() == 0) continue;
-        if (tempBlock.isTouchingCircle(this)){
-          respondToBlockCollision(tempBlock);
-          return true;
-        }
-      }
+    List<Block> blockList = blockConfiguration.getBlocksAsList();
+    for (Block block : blockList) {
+      if (block== null || block.getBlockHardness() == 0) continue;
+      if (block.isTouchingCircle(this)) return true;
     }
     return false;
   }
 
-  private void respondToBlockCollision(Block block) {
-    increaseScoreBy(10);
+  private Block getBlockBallIsTouching() {
+    for (Block block : blockConfiguration.getBlocksAsList()) {
+      if (block== null || block.getBlockHardness() == 0) continue;
+      if (block.isTouchingCircle(this)) return block;
+    }
+    return null;
+  }
 
+  // TODO move into BlockConfiguration
+  private void respondToBlockCollision() {
+    Block block = getBlockBallIsTouching();
+    if (block == null) return;
+    blockConfiguration.findAndDecrementBlock(block, this);
+    increaseScoreBy(10);
+    handleBlockBehavior(block);
+  }
+
+  // TODO: move into higher level class
+  private void handleBlockBehavior(Block block) {
     if (block.hasPowerUp()) {
       PowerUpType powerUpType = block.getPowerUp().getPowerUpType();
       if (powerUpType == PowerUpType.MOVING_BLOCK) {
@@ -187,7 +224,6 @@ public class Ball extends Circle {
         handleFoundPowerUpInBlock(block);
       }
     }
-    blockConfiguration.decrementBlock(block, this);
   }
 
   private void handleFoundPowerUpInBlock(Block block) {
@@ -197,16 +233,13 @@ public class Ball extends Circle {
       case BREAKER_BALL: {
         block.getPowerUp().setGameBall(this);
         break;
-      }
-      case PADDLE: {
+      } case PADDLE: {
         paddle.setWidth(paddle.getWidth());
         break;
-      }
-      case MOVING_BLOCK: {
+      } case MOVING_BLOCK: {
         increaseScoreBy(MovingBlockPowerUp.MOVING_BLOCK_SCORE_VALUE);
         break;
-      }
-      default: {
+      } default: {
         throw new IllegalStateException("This shouldn't be reached");
       }
     }
