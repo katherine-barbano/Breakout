@@ -54,9 +54,7 @@ public class BlockConfiguration {
           }
         }
       }
-    } catch (FileNotFoundException e) {
-      e.printStackTrace();
-    }
+    } catch (FileNotFoundException e) {}
   }
 
   private MovingBlockRow convertFileLineToMovingBlockRow(String fileLine) {
@@ -145,19 +143,31 @@ public class BlockConfiguration {
     return powerUp;
   }
 
-  void decrementBlock(Block block, Ball ball) {
-    List<Block> blocks = getBlocksAsList(); // FIXME
-    for (Block currentBlock : blocks) {
-      if (currentBlock != null && currentBlock.equals(block)) {
-        if (currentBlock.getBlockHardness() == 1 || ball.isBreakerBall()) {
-          currentBlock.removeFromScene();
-          decreaseNumberOfBlocksByOne();
-        } else {
-          currentBlock.decreaseHardnessByOne();
-          currentBlock.updateBlockColor();
-        }
-      }
+  void findAndDecrementBlock(Block block, Ball ball) {
+    Block foundBlock = findBlock(block);
+    if (foundBlock == null) return;
+    if (foundBlock.getBlockHardness() == 1 || ball.isBreakerBall()) {
+      removeBlockFromConfiguration(foundBlock);
     }
+    else decrementBlock(foundBlock);
+  }
+
+  private Block findBlock(Block block) {
+    List<Block> blocks = getBlocksAsList();
+    for (Block currentBlock : blocks) {
+      if (currentBlock.equals(block)) return currentBlock;
+    }
+    return null;
+  }
+
+  private void removeBlockFromConfiguration(Block block) {
+    block.removeFromScene();
+    decreaseNumberOfBlocksByOne();
+  }
+
+  private void decrementBlock(Block block) {
+    block.decreaseHardnessByOne();
+    block.updateBlockColor();
   }
 
   /**

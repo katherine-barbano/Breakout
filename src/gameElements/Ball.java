@@ -187,7 +187,7 @@ public class Ball extends Circle {
         handleFoundPowerUpInBlock(block);
       }
     }
-    blockConfiguration.decrementBlock(block, this);
+    blockConfiguration.findAndDecrementBlock(block, this);
   }
 
   private void handleFoundPowerUpInBlock(Block block) {
