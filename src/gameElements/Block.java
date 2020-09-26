@@ -69,13 +69,6 @@ public class Block extends Rectangle {
     }
   }
 
-  public void updatePosition(int blockWidth, int blockHeight, int xOffset, int yOffset) {
-    setWidth(blockWidth);
-    setHeight(blockHeight);
-    setX(xOffset);
-    setY(yOffset);
-  }
-
   public boolean isTouchingCircle(Circle collisionCircle) {
     double R = Ball.BALL_RADIUS;
     double Xcoord = collisionCircle.getCenterX();
@@ -145,4 +138,32 @@ public class Block extends Rectangle {
 
   public void updateLocationAndVelocity(double elapsedTime, boolean gameIsPaused) { }
   public int getVelocity() { return 0; }
+
+  public boolean isTouchingLeftOrRight(Ball ball) {
+    double minCircleHeight = ball.getCenterY() - ball.getRadius();
+    double maxCircleHeight = ball.getCenterY() - ball.getRadius();
+    double maxBlockHeight = getHeight() + getY();
+    if (minCircleHeight < maxBlockHeight && maxCircleHeight > getY()) {
+      boolean touchingLeft = (ball.getCenterX() + ball.getRadius()) > getX();
+      boolean touchingRight = (ball.getCenterX() - ball.getRadius()) < getX() + getWidth();
+      return touchingLeft || touchingRight;
+    }
+    return false;
+  }
+
+  public boolean isTouchingBottomOrTop(Ball ball) {
+    double minCircleWidth = ball.getCenterX() - ball.getRadius();
+    double maxCircleWidth = ball.getCenterX() - ball.getRadius();
+    double minCircleHeight = ball.getCenterY() - ball.getRadius();
+    double maxCircleHeight = ball.getCenterY() - ball.getRadius();
+
+    double maxBlockWidth = getWidth() + getX();
+    double maxBlockHeight = getHeight() + getY();
+    if (minCircleWidth < maxBlockWidth && maxCircleWidth > getX()) {
+      boolean touchingTop = (maxCircleHeight > getY()) && (minCircleHeight < getY());
+      boolean touchingBottom = (minCircleHeight < maxBlockHeight) && (maxBlockWidth > maxBlockHeight);
+      return touchingTop || touchingBottom;
+    }
+    return false;
+  }
 }
