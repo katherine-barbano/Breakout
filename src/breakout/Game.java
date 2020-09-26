@@ -218,7 +218,10 @@ public class Game {
    * @param levelIndex Index in Levels to show
    */
   public void resetGameToLevelFirstTime(int levelIndex) {
-    if (indexIsOutOfBounds(levelIndex)) return;
+    if (indexIsOutOfBounds(levelIndex)) {
+      return;
+    }
+    initializeGameLevels();
     gameOverText.removeText();
     setLevelNumber(levelIndex);
     showCurrentLevel();
