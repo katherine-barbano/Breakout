@@ -19,7 +19,9 @@ import text.GameOverText;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import text.GameText;
 import text.ScoreText;
+import text.StatusText;
 
 /***
  * Handles the game flow over multiple Levels. Creates and initializes the Scene, Group, and
@@ -46,8 +48,8 @@ public class Game {
   private List<Level> gameLevels;
   private int totalScore;
   private int currentGameLevelIndex;
-  private GameOverText gameOverText;
-  private ScoreText scoreText;
+  private GameText gameOverText;
+  private GameText scoreText;
 
   /***
    * Constructor initializes gameScene and gameRoot, including key inputs,
@@ -100,7 +102,10 @@ public class Game {
 
   public void updateGameScore(Level level) {
     totalScore = level.getScore();
-    scoreText.updateValue(totalScore);
+
+    StatusText subclassUpdateValueText = (StatusText) scoreText;
+    subclassUpdateValueText.updateValue(totalScore);
+    scoreText = subclassUpdateValueText;
   }
 
   /***
@@ -150,7 +155,11 @@ public class Game {
   void gameOver() {
     Level currentLevel = getCurrentGameLevel();
     scoreText.removeText();
-    gameOverText.gameOverUpdate(gameIsWon());
+
+    GameOverText subclassGameOverText = (GameOverText) gameOverText;
+    subclassGameOverText.gameOverUpdate(gameIsWon());
+    gameOverText = subclassGameOverText;
+
     currentLevel.removeLevel();
   }
 
@@ -256,7 +265,7 @@ public class Game {
    * Gets the gameOverText object currently in the Game.
    * @return gameOverText object
    */
-  public GameOverText getGameOverText() {
+  public GameText getGameOverText() {
     return gameOverText;
   }
   public void setGameOverText(GameOverText text) { this.gameOverText = text; }
@@ -287,7 +296,7 @@ public class Game {
     currentGameLevelIndex = levelNumber;
   }
   public int getLevelNumber() { return currentGameLevelIndex; }
-  public ScoreText getScoreText() {
+  public GameText getScoreText() {
     return scoreText;
   }
 }

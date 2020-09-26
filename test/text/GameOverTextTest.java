@@ -12,7 +12,7 @@ import util.DukeApplicationTest;
 public class GameOverTextTest extends DukeApplicationTest{
   private Game game;
   private Ball ball;
-  private GameOverText gameOverText;
+  private GameText gameOverText;
   private Scene myScene;
 
   @Override
