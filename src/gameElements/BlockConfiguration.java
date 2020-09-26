@@ -178,6 +178,7 @@ public class BlockConfiguration {
   public void updateConfiguration(int sceneWidth, int sceneHeight) {
     int blockWidth = sceneWidth / Block.BLOCKS_PER_ROW;
     int blockHeight = sceneHeight / (Block.NUMBER_OF_BLOCK_ROWS + 1);
+
     // TODO: utilize getBlocksAsList()
     // make delta i,j matrices to assign X and Y?
     for (int i = 0; i < configRows.length; i++) {
@@ -197,26 +198,10 @@ public class BlockConfiguration {
     }
   }
 
-  String generateFilePathForFile(String gameName, String fileName) { return FILE_SOURCE_PATH + gameName + "/" + fileName + ".txt"; }
-
-  public BlockRow[] getBlockRows() { return configRows; }
-
-  void setConfigFile(File configFile) { this.configFile = configFile; }
-
-  void decreaseNumberOfBlocksByOne() { numberOfBlocksRemaining--; }
-  void setNumberOfBlocksRemaining(int numberOfBlocksRemaining) { this.numberOfBlocksRemaining = numberOfBlocksRemaining; }
-  public int getNumberOfBlocksRemaining() { return numberOfBlocksRemaining; }
-  boolean isEmpty() { return (numberOfBlocksRemaining == 0);}
-
   Block getBlock(int row, int col) {
     BlockRow blockRow = getBlockRows()[row];
     Block block = blockRow.getRowOfBlocks()[col];
     return block;
-  }
-
-  int getBlockHeight(int sceneHeight) {
-    return (sceneHeight - Paddle.VERTICAL_PADDLE_OFFSET_FROM_BOTTOM - Paddle.PADDLE_HEIGHT) /
-        (Block.NUMBER_OF_BLOCK_ROWS + 1);
   }
 
   public List<Block> getBlocksAsList() {
@@ -233,14 +218,10 @@ public class BlockConfiguration {
 
   public List<PowerUp> getVisiblePowerUps() {
     List<PowerUp> powerUpList = new ArrayList<>();
-    for (BlockRow blockRow : configRows) {
-      if (blockRow != null && blockRow.getRowOfBlocks() != null) {
-        for (Block block : blockRow.getRowOfBlocks()) {
-          if (block != null && block.hasReleasedPowerUp()) {
-
-            powerUpList.add(block.getPowerUp());
-          }
-        }
+    List<Block> blockList = getBlocksAsList();
+    for (Block block : blockList) {
+      if (block != null && block.hasReleasedPowerUp()) {
+        powerUpList.add(block.getPowerUp());
       }
     }
     return powerUpList;
@@ -248,14 +229,10 @@ public class BlockConfiguration {
 
   public List<Block> getMovingBlocks() {
     List<Block> movingBlockList = new ArrayList<>();
-    for (BlockRow blockRow : configRows) {
-      if (blockRow != null && blockRow instanceof MovingBlockRow) {
-        Block[] movingBlocks = blockRow.getRowOfBlocks();
-        for (Block block : movingBlocks) {
-          if (block != null && block instanceof MovingBlock)
-            movingBlockList.add((MovingBlock) block); // FIXME: cast is redundant
-        }
-      }
+    List<Block> blockList = getBlocksAsList();
+    for (Block block : blockList) {
+      if (block != null && block instanceof MovingBlock)
+        movingBlockList.add(block);
     }
     return movingBlockList;
   }
@@ -279,7 +256,16 @@ public class BlockConfiguration {
     return myLevel;
   }
   public void setLevel(Level myLevel) { this.myLevel = myLevel; }
+  String generateFilePathForFile(String gameName, String fileName) { return FILE_SOURCE_PATH + gameName + "/" + fileName + ".txt"; }
 
+  public BlockRow[] getBlockRows() { return configRows; }
+
+  void setConfigFile(File configFile) { this.configFile = configFile; }
+
+  void decreaseNumberOfBlocksByOne() { numberOfBlocksRemaining--; }
+  void setNumberOfBlocksRemaining(int numberOfBlocksRemaining) { this.numberOfBlocksRemaining = numberOfBlocksRemaining; }
+  public int getNumberOfBlocksRemaining() { return numberOfBlocksRemaining; }
+  boolean isEmpty() { return (numberOfBlocksRemaining == 0);}
   public int getNumberOfPowerUps() { return numberOfPowerUps; }
   public void setNumberOfPowerUps(int powerUps) { this.numberOfPowerUps = powerUps; }
 }
