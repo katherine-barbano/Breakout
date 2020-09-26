@@ -13,7 +13,6 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
-import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import text.GameOverText;
@@ -35,7 +34,8 @@ public class Game {
   public static final double SECOND_DELAY = 1.0 / FRAMES_PER_SECOND;
   public static final Paint BACKGROUND = Color.AZURE;
   //public static final String GAME_NAME = "sample_game_no_powerups";
-  public static final String GAME_NAME = "sample_game";
+  //public static final String GAME_NAME = "sample_game";
+  public static final String GAME_NAME = "game_for_testing_main";
   public static final String[] NUMERICS = {"1", "2", "3", "4", "5","6","7","8","9","0"};
   public static final int LEVEL_ONE_INDEX = 0;
   public static final int FINAL_LEVEL_INDEX = 2;
@@ -82,10 +82,8 @@ public class Game {
   public void step (double elapsedTime) {
     Level currentLevel = getCurrentGameLevel();
     if (currentLevel.gameIsLost() || gameIsWon()) {
-      currentLevel.removeLevel();
       gameOver();
     } else if (currentLevel.levelIsWon()) {
-      currentLevel.removeLevel();
       resetGameToLevel(currentGameLevelIndex+1);
     } else {
       currentLevel.dropFoundPowerUps(elapsedTime);
@@ -114,7 +112,7 @@ public class Game {
     scoreText = new ScoreText(totalScore,gameRoot);
 
     initializeGameLevels();
-    resetGameToLevel(LEVEL_ONE_INDEX);
+    resetGameToLevelFirstTime(LEVEL_ONE_INDEX);
 
     Scene scene = new Scene(gameRoot, SCENE_SIZE, SCENE_SIZE, BACKGROUND);
     scene.setOnKeyPressed(e -> handleKeyInput(e.getCode()));
@@ -135,12 +133,10 @@ public class Game {
   private void handleMouseInput(MouseButton button) {
     //left mouse click
     if(button == MouseButton.PRIMARY && currentGameLevelIndex!=LEVEL_ONE_INDEX) {
-      getCurrentGameLevel().removeLevel();
       resetGameToLevel(currentGameLevelIndex-1);
     }
     //right mouse click
     else if(button == MouseButton.SECONDARY && currentGameLevelIndex!=gameLevels.size()-1) {
-      getCurrentGameLevel().removeLevel();
       resetGameToLevel(currentGameLevelIndex+1);
     }
   }
@@ -219,13 +215,18 @@ public class Game {
    * LevelIndex should be start indexed at 0.
    * @param levelIndex Index in Levels to show
    */
-  public void resetGameToLevel(int levelIndex) {
+  public void resetGameToLevelFirstTime(int levelIndex) {
     if (indexIsOutOfBounds(levelIndex)) return;
     gameOverText.removeText();
     setLevelNumber(levelIndex);
     showCurrentLevel();
     Level newLevel = gameLevels.get(levelIndex);
     newLevel.increaseBallScore(totalScore);
+  }
+
+  public void resetGameToLevel(int levelIndex) {
+    getCurrentGameLevel().removeLevel();
+    resetGameToLevelFirstTime(levelIndex);
   }
 
   /**
