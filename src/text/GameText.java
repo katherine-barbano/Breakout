@@ -18,6 +18,7 @@ public abstract class GameText extends Text {
   }
 
   abstract void initializeText(String words);
+  abstract void updateText(String text);
 
   void initializeProperties(String text, int x, int y, String id) {
     setText(text);

@@ -1,10 +1,6 @@
 package text;
 
 import javafx.scene.Group;
-import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
-import javafx.scene.text.Font;
-import javafx.scene.text.Text;
 
 public class PauseText extends GameText {
 
@@ -26,15 +22,19 @@ public class PauseText extends GameText {
     initializeProperties(words, PAUSE_XPOSITION, PAUSE_YPOSITION, PAUSE_ID);
   }
 
-  public void startGame() {
-    initializeText(START_TITLE);
+  @Override
+  void updateText(String words) {
+    initializeText(words);
     addText();
+  }
+
+  public void startGame() {
+    updateText(START_TITLE);
   }
 
   public void startPause() {
     removeText();
-    initializeText(PAUSE_TITLE);
-    addText();
+    updateText(PAUSE_TITLE);
   }
 
   public void endPause() {

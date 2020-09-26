@@ -231,7 +231,7 @@ public class Level {
 
   private void setLives(int lives) {
     levelLives = lives;
-    gameLivesText.updateLives(lives);
+    gameLivesText.updateValue(lives);
   }
 
   // made public for unit testing
@@ -293,7 +293,7 @@ public class Level {
     this.levelNumber = levelNumber;
   }
 
-  void setScore(int i) { gameScoreText.updateScore(i); }
+  void setScore(int i) { gameScoreText.updateValue(i); }
 
   int getScore() { return prevBallScore + gameBall.getScore(); }
 

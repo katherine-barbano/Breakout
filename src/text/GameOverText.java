@@ -1,9 +1,6 @@
 package text;
 
 import javafx.scene.Group;
-import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
-import javafx.scene.text.Font;
 
 public class GameOverText extends GameText {
 
@@ -30,12 +27,17 @@ public class GameOverText extends GameText {
     setText("");
   }
 
+  @Override
+  void updateText(String words) {
+    setText(words);
+  }
+
   public void gameOverUpdate(boolean gameIsWon) {
     if(gameIsWon) {
-      setText(GAMEWON_TITLE);
+      updateText(GAMEWON_TITLE);
     }
     else {
-      setText(GAMEOVER_TITLE);
+      updateText(GAMEOVER_TITLE);
     }
   }
 }
