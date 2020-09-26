@@ -3,10 +3,7 @@ package breakout;
 import gameElements.Ball;
 import gameElements.Block;
 import gameElements.BlockConfiguration;
-import gameElements.BlockRow;
-import gameElements.MovingBlock;
 import gameElements.Paddle;
-import gameElements.PaddlePowerUp;
 import gameElements.PowerUp;
 import java.util.List;
 import javafx.scene.Group;
@@ -31,7 +28,6 @@ public class Level {
   private boolean gameIsPaused;
   private PauseText gamePauseText;
   private LivesText gameLivesText;
-  private ScoreText gameScoreText;
   private Group gameRoot;
   private Ball gameBall; // TODO extension: List<Ball> myBalls, to accomodate multi-gameBall powerups
   private Paddle gamePaddle;
@@ -94,7 +90,6 @@ public class Level {
   public void showLevel() {
     this.gameLivesText = new LivesText(getLives(),gameRoot);
     this.gamePauseText = new PauseText(gameRoot);
-    this.gameScoreText = new ScoreText(gameRoot);
 
     setLives(INITIAL_NUMBER_LIVES);
     initializeNewBallAndPaddle();
@@ -293,13 +288,10 @@ public class Level {
     this.levelNumber = levelNumber;
   }
 
-  void setScore(int i) { gameScoreText.updateValue(i); }
-
   int getScore() { return prevBallScore + gameBall.getScore(); }
-
-  public void removeScore() { gameScoreText.removeText(); }
-
-  public ScoreText getScoreText() { return gameScoreText; }
+  void increaseBallScore(int points) {
+    gameBall.increaseScoreBy(points);
+  }
 
   public Group getGameRoot() { return gameRoot; }
   public void setGameRoot(Group gameRoot) { this.gameRoot = gameRoot; }

@@ -9,7 +9,7 @@ public class ScoreText extends StatusText {
   public static final int SCORE_YPOSITION = 40;
   public static final String SCORE_ID = "#scoreText";
 
-  public ScoreText(Group gameRootArg) {
-    super(gameRootArg,0, SCORE_TITLE,SCORE_XPOSITION,SCORE_YPOSITION,SCORE_ID);
+  public ScoreText(int score, Group gameRootArg) {
+    super(gameRootArg,score, SCORE_TITLE,SCORE_XPOSITION,SCORE_YPOSITION,SCORE_ID);
   }
 }

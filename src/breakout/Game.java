@@ -20,6 +20,7 @@ import text.GameOverText;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import text.ScoreText;
 
 /***
  * Handles the game flow over multiple Levels. Creates and initializes the Scene, Group, and
@@ -46,6 +47,7 @@ public class Game {
   private int totalScore;
   private int currentGameLevelIndex;
   private GameOverText gameOverText;
+  private ScoreText scoreText;
 
   /***
    * Constructor initializes gameScene and gameRoot, including key inputs,
@@ -96,9 +98,9 @@ public class Game {
     updateGameScore(currentLevel);
   }
 
-  void updateGameScore(Level level) {
-    int levelScore = level.getScore();
-    level.setScore(levelScore);
+  public void updateGameScore(Level level) {
+    totalScore = level.getScore();
+    scoreText.updateValue(totalScore);
   }
 
   /***
@@ -106,10 +108,11 @@ public class Game {
    * @return Scene to be set as the gameScene
    */
   public Scene setupScene() {
+    totalScore = 0;
     gameRoot = new Group();
     gameOverText = new GameOverText(gameRoot);
+    scoreText = new ScoreText(totalScore,gameRoot);
 
-    totalScore = 0;
     initializeGameLevels();
     resetGameToLevel(LEVEL_ONE_INDEX);
 
@@ -148,7 +151,7 @@ public class Game {
    */
   void gameOver() {
     Level currentLevel = getCurrentGameLevel();
-    currentLevel.removeScore();
+    scoreText.removeText();
     gameOverText.gameOverUpdate(gameIsWon());
     currentLevel.removeLevel();
   }
@@ -221,6 +224,8 @@ public class Game {
     gameOverText.removeText();
     setLevelNumber(levelIndex);
     showCurrentLevel();
+    Level newLevel = gameLevels.get(levelIndex);
+    newLevel.increaseBallScore(totalScore);
   }
 
   /**
@@ -231,6 +236,7 @@ public class Game {
   public void setCurrentGameLevel(Level levelArg) {
     gameOverText.removeText();
     levelArg.setGameRoot(gameRoot);
+    levelArg.increaseBallScore(totalScore);
     levelArg.showLevel();
   }
 
@@ -271,6 +277,11 @@ public class Game {
    * Sets the index of the level currently running to a new levelNumber.
    * @param levelNumber int of the level number to run
    */
-  public void setLevelNumber(int levelNumber) { currentGameLevelIndex = levelNumber; }
+  public void setLevelNumber(int levelNumber) {
+    currentGameLevelIndex = levelNumber;
+  }
   public int getLevelNumber() { return currentGameLevelIndex; }
+  public ScoreText getScoreText() {
+    return scoreText;
+  }
 }
