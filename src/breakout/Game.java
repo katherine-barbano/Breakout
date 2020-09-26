@@ -83,9 +83,11 @@ public class Game {
     Level currentLevel = getCurrentGameLevel();
     if (currentLevel.gameIsLost() || gameIsWon()) {
       gameOver();
-    } else if (currentLevel.levelIsWon()) {
+    }
+    else if (currentLevel.levelIsWon()) {
       resetGameToLevel(currentGameLevelIndex+1);
-    } else {
+    }
+    else {
       currentLevel.dropFoundPowerUps(elapsedTime);
       currentLevel.updatePositionMovingBlocks(elapsedTime);
       boolean ballIsValid = currentLevel.isBallValid(elapsedTime);
@@ -197,7 +199,7 @@ public class Game {
   }
 
   private boolean gameIsWon() {
-    return getCurrentGameLevel().levelIsWon() && currentGameLevelIndex == gameLevels.size();
+    return getCurrentGameLevel().levelIsWon() && currentGameLevelIndex == gameLevels.size()-1;
   }
 
   // Getters and setters:
