@@ -8,6 +8,7 @@ import text.GameText;
 import text.LivesText;
 import text.PauseText;
 import text.StatusText;
+import text.TimerText;
 
 public class InfoBar extends Rectangle {
 
@@ -18,7 +19,9 @@ public class InfoBar extends Rectangle {
   private GameText scoreText;
   private GameText livesText;
   private GameText levelText;
+  private GameTimer gameTimer;
   private Group root;
+
   public InfoBar(GameText scoreText,Group root) {
     super(0,0,Game.SCENE_SIZE,INFO_BAR_HEIGHT);
     setFill(INFO_BAR_COLOR);
@@ -31,6 +34,7 @@ public class InfoBar extends Rectangle {
     this.pauseText = pauseText;
     this.livesText = livesText;
     this.levelText = levelText;
+    this.gameTimer = new GameTimer(root);
     scoreText.removeText();
     scoreText.addText();
   }

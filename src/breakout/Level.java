@@ -3,6 +3,7 @@ package breakout;
 import gameElements.Ball;
 import gameElements.Block;
 import gameElements.BlockConfiguration;
+import gameElements.GameTimer;
 import gameElements.InfoBar;
 import gameElements.Paddle;
 import gameElements.PowerUp;
