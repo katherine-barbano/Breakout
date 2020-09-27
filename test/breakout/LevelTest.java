@@ -77,13 +77,13 @@ public class LevelTest extends DukeApplicationTest {
     assertEquals(150,ball.getVelocityY());
 
     assertEquals(300, ball.getCenterX());
-    assertEquals(555, ball.getCenterY());
+    assertEquals(605, ball.getCenterY());
   }
 
   private void ballTouchesGround() {
     ball = lookup("#ball").query();
     ball.setCenterX(20);
-    ball.setCenterY(585);
+    ball.setCenterY(635);
     ball.setVelocityX(0);
     ball.setVelocityY(150);
 

@@ -38,7 +38,7 @@ public class PauseTextTest extends DukeApplicationTest {
   void cheatKeyPauseAndUnpause() {
     startAnimation();
     press(myScene, KeyCode.SPACE);
-    assertEquals("Paused. Resume with space bar",pauseText.getText());
+    assertEquals("Paused. Resume with space",pauseText.getText());
     press(myScene, KeyCode.SPACE);
     Group root = game.getRoot();
     assertFalse(root.getChildren().contains(pauseText));
@@ -54,7 +54,7 @@ public class PauseTextTest extends DukeApplicationTest {
   private void ballTouchesGround() {
     ball = lookup("#ball").query();
     ball.setCenterX(20);
-    ball.setCenterY(585);
+    ball.setCenterY(635);
     ball.setVelocityX(0);
     ball.setVelocityY(150);
 

@@ -47,7 +47,7 @@ public class GameOverTextTest extends DukeApplicationTest{
   private void ballTouchesGround() {
     ball = lookup("#ball").query();
     ball.setCenterX(20);
-    ball.setCenterY(585);
+    ball.setCenterY(635);
     ball.setVelocityX(0);
     ball.setVelocityY(150);
 
