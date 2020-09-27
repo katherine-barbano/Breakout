@@ -9,6 +9,7 @@ import java.util.List;
 import javafx.scene.Group;
 import javafx.scene.input.KeyCode;
 import text.GameText;
+import text.LevelText;
 import text.LivesText;
 import text.PauseText;
 import text.ScoreText;
@@ -30,6 +31,7 @@ public class Level {
   private boolean gameIsPaused;
   private GameText gamePauseText;
   private GameText gameLivesText;
+  private GameText gameLevelText;
   private Group gameRoot;
   private Ball gameBall; // TODO extension: List<Ball> myBalls, to accomodate multi-gameBall powerups
   private Paddle gamePaddle;
@@ -92,6 +94,7 @@ public class Level {
   public void showLevel() {
     this.gameLivesText = new LivesText(getLives(),gameRoot);
     this.gamePauseText = new PauseText(gameRoot);
+    this.gameLevelText = new LevelText(getLevelNumber(),gameRoot);
 
     setLives(INITIAL_NUMBER_LIVES);
     initializeNewBallAndPaddle();
@@ -219,6 +222,7 @@ public class Level {
   void removeLevel() {
     gameLivesText.removeText();
     gamePauseText.removeText();
+    gameLevelText.removeText();
     gamePaddle.removePaddle();
     gameBall.removeBall();
     levelConfiguration.removeAllBlocks();
@@ -250,6 +254,10 @@ public class Level {
    * @return LivesText object for the Level
    */
   public GameText getLivesText() { return gameLivesText; }
+
+  public GameText getLevelText() {
+    return gameLevelText;
+  }
 
   /***
    * Returns the gamePauseText object for unit testing.
