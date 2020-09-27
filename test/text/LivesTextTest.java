@@ -19,7 +19,7 @@ public class LivesTextTest extends DukeApplicationTest {
   @Override
   public void start (Stage stage) {
     game = new Game(stage);
-    livesText = game.getCurrentGameLevel().getLivesText();
+    livesText = game.getCurrentGameLevel().getInfoBar().getLivesText();
   }
 
   public void startAnimation() {

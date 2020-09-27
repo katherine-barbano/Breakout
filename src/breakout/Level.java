@@ -3,6 +3,7 @@ package breakout;
 import gameElements.Ball;
 import gameElements.Block;
 import gameElements.BlockConfiguration;
+import gameElements.InfoBar;
 import gameElements.Paddle;
 import gameElements.PowerUp;
 import java.util.List;
@@ -12,8 +13,6 @@ import text.GameText;
 import text.LevelText;
 import text.LivesText;
 import text.PauseText;
-import text.ScoreText;
-import text.StatusText;
 
 /***
  * Maintains gameElements for a single level of the game. Handles removal and addition of gameElements
@@ -29,9 +28,7 @@ public class Level {
   private int prevBallScore;
   private BlockConfiguration levelConfiguration;
   private boolean gameIsPaused;
-  private GameText gamePauseText;
-  private GameText gameLivesText;
-  private GameText gameLevelText;
+  private InfoBar infoBar;
   private Group gameRoot;
   private Ball gameBall; // TODO extension: List<Ball> myBalls, to accomodate multi-gameBall powerups
   private Paddle gamePaddle;
@@ -46,10 +43,11 @@ public class Level {
    * @param gameName String of the directory of the Game being run within the data folder
    * @param fileName String of the filename of the Level to instantiate
    */
-  public Level(Group gameRootArg, String gameName, String fileName) {
+  public Level(Group gameRootArg, String gameName, String fileName, InfoBar infoBar) {
     this.levelConfiguration = new BlockConfiguration(gameName, fileName, this);
     this.levelNumber = 0;
     this.prevBallScore = 0;
+    this.infoBar = infoBar;
 
     initializeLevelProperties(gameRootArg);
   }
@@ -66,11 +64,12 @@ public class Level {
    * @param gameRootArg Group root for a scene
    * @param levelNumber Number of the level to instantiate
    */
-  public Level(Group gameRootArg, String gameName, int levelNumber) {
+  public Level(Group gameRootArg, String gameName, int levelNumber, InfoBar infoBar) {
     this.levelConfiguration = new BlockConfiguration();
     this.levelConfiguration.setLevel(this);
     this.levelNumber = levelNumber;
     this.gameRoot = gameRootArg;
+    this.infoBar = infoBar;
 
     generateLevelConfiguration(gameName, levelNumber);
     initializeLevelProperties(gameRootArg);
@@ -78,7 +77,7 @@ public class Level {
 
   private void initializeLevelProperties(Group gameRootArg) {
     this.gameIsPaused = true;
-    this.levelConfiguration.updateConfiguration(Game.SCENE_SIZE, Game.SCENE_SIZE);
+    this.levelConfiguration.updateConfiguration(Game.PLAYABLE_AREA_SIZE, Game.SCENE_SIZE);
     System.out.println("Level has " + levelConfiguration.getNumberOfBlocksRemaining() + " blocks");
   }
 
@@ -92,9 +91,10 @@ public class Level {
    * Display the current level on the screen
    */
   public void showLevel() {
-    this.gameLivesText = new LivesText(getLives(),gameRoot);
-    this.gamePauseText = new PauseText(gameRoot);
-    this.gameLevelText = new LevelText(getLevelNumber(),gameRoot);
+    GameText gameLivesText = new LivesText(getLives(),gameRoot);
+    GameText gamePauseText = new PauseText(gameRoot);
+    GameText gameLevelText = new LevelText(getLevelNumber(),gameRoot);
+    infoBar.initializeLevelSpecificText(gamePauseText,gameLivesText,gameLevelText);
 
     setLives(INITIAL_NUMBER_LIVES);
     initializeNewBallAndPaddle();
@@ -161,26 +161,18 @@ public class Level {
   }
 
   private void pauseGame() {
-    PauseText subclassPauseText = (PauseText) gamePauseText;
-    subclassPauseText.startPause();
-    gamePauseText = subclassPauseText;
-
+    infoBar.initiatePauseInText();
     gameIsPaused = true;
   }
 
   private void unpauseGame() {
-    PauseText subclassPauseText = (PauseText) gamePauseText;
-    subclassPauseText.endPause();
-    gamePauseText = subclassPauseText;
-
+    infoBar.initiateUnpauseInText();
     gameIsPaused = false;
   }
 
   private void resetPosition() {
     gameIsPaused = true;
-    gamePauseText.removeText();
-    gamePauseText = new PauseText(gameRoot);
-
+    infoBar.resetPauseText(gameRoot);
     resetBallAndPaddle();
   }
 
@@ -220,9 +212,7 @@ public class Level {
    * the Scene.
    */
   void removeLevel() {
-    gameLivesText.removeText();
-    gamePauseText.removeText();
-    gameLevelText.removeText();
+    infoBar.removeAllLevelSpecificText();
     gamePaddle.removePaddle();
     gameBall.removeBall();
     levelConfiguration.removeAllBlocks();
@@ -238,32 +228,13 @@ public class Level {
 
   private void setLives(int lives) {
     levelLives = lives;
-
-    LivesText subclassLivesText = (LivesText) gameLivesText;
-    subclassLivesText.updateValue(lives);
-    gameLivesText = subclassLivesText;
+    infoBar.updateLivesText(lives);
   }
 
   // made public for unit testing
   public void decreaseLivesByOne() {
     setLives(levelLives-1);
   }
-
-  /***
-   * Returns the gameLivesText object for unit testing.
-   * @return LivesText object for the Level
-   */
-  public GameText getLivesText() { return gameLivesText; }
-
-  public GameText getLevelText() {
-    return gameLevelText;
-  }
-
-  /***
-   * Returns the gamePauseText object for unit testing.
-   * @return PauseText object for the Level
-   */
-  public GameText getPauseText() { return gamePauseText; }
 
   /***
    * Returns whether there are 0 blocks left
@@ -320,4 +291,8 @@ public class Level {
 
   public Ball getGameBall() { return this.gameBall; }
   public void setGameBall(Ball ball) { this.gameBall = ball; }
+
+  public InfoBar getInfoBar() {
+    return infoBar;
+  }
 }

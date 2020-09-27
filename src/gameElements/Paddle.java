@@ -2,7 +2,6 @@ package gameElements;
 
 import breakout.Game;
 import javafx.scene.Group;
-import javafx.scene.Node;
 import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
@@ -41,7 +40,7 @@ public class Paddle extends Rectangle{
   }
 
   public void setPaddleProperties() {
-    setX(Game.SCENE_SIZE / 2 - NORMAL_PADDLE_WIDTH/2);
+    setX(Game.PLAYABLE_AREA_SIZE / 2 - NORMAL_PADDLE_WIDTH/2);
     setY(Game.SCENE_SIZE - VERTICAL_PADDLE_OFFSET_FROM_BOTTOM);
     setWidth(NORMAL_PADDLE_WIDTH);
     setHeight(PADDLE_HEIGHT);

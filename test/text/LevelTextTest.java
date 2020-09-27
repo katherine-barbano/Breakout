@@ -21,7 +21,7 @@ public class LevelTextTest extends DukeApplicationTest {
   @Override
   public void start (Stage stage) {
     game = new Game(stage);
-    levelText = game.getCurrentGameLevel().getLevelText();
+    levelText = game.getCurrentGameLevel().getInfoBar().getLevelText();
   }
 
   public void startAnimation() {
@@ -60,7 +60,7 @@ public class LevelTextTest extends DukeApplicationTest {
     //Had to use this directly in order to test right clicks with a different MouseButton argument, since the click method only tests for left clicks.
     javafxRun(() -> scene.getOnMouseClicked().handle(new MouseEvent(MouseEvent.MOUSE_CLICKED, 10, 10, 10, 10, MouseButton.SECONDARY, 1,
         false, false, false, false, true, false, false, true, false, false, null)));
-    levelText = game.getCurrentGameLevel().getLevelText();
+    levelText = game.getCurrentGameLevel().getInfoBar().getLevelText();
     assertEquals("Level: 2", levelText.getText());
   }
 
@@ -68,7 +68,7 @@ public class LevelTextTest extends DukeApplicationTest {
   void levelTextOnPreviousLevel() {
     levelTextOnNextLevel();
     click(game.getScene(), 200, 200);
-    levelText = game.getCurrentGameLevel().getLevelText();
+    levelText = game.getCurrentGameLevel().getInfoBar().getLevelText();
     assertEquals("Level: 1",levelText.getText());
   }
 }

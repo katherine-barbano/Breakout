@@ -23,6 +23,10 @@ public class Ball extends Circle {
   public static final int BALL_RADIUS = 15;
   public static final int NORMAL_BALL_SPEED = 150;
   public static final int SLOW_BALL_SPEED = 75;
+  public static final int VELOCITY_CHANGE_FOR_PADDLE_SIDE = 100;
+  public static final int PLAYABLE_AREA_TOP_BOUND = InfoBar.INFO_BAR_HEIGHT;
+  public static final int RIGHT_ANGLE=90;
+  public static final int SCORE_INCREMENT=10;
 
   private final Paddle paddle;
   private BlockConfiguration blockConfiguration;
@@ -44,7 +48,7 @@ public class Ball extends Circle {
 
   public void setBallProperties() {
     setScore(0);
-    setCenterX(Game.SCENE_SIZE / 2);
+    setCenterX(Game.PLAYABLE_AREA_SIZE / 2);
     setCenterY(paddle.getY() - BALL_RADIUS);
     setRadius(BALL_RADIUS);
     setFill(BALL_COLOR);
@@ -136,20 +140,20 @@ public class Ball extends Circle {
       return;
     }
     // FIXME: can we extract this into a helper method?
-    else if (isTouchingPaddleTop && velocityCanBeUpdated) {
+    else if (isTouchingPaddleTop) {
       velocityX = getVelocityXFromPaddleHit();
     }
-    else if (isTouchingPaddleLeft && velocityX >=0 && velocityCanBeUpdated) {
-      velocityX = velocityX + 100;
+    else if (isTouchingPaddleLeft && velocityX >=PLAYABLE_AREA_TOP_BOUND) {
+      velocityX = velocityX + VELOCITY_CHANGE_FOR_PADDLE_SIDE;
     }
-    else if (isTouchingPaddleRight && velocityX <0 && velocityCanBeUpdated) {
-      velocityX = velocityX * -1 + 100;
+    else if (isTouchingPaddleRight && velocityX <PLAYABLE_AREA_TOP_BOUND ) {
+      velocityX = velocityX * -1 + VELOCITY_CHANGE_FOR_PADDLE_SIDE;
     }
-    else if (isTouchingPaddleLeft && velocityX >0 && velocityCanBeUpdated) {
-      velocityX = velocityX * -1 - 100;
+    else if (isTouchingPaddleLeft && velocityX >PLAYABLE_AREA_TOP_BOUND) {
+      velocityX = velocityX * -1 - VELOCITY_CHANGE_FOR_PADDLE_SIDE;
     }
-    else if (isTouchingPaddleLeft && velocityX <=0 && velocityCanBeUpdated) {
-      velocityX = velocityX -100;
+    else if (isTouchingPaddleLeft && velocityX <=PLAYABLE_AREA_TOP_BOUND) {
+      velocityX = velocityX - VELOCITY_CHANGE_FOR_PADDLE_SIDE;
     }
     velocityCanBeUpdated = false;
   }
@@ -210,7 +214,7 @@ public class Ball extends Circle {
     Block block = getBlockBallIsTouching();
     if (block == null) return;
     blockConfiguration.findAndDecrementBlock(block, this);
-    increaseScoreBy(10);
+    increaseScoreBy(SCORE_INCREMENT);
     handleBlockBehavior(block);
   }
 
@@ -252,12 +256,12 @@ public class Ball extends Circle {
   private int getVelocityXFromPaddleHit() {
     double distanceFromPaddleCenter = getCenterX() - paddle.getCenterX();
     double angleRatio = distanceFromPaddleCenter / paddle.getWidth();
-    double angleRadians = Math.toRadians(angleRatio * 90);
+    double angleRadians = Math.toRadians(angleRatio * RIGHT_ANGLE);
     return (int) (velocityY * Math.sin(angleRadians));
   }
 
   private boolean isTouchingTopWall() {
-    return getCenterY() - BALL_RADIUS < 0;
+    return getCenterY() - BALL_RADIUS < PLAYABLE_AREA_TOP_BOUND;
   }
 
   //assumes Scene has already been instantiated in Game so that it can use the getScene method

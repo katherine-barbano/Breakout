@@ -1,6 +1,7 @@
 package breakout;
 
 import gameElements.BlockConfiguration;
+import gameElements.InfoBar;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -31,13 +32,14 @@ import text.StatusText;
 public class Game {
 
   public static final String TITLE = "Breakout";
-  public static final int SCENE_SIZE = 620;
+  public static final int SCENE_SIZE = 650;
+  public static final int PLAYABLE_AREA_SIZE = 600;
   public static final int FRAMES_PER_SECOND = 60;
   public static final double SECOND_DELAY = 1.0 / FRAMES_PER_SECOND;
   public static final Paint BACKGROUND = Color.AZURE;
   //public static final String GAME_NAME = "sample_game_no_powerups";
-  //public static final String GAME_NAME = "sample_game";
-  public static final String GAME_NAME = "game_for_testing_main";
+  public static final String GAME_NAME = "sample_game";
+  //public static final String GAME_NAME = "game_for_testing_main";
   public static final String[] NUMERICS = {"1", "2", "3", "4", "5","6","7","8","9","0"};
   public static final int LEVEL_ONE_INDEX = 0;
   public static final int FINAL_LEVEL_INDEX = 2;
@@ -48,8 +50,8 @@ public class Game {
   private List<Level> gameLevels;
   private int totalScore;
   private int currentGameLevelIndex;
+  private InfoBar infoBar;
   private GameText gameOverText;
-  private GameText scoreText;
 
   /***
    * Constructor initializes gameScene and gameRoot, including key inputs,
@@ -102,10 +104,7 @@ public class Game {
 
   public void updateGameScore(Level level) {
     totalScore = level.getScore();
-
-    StatusText subclassUpdateValueText = (StatusText) scoreText;
-    subclassUpdateValueText.updateValue(totalScore);
-    scoreText = subclassUpdateValueText;
+    infoBar.updateScoreText(totalScore);
   }
 
   /***
@@ -116,12 +115,12 @@ public class Game {
     totalScore = 0;
     gameRoot = new Group();
     gameOverText = new GameOverText(gameRoot);
-    scoreText = new ScoreText(totalScore,gameRoot);
+    infoBar = new InfoBar(new ScoreText(totalScore,gameRoot),gameRoot);
 
     initializeGameLevels();
     resetGameToLevelFirstTime(LEVEL_ONE_INDEX);
 
-    Scene scene = new Scene(gameRoot, SCENE_SIZE, SCENE_SIZE, BACKGROUND);
+    Scene scene = new Scene(gameRoot, PLAYABLE_AREA_SIZE, SCENE_SIZE, BACKGROUND);
     scene.setOnKeyPressed(e -> handleKeyInput(e.getCode()));
     scene.setOnMouseClicked(e -> handleMouseInput(e.getButton()));
     return scene;
@@ -154,7 +153,7 @@ public class Game {
    */
   void gameOver() {
     Level currentLevel = getCurrentGameLevel();
-    scoreText.removeText();
+    infoBar.removeScoreText();
 
     GameOverText subclassGameOverText = (GameOverText) gameOverText;
     subclassGameOverText.gameOverUpdate(gameIsWon());
@@ -178,7 +177,7 @@ public class Game {
 
       for(Object filePath:filesInGameArray) {
         int levelNumber = getLevelNumberFromFileName(filePath.toString());
-        gameLevels.add(new Level(gameRoot,GAME_NAME,levelNumber));
+        gameLevels.add(new Level(gameRoot,GAME_NAME,levelNumber,infoBar));
       }
     }
     catch(IOException e) {
@@ -261,14 +260,13 @@ public class Game {
    */
   public Scene getScene() { return gameScene; }
 
-  /***
-   * Gets the gameOverText object currently in the Game.
-   * @return gameOverText object
-   */
   public GameText getGameOverText() {
     return gameOverText;
   }
-  public void setGameOverText(GameOverText text) { this.gameOverText = text; }
+
+  public InfoBar getInfoBar() {
+    return infoBar;
+  }
 
   /***
    * Gets the Group object currently running the Game.
@@ -296,7 +294,4 @@ public class Game {
     currentGameLevelIndex = levelNumber;
   }
   public int getLevelNumber() { return currentGameLevelIndex; }
-  public GameText getScoreText() {
-    return scoreText;
-  }
 }

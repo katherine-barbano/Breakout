@@ -18,7 +18,7 @@ public class ScoreTextTest extends DukeApplicationTest {
   @Override
   public void start (Stage stage) {
     game = new Game(stage);
-    scoreText = game.getScoreText();
+    scoreText = game.getInfoBar().getScoreText();
   }
 
   public void startAnimation() {

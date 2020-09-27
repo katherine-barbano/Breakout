@@ -18,6 +18,7 @@ import javafx.scene.Group;
 public class BlockConfiguration {
   public static final String FILE_SOURCE_PATH = "data/";
   public static final int NUMBER_OF_BLOCK_ROWS = Block.NUMBER_OF_BLOCK_ROWS;
+  public static final int BLOCK_CONFIGURATION_OFFSET_FROM_PADDLE = 100;
 
   private Level myLevel;
   private File configFile;
@@ -176,8 +177,8 @@ public class BlockConfiguration {
    * @param sceneHeight
    */
   public void updateConfiguration(int sceneWidth, int sceneHeight) {
-    int blockWidth = sceneWidth / Block.BLOCKS_PER_ROW;
-    int blockHeight = sceneHeight / (Block.NUMBER_OF_BLOCK_ROWS + 1);
+    int blockWidth = sceneWidth / (Block.BLOCKS_PER_ROW);
+    int blockHeight = (sceneHeight-Ball.PLAYABLE_AREA_TOP_BOUND-BlockConfiguration.BLOCK_CONFIGURATION_OFFSET_FROM_PADDLE) / Block.NUMBER_OF_BLOCK_ROWS;
 
     // TODO: utilize getBlocksAsList()
     // make delta i,j matrices to assign X and Y?
@@ -189,8 +190,8 @@ public class BlockConfiguration {
         if (blocks[j] == null) continue;
         if (sceneWidth != 0 && sceneHeight != 0) {
           blocks[j].setDimensions(sceneWidth,sceneHeight);
-          blocks[j].setX(blockWidth*j);
-          blocks[j].setY(blockHeight*i);
+          blocks[j].setX(blocks[j].getBlockWidth(sceneWidth)*j);
+          blocks[j].setY(blocks[j].getBlockHeight(sceneHeight)*i + Ball.PLAYABLE_AREA_TOP_BOUND);
           blocks[j].setDimensionsPowerUp();
         }
         blocks[j].updateBlockColor();
