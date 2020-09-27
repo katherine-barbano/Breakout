@@ -1,6 +1,5 @@
 package breakout;
 
-import gameElements.BlockConfiguration;
 import gameElements.InfoBar;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -22,7 +21,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import text.GameText;
 import text.ScoreText;
-import text.StatusText;
 
 /***
  * Handles the game flow over multiple Levels. Creates and initializes the Scene, Group, and
@@ -85,10 +83,10 @@ public class Game {
    */
   public void step (double elapsedTime) {
     Level currentLevel = getCurrentGameLevel();
-    if (currentLevel.gameIsLost() || gameIsWon()) {
+    if (gameIsEnding(currentLevel)) {
       gameOver();
     }
-    else if (currentLevel.levelIsWon()) {
+    else if (gameIsContinuingToNextLevel(currentLevel)) {
       resetGameToLevel(currentGameLevelIndex+1);
     }
     else {
@@ -101,6 +99,21 @@ public class Game {
     }
     updateGameScore(currentLevel);
   }
+
+  private boolean gameIsEnding(Level currentLevel) {
+    boolean scoreTooLowToContinue = infoBar.timeIsUp() && !scoreSurpassedThresholdToContinue(currentLevel);
+    return currentLevel.gameIsLost() || gameIsWon() || scoreTooLowToContinue;
+  }
+
+  private boolean scoreSurpassedThresholdToContinue(Level level) {
+    return totalScore>=level.getScoreToWinLevel();
+  }
+
+  private boolean gameIsContinuingToNextLevel(Level currentLevel) {
+    boolean scoreHighEnoughToContinue = infoBar.timeIsUp() && scoreSurpassedThresholdToContinue(currentLevel);
+    return currentLevel.allBlocksBrokenInLevel() || scoreHighEnoughToContinue;
+  }
+
 
   public void updateGameScore(Level level) {
     totalScore = level.getScore();
@@ -209,7 +222,7 @@ public class Game {
   }
 
   private boolean gameIsWon() {
-    return getCurrentGameLevel().levelIsWon() && currentGameLevelIndex == gameLevels.size()-1;
+    return getCurrentGameLevel().allBlocksBrokenInLevel() && currentGameLevelIndex == gameLevels.size()-1;
   }
 
   // Getters and setters:

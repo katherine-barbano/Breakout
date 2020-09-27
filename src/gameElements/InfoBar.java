@@ -107,4 +107,8 @@ public class InfoBar extends Rectangle {
     return scoreText;
   }
 
+  public boolean timeIsUp() {
+    return gameTimer.timeIsUp();
+  }
+
 }

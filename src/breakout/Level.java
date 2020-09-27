@@ -311,7 +311,7 @@ public class Level {
    * Returns whether there are 0 blocks left
    * @return true if game is won
    */
-  boolean levelIsWon() {
+  boolean allBlocksBrokenInLevel() {
     return (levelConfiguration.getNumberOfBlocksRemaining() == 0);
   }
 
@@ -366,4 +366,6 @@ public class Level {
   public InfoBar getInfoBar() {
     return infoBar;
   }
+
+  public int getScoreToWinLevel() {return scoreToWinLevel;}
 }

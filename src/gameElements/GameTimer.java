@@ -57,4 +57,8 @@ public class GameTimer {
   void unpauseTimer() {
     timeline.play();
   }
+
+  boolean timeIsUp() {
+    return timeSeconds==0;
+  }
 }
