@@ -30,7 +30,6 @@ public class GameTimer {
     EventHandler timerUpdate = new EventHandler() {
       public void handle(Event event) {
         timeSeconds--;
-        System.out.println(timeSeconds);
 
         TimerText subclassTimerText = (TimerText) timerText;
         subclassTimerText.updateValue(timeSeconds);

@@ -26,7 +26,6 @@ public class Ball extends Circle {
   public static final int VELOCITY_CHANGE_FOR_PADDLE_SIDE = 100;
   public static final int PLAYABLE_AREA_TOP_BOUND = InfoBar.INFO_BAR_HEIGHT;
   public static final int RIGHT_ANGLE=90;
-  public static final int SCORE_INCREMENT=5;
 
   private final Paddle paddle;
   private BlockConfiguration blockConfiguration;
@@ -214,7 +213,6 @@ public class Ball extends Circle {
     Block block = getBlockBallIsTouching();
     if (block == null) return;
     blockConfiguration.findAndDecrementBlock(block, this);
-    increaseScoreBy(SCORE_INCREMENT);
     handleBlockBehavior(block);
   }
 

@@ -18,6 +18,7 @@ import javafx.scene.Group;
 public class BlockConfiguration {
   public static final int NUMBER_OF_BLOCK_ROWS = Block.NUMBER_OF_BLOCK_ROWS;
   public static final int BLOCK_CONFIGURATION_OFFSET_FROM_PADDLE = 100;
+  public static final int SCORE_INCREMENT=5;
 
   private Level myLevel;
   private File configFile;
@@ -262,7 +263,10 @@ public class BlockConfiguration {
 
   void setConfigFile(File configFile) { this.configFile = configFile; }
 
-  void decreaseNumberOfBlocksByOne() { numberOfBlocksRemaining--; }
+  void decreaseNumberOfBlocksByOne() {
+    numberOfBlocksRemaining--;
+    myLevel.getGameBall().increaseScoreBy(SCORE_INCREMENT);
+  }
   void setNumberOfBlocksRemaining(int numberOfBlocksRemaining) { this.numberOfBlocksRemaining = numberOfBlocksRemaining; }
   public int getNumberOfBlocksRemaining() { return numberOfBlocksRemaining; }
   boolean isEmpty() { return (numberOfBlocksRemaining == 0);}
