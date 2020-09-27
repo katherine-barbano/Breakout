@@ -111,11 +111,15 @@ public class LevelTest extends DukeApplicationTest {
 
   @Test
   void scoreAndTimeFileNotFound() {
-
+    Group testGroup = new Group();
+    InfoBar infoBar = new InfoBar(new ScoreText(0,testGroup),testGroup);
+    assertThrows(IllegalArgumentException.class, () -> new Level(testGroup,"game_without_score_time_file",1, infoBar));
   }
 
   @Test
   void scoreAndTimeFileFormattedIncorrectly() {
-
+    Group testGroup = new Group();
+    InfoBar infoBar = new InfoBar(new ScoreText(0,testGroup),testGroup);
+    assertThrows(IllegalArgumentException.class, () -> new Level(testGroup,"game_score_time_file_format_wrong",3, infoBar));
   }
 }
