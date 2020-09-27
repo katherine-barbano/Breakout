@@ -37,7 +37,7 @@ public class ScoreTextTest extends DukeApplicationTest {
     for(int numSteps = 0; numSteps < 69; numSteps ++) {
       javafxRun(() -> game.step(Game.SECOND_DELAY));
     }
-    assertEquals("Score: 10", scoreText.getText());
+    assertEquals("Score: 5", scoreText.getText());
   }
 }
 
