@@ -18,7 +18,10 @@ public class InfoBar extends Rectangle {
   private GameText scoreText;
   private GameText livesText;
   private GameText levelText;
+  private GameText scoreToWinText;
+  private GameTimer gameTimer;
   private Group root;
+
   public InfoBar(GameText scoreText,Group root) {
     super(0,0,Game.SCENE_SIZE,INFO_BAR_HEIGHT);
     setFill(INFO_BAR_COLOR);
@@ -27,35 +30,45 @@ public class InfoBar extends Rectangle {
     this.root.getChildren().add(this);
   }
 
-  public void initializeLevelSpecificText(GameText pauseText, GameText livesText, GameText levelText) {
+  public void initializeLevelSpecificText(GameText pauseText, GameText livesText, GameText levelText, GameText scoreToWinText) {
     this.pauseText = pauseText;
     this.livesText = livesText;
     this.levelText = levelText;
+    this.scoreToWinText = scoreToWinText;
     scoreText.removeText();
     scoreText.addText();
+  }
+
+  public void setTimeLimit(int timeLimit) {
+    this.gameTimer = new GameTimer(root, timeLimit);
   }
 
   public void initiatePauseInText() {
     PauseText subclassPauseText = (PauseText) pauseText;
     subclassPauseText.startPause();
     pauseText = subclassPauseText;
+    gameTimer.pauseTimer();
   }
 
   public void initiateUnpauseInText() {
     PauseText subclassPauseText = (PauseText) pauseText;
     subclassPauseText.endPause();
     pauseText = subclassPauseText;
+    gameTimer.unpauseTimer();
   }
 
   public void resetPauseText(Group gameRoot) {
     pauseText.removeText();
     pauseText = new PauseText(gameRoot);
+    gameTimer.pauseTimer();
   }
 
   public void removeAllLevelSpecificText() {
     livesText.removeText();
     pauseText.removeText();
     levelText.removeText();
+    scoreToWinText.removeText();
+    gameTimer.removeTimerText();
   }
 
   public void updateLivesText(int lives) {
@@ -72,10 +85,6 @@ public class InfoBar extends Rectangle {
 
   public void removeScoreText() {
     scoreText.removeText();
-  }
-
-  public void addScoreText() {
-    scoreText.addText();
   }
 
   /***
@@ -96,6 +105,10 @@ public class InfoBar extends Rectangle {
 
   public GameText getScoreText() {
     return scoreText;
+  }
+
+  public boolean timeIsUp() {
+    return gameTimer.timeIsUp();
   }
 
 }

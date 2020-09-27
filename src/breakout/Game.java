@@ -1,6 +1,5 @@
 package breakout;
 
-import gameElements.BlockConfiguration;
 import gameElements.InfoBar;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -22,7 +21,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import text.GameText;
 import text.ScoreText;
-import text.StatusText;
 
 /***
  * Handles the game flow over multiple Levels. Creates and initializes the Scene, Group, and
@@ -32,7 +30,7 @@ import text.StatusText;
 public class Game {
 
   public static final String TITLE = "Breakout";
-  public static final int SCENE_SIZE = 650;
+  public static final int SCENE_SIZE = 670;
   public static final int PLAYABLE_AREA_SIZE = 600;
   public static final int FRAMES_PER_SECOND = 60;
   public static final double SECOND_DELAY = 1.0 / FRAMES_PER_SECOND;
@@ -85,10 +83,10 @@ public class Game {
    */
   public void step (double elapsedTime) {
     Level currentLevel = getCurrentGameLevel();
-    if (currentLevel.gameIsLost() || gameIsWon()) {
+    if (gameIsEnding(currentLevel)) {
       gameOver();
     }
-    else if (currentLevel.levelIsWon()) {
+    else if (gameIsContinuingToNextLevel(currentLevel)) {
       resetGameToLevel(currentGameLevelIndex+1);
     }
     else {
@@ -101,6 +99,21 @@ public class Game {
     }
     updateGameScore(currentLevel);
   }
+
+  private boolean gameIsEnding(Level currentLevel) {
+    boolean scoreTooLowToContinue = infoBar.timeIsUp() && !scoreSurpassedThresholdToContinue(currentLevel);
+    return currentLevel.gameIsLost() || gameIsWon() || scoreTooLowToContinue;
+  }
+
+  private boolean scoreSurpassedThresholdToContinue(Level level) {
+    return totalScore>=level.getScoreToWinLevel();
+  }
+
+  private boolean gameIsContinuingToNextLevel(Level currentLevel) {
+    boolean scoreHighEnoughToContinue = infoBar.timeIsUp() && scoreSurpassedThresholdToContinue(currentLevel);
+    return currentLevel.allBlocksBrokenInLevel() || scoreHighEnoughToContinue;
+  }
+
 
   public void updateGameScore(Level level) {
     totalScore = level.getScore();
@@ -170,14 +183,16 @@ public class Game {
   private void initializeGameLevels() {
     try {
       //following line to list files in directory from http://zetcode.com/java/listdirectory/
-      Stream filesInGame = Files.list(new File(BlockConfiguration.FILE_SOURCE_PATH + GAME_NAME).toPath());
+      Stream filesInGame = Files.list(new File(Level.FILE_SOURCE_PATH + GAME_NAME).toPath());
 
       Object[] filesInGameArray = filesInGame.toArray();
       gameLevels = new ArrayList<>();
 
       for(Object filePath:filesInGameArray) {
         int levelNumber = getLevelNumberFromFileName(filePath.toString());
-        gameLevels.add(new Level(gameRoot,GAME_NAME,levelNumber,infoBar));
+        if(levelNumber != -1) {
+          gameLevels.add(new Level(gameRoot,GAME_NAME,levelNumber,infoBar));
+        }
       }
     }
     catch(IOException e) {
@@ -207,7 +222,7 @@ public class Game {
   }
 
   private boolean gameIsWon() {
-    return getCurrentGameLevel().levelIsWon() && currentGameLevelIndex == gameLevels.size()-1;
+    return getCurrentGameLevel().allBlocksBrokenInLevel() && currentGameLevelIndex == gameLevels.size()-1;
   }
 
   // Getters and setters:

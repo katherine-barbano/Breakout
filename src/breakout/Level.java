@@ -3,16 +3,29 @@ package breakout;
 import gameElements.Ball;
 import gameElements.Block;
 import gameElements.BlockConfiguration;
+import gameElements.FilledBlockRow;
+import gameElements.GameTimer;
 import gameElements.InfoBar;
+import gameElements.MovingBlockRow;
 import gameElements.Paddle;
 import gameElements.PowerUp;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Scanner;
+import java.util.regex.PatternSyntaxException;
+import java.util.stream.Stream;
 import javafx.scene.Group;
 import javafx.scene.input.KeyCode;
 import text.GameText;
 import text.LevelText;
 import text.LivesText;
 import text.PauseText;
+import text.ScoreToWinText;
 
 /***
  * Maintains gameElements for a single level of the game. Handles removal and addition of gameElements
@@ -22,12 +35,14 @@ import text.PauseText;
 public class Level {
 
   public static final int INITIAL_NUMBER_LIVES = 3;
+  public static final String FILE_SOURCE_PATH = "data/";
 
   private int levelLives;
   private int levelNumber;
-  private int prevBallScore;
   private BlockConfiguration levelConfiguration;
   private boolean gameIsPaused;
+  private int scoreToWinLevel;
+  private int levelTimeLimit;
   private InfoBar infoBar;
   private Group gameRoot;
   private Ball gameBall; // TODO extension: List<Ball> myBalls, to accomodate multi-gameBall powerups
@@ -46,10 +61,10 @@ public class Level {
   public Level(Group gameRootArg, String gameName, String fileName, InfoBar infoBar) {
     this.levelConfiguration = new BlockConfiguration(gameName, fileName, this);
     this.levelNumber = 0;
-    this.prevBallScore = 0;
+    this.gameRoot = gameRootArg;
     this.infoBar = infoBar;
 
-    initializeLevelProperties(gameRootArg);
+    initializeLevelProperties(gameName);
   }
 
   /***
@@ -72,19 +87,72 @@ public class Level {
     this.infoBar = infoBar;
 
     generateLevelConfiguration(gameName, levelNumber);
-    initializeLevelProperties(gameRootArg);
+    initializeLevelProperties(gameName);
   }
 
-  private void initializeLevelProperties(Group gameRootArg) {
+  private void initializeLevelProperties(String gameName) {
     this.gameIsPaused = true;
     this.levelConfiguration.updateConfiguration(Game.PLAYABLE_AREA_SIZE, Game.SCENE_SIZE);
+    readLevelScoresAndTimeFile(getFileNameOfScoreToWinAndLivesFile(gameName));
     System.out.println("Level has " + levelConfiguration.getNumberOfBlocksRemaining() + " blocks");
+  }
+
+  public String generateFilePathForFile(String gameName, String fileName) {
+    return FILE_SOURCE_PATH + gameName + "/" + fileName + ".txt";
+  }
+
+  private String getFileNameOfScoreToWinAndLivesFile(String gameName) {
+    try {
+      //following line to list files in directory from http://zetcode.com/java/listdirectory/
+      Stream filesInGame = Files.list(new File(FILE_SOURCE_PATH + gameName).toPath());
+
+      Object[] filesInGameArray = filesInGame.toArray();
+
+      for(Object filePath:filesInGameArray) {
+        if (!stringContainsNumeric(filePath.toString())) {
+          return filePath.toString();
+        }
+      }
+      throw new IOException();
+    }
+    catch(IOException e) {
+      throw new IllegalArgumentException("Invalid argument given for gameName or filenames.");
+    }
+  }
+
+  private boolean stringContainsNumeric(String s) {
+    for(int index=0;index<Game.NUMERICS.length;index++) {
+      if(s.contains(Game.NUMERICS[index])) {
+        return true;
+      }
+    }
+    return false;
   }
 
   private void generateLevelConfiguration(String gameName, int levelNumber) {
     String fileName = "level_" + levelNumber; // TODO
     BlockConfiguration configuration = new BlockConfiguration(gameName, fileName, this);
     this.levelConfiguration = configuration;
+  }
+
+  private void readLevelScoresAndTimeFile(String filePath) {
+    try {
+      File scoresAndTimeFile = new File(filePath);
+      Scanner fileReader = new Scanner(scoresAndTimeFile);
+      String fileLine="";
+      for (int i = 0; i < levelNumber; i++) {
+        fileLine = fileReader.nextLine();
+      }
+      String[] scoresAndTime = fileLine.split(" ");
+      scoreToWinLevel=Integer.parseInt(scoresAndTime[0]);
+      levelTimeLimit=Integer.parseInt(scoresAndTime[1]);
+    }
+    catch (FileNotFoundException e) {
+      throw new IllegalArgumentException("No file provided with scores to win level and time limits.");
+    }
+    catch (PatternSyntaxException e) {
+      throw new IllegalArgumentException("Invalid number of levels provided in file.");
+    }
   }
 
   /***
@@ -94,7 +162,9 @@ public class Level {
     GameText gameLivesText = new LivesText(getLives(),gameRoot);
     GameText gamePauseText = new PauseText(gameRoot);
     GameText gameLevelText = new LevelText(getLevelNumber(),gameRoot);
-    infoBar.initializeLevelSpecificText(gamePauseText,gameLivesText,gameLevelText);
+    GameText gameScoreToWinText = new ScoreToWinText(scoreToWinLevel,gameRoot);
+    infoBar.initializeLevelSpecificText(gamePauseText,gameLivesText,gameLevelText,gameScoreToWinText);
+    infoBar.setTimeLimit(levelTimeLimit);
 
     setLives(INITIAL_NUMBER_LIVES);
     initializeNewBallAndPaddle();
@@ -116,7 +186,6 @@ public class Level {
    * when pressing the "r" cheat key.
    */
   void resetCurrentLevel() {
-    prevBallScore += gameBall.getScore();
     decreaseLivesByOne();
     resetPosition();
   }
@@ -242,7 +311,7 @@ public class Level {
    * Returns whether there are 0 blocks left
    * @return true if game is won
    */
-  boolean levelIsWon() {
+  boolean allBlocksBrokenInLevel() {
     return (levelConfiguration.getNumberOfBlocksRemaining() == 0);
   }
 
@@ -280,7 +349,7 @@ public class Level {
     this.levelNumber = levelNumber;
   }
 
-  int getScore() { return prevBallScore + gameBall.getScore(); }
+  int getScore() { return gameBall.getScore(); }
   void increaseBallScore(int points) {
     gameBall.increaseScoreBy(points);
   }
@@ -297,4 +366,6 @@ public class Level {
   public InfoBar getInfoBar() {
     return infoBar;
   }
+
+  public int getScoreToWinLevel() {return scoreToWinLevel;}
 }
