@@ -8,7 +8,6 @@ import text.GameText;
 import text.LivesText;
 import text.PauseText;
 import text.StatusText;
-import text.TimerText;
 
 public class InfoBar extends Rectangle {
 
@@ -61,6 +60,7 @@ public class InfoBar extends Rectangle {
   public void resetPauseText(Group gameRoot) {
     pauseText.removeText();
     pauseText = new PauseText(gameRoot);
+    gameTimer.pauseTimer();
   }
 
   public void removeAllLevelSpecificText() {

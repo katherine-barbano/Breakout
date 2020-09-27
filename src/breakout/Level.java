@@ -39,7 +39,6 @@ public class Level {
 
   private int levelLives;
   private int levelNumber;
-  private int prevBallScore;
   private BlockConfiguration levelConfiguration;
   private boolean gameIsPaused;
   private int scoreToWinLevel;
@@ -62,7 +61,6 @@ public class Level {
   public Level(Group gameRootArg, String gameName, String fileName, InfoBar infoBar) {
     this.levelConfiguration = new BlockConfiguration(gameName, fileName, this);
     this.levelNumber = 0;
-    this.prevBallScore = 0;
     this.gameRoot = gameRootArg;
     this.infoBar = infoBar;
 
@@ -188,7 +186,6 @@ public class Level {
    * when pressing the "r" cheat key.
    */
   void resetCurrentLevel() {
-    prevBallScore += gameBall.getScore();
     decreaseLivesByOne();
     resetPosition();
   }
@@ -352,7 +349,7 @@ public class Level {
     this.levelNumber = levelNumber;
   }
 
-  int getScore() { return prevBallScore + gameBall.getScore(); }
+  int getScore() { return gameBall.getScore(); }
   void increaseBallScore(int points) {
     gameBall.increaseScoreBy(points);
   }
