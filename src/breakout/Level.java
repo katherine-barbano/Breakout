@@ -368,4 +368,13 @@ public class Level {
   }
 
   public int getScoreToWinLevel() {return scoreToWinLevel;}
+
+  public int getLevelTimeLimit() {
+    return levelTimeLimit;
+  }
+
+  public void setLevelTimeLimit(int newTimeLimit) {
+    levelTimeLimit = newTimeLimit;
+  }
+
 }

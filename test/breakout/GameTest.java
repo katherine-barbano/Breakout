@@ -5,6 +5,7 @@ import gameElements.Block;
 import gameElements.Paddle;
 import java.util.List;
 import javafx.scene.Group;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
@@ -62,5 +63,102 @@ public class GameTest extends DukeApplicationTest{
       Level levelAtIndex = actualLevelList.get(levelIndex);
       assertEquals(levelIndex+1, levelAtIndex.getLevelNumber());
     }
+  }
+
+  @Test
+  void timeIsUpTargetScoreSurpassed() {
+    game.setScore(110);
+    startAnimation();
+    for(int numSteps = 0; numSteps < 10; numSteps ++) {
+      javafxRun(() -> game.step(Game.SECOND_DELAY));
+    }
+
+    List<Node> children = game.getRoot().getChildren();
+    assertTrue(children.size()>63);
+  }
+
+  @Test
+  void directoryNotFoundWhenInitializingLevels() {
+    fail();
+  }
+
+  @Test
+  void levelOneScoreToWinWinningCondition() {
+    Level level = game.getGameLevels().get(0);
+    assertEquals(100, level.getScoreToWinLevel());
+  }
+
+  @Test
+  void levelTwoScoreToWinWinningCondition() {
+    Level level = game.getGameLevels().get(1);
+    assertEquals(500, level.getScoreToWinLevel());
+  }
+
+  @Test
+  void levelThreeScoreToWinWinningCondition() {
+    Level level = game.getGameLevels().get(2);
+    assertEquals(600, level.getScoreToWinLevel());
+  }
+
+  @Test
+  void levelOneTimeLimit() {
+    Level level = game.getGameLevels().get(0);
+    assertEquals(60, level.getLevelTimeLimit());
+  }
+
+  @Test
+  void levelTwoTimeLimit() {
+    Level level = game.getGameLevels().get(1);
+    assertEquals(100, level.getLevelTimeLimit());
+  }
+
+  @Test
+  void levelThreeTimeLimit() {
+    Level level = game.getGameLevels().get(2);
+    assertEquals(20, level.getLevelTimeLimit());
+  }
+
+  void startAnimation() {
+    Scene myScene = game.getScene();
+    press(myScene,KeyCode.SPACE);
+  }
+
+  @Test
+  void levelOneScoreDoesNotSurpassWinningCondition() {
+    Level level = game.getGameLevels().get(0);
+    level.setLevelTimeLimit(1);
+    startAnimation();
+    for(int numSteps = 0; numSteps < 10; numSteps ++) {
+      javafxRun(() -> game.step(Game.SECOND_DELAY));
+    }
+
+    List<Node> children = game.getRoot().getChildren();
+    assertTrue(children.size()<=63);
+  }
+
+  @Test
+  void levelTwoScoreDoesNotSurpassWinningCondition() {
+    Level level = game.getGameLevels().get(1);
+    level.setLevelTimeLimit(1);
+    startAnimation();
+    for(int numSteps = 0; numSteps < 10; numSteps ++) {
+      javafxRun(() -> game.step(Game.SECOND_DELAY));
+    }
+
+    List<Node> children = game.getRoot().getChildren();
+    assertTrue(children.size()<=63);
+  }
+
+  @Test
+  void levelThreeScoreDoesNotSurpassWinningCondition() {
+    Level level = game.getGameLevels().get(2);
+    level.setLevelTimeLimit(1);
+    startAnimation();
+    for(int numSteps = 0; numSteps < 10; numSteps ++) {
+      javafxRun(() -> game.step(Game.SECOND_DELAY));
+    }
+
+    List<Node> children = game.getRoot().getChildren();
+    assertTrue(children.size()<=63);
   }
 }

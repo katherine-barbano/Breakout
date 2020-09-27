@@ -108,4 +108,14 @@ public class LevelTest extends DukeApplicationTest {
     GameOverText gameOverText = lookup("#gameOverText").query();
     assertEquals("Game Over! Tap the space bar to restart from Level 1.",gameOverText.getText());
   }
+
+  @Test
+  void scoreAndTimeFileNotFound() {
+
+  }
+
+  @Test
+  void scoreAndTimeFileFormattedIncorrectly() {
+
+  }
 }
