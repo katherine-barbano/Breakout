@@ -8,7 +8,7 @@ import javafx.scene.text.Text;
 
 public abstract class GameText extends Text {
 
-  public static final Paint TEXT_COLOR = Color.MEDIUMVIOLETRED;
+  public static final Paint TEXT_COLOR = Color.WHITE;
   public static final String TEXT_FONT = "ARIAL";
   public static final int TEXT_SIZE = 20;
 

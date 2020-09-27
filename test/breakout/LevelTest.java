@@ -2,6 +2,7 @@ package breakout;
 
 import gameElements.Ball;
 import gameElements.Block;
+import gameElements.InfoBar;
 import gameElements.Paddle;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,6 +15,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 import text.GameOverText;
+import text.ScoreText;
 import util.DukeApplicationTest;
 
 public class LevelTest extends DukeApplicationTest {
@@ -42,6 +44,7 @@ public class LevelTest extends DukeApplicationTest {
     startAnimation();
 
     for(int numSteps = 0; numSteps < 3; numSteps ++) {
+      sleep(2000);
       game.step(Game.SECOND_DELAY);
     }
 
@@ -52,7 +55,8 @@ public class LevelTest extends DukeApplicationTest {
   @Test
   void testAllBlocks() {
     Group testGroup = new Group();
-    Level level = new Level(testGroup,"game_for_testing","testOneInput");
+    InfoBar infoBar = new InfoBar(new ScoreText(0,testGroup),testGroup);
+    Level level = new Level(testGroup,"game_for_testing","testOneInput", infoBar);
     int width = (int) game.getScene().getWidth();
     int height = (int) game.getScene().getHeight();
     List<Block> oneBlock = level.getLevelConfiguration().getBlocksAsList();
@@ -73,13 +77,13 @@ public class LevelTest extends DukeApplicationTest {
     assertEquals(150,ball.getVelocityY());
 
     assertEquals(300, ball.getCenterX());
-    assertEquals(555, ball.getCenterY());
+    assertEquals(605, ball.getCenterY());
   }
 
   private void ballTouchesGround() {
     ball = lookup("#ball").query();
     ball.setCenterX(20);
-    ball.setCenterY(585);
+    ball.setCenterY(635);
     ball.setVelocityX(0);
     ball.setVelocityY(150);
 

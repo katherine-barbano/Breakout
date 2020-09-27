@@ -4,10 +4,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import breakout.Game;
 import breakout.Level;
+import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
 import javafx.stage.Stage;
 import org.junit.jupiter.api.Test;
+import text.ScoreText;
 import util.DukeApplicationTest;
 
 public class PowerUpTest extends DukeApplicationTest {
@@ -62,7 +64,9 @@ public class PowerUpTest extends DukeApplicationTest {
   @Test
   void testBallSlowsDown() {
     startAnimation();
-    Level testLevel = new Level(game.getRoot(), "power_up_test_data", "slowBallPowerUp");
+    Group testGroup = new Group();
+    InfoBar infoBar = new InfoBar(new ScoreText(0,testGroup),testGroup);
+    Level testLevel = new Level(game.getRoot(), "power_up_test_data", "slowBallPowerUp", infoBar);
     game.setCurrentGameLevel(testLevel);
     testLevel.addBlocksToRoot();
     for(int numSteps = 0; numSteps < 150; numSteps ++) {
@@ -74,7 +78,9 @@ public class PowerUpTest extends DukeApplicationTest {
   @Test
   void testBallSlowsDownOnce() {
     startAnimation();
-    Level testLevel = new Level(game.getRoot(), "power_up_test_data", "slowBallPowerUp");
+    Group testGroup = new Group();
+    InfoBar infoBar = new InfoBar(new ScoreText(0,testGroup),testGroup);
+    Level testLevel = new Level(game.getRoot(), "power_up_test_data", "slowBallPowerUp",infoBar);
     game.setCurrentGameLevel(testLevel);
     testLevel.addBlocksToRoot();
     for(int numSteps = 0; numSteps < 300; numSteps ++) {
@@ -86,7 +92,9 @@ public class PowerUpTest extends DukeApplicationTest {
   @Test
   void testBallBreakerWorks() {
     game.setupScene(); // FIXME made public
-    Level testLevel = new Level(game.getRoot(), "power_up_test_data", "breakerBallPowerUp");
+    Group testGroup = new Group();
+    InfoBar infoBar = new InfoBar(new ScoreText(0,testGroup),testGroup);
+    Level testLevel = new Level(game.getRoot(), "power_up_test_data", "breakerBallPowerUp",infoBar);
     game.setCurrentGameLevel(testLevel);
 
     testLevel.addBlocksToRoot();

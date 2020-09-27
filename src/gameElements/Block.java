@@ -47,16 +47,18 @@ public class Block extends Rectangle {
   }
 
   void setDimensions(int sceneWidth, int sceneHeight) {
-    int blockWidth = sceneWidth / BLOCKS_PER_ROW;
+    int blockWidth = getBlockWidth(sceneWidth);
     int blockHeight = getBlockHeight(sceneHeight);
     setWidth(blockWidth);
     setHeight(blockHeight);
   }
 
-  // multiplied by factor of 0.8 because we aren't filling entire scene with rows
-  // TODO: optimize this scaling factor
-  private int getBlockHeight(int sceneHeight) {
-    return (sceneHeight * 8) / (10 * (NUMBER_OF_BLOCK_ROWS + 1));
+  int getBlockWidth(int sceneWidth) {
+    return sceneWidth / BLOCKS_PER_ROW;
+  }
+
+  int getBlockHeight(int sceneHeight) {
+    return (sceneHeight-Ball.PLAYABLE_AREA_TOP_BOUND-BlockConfiguration.BLOCK_CONFIGURATION_OFFSET_FROM_PADDLE) / Block.NUMBER_OF_BLOCK_ROWS;
   }
 
   Paint getBlockColor(int blockHardness) {

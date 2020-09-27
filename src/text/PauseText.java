@@ -4,7 +4,7 @@ import javafx.scene.Group;
 
 public class PauseText extends GameText {
 
-  public static final String PAUSE_TITLE="Paused. Resume with space bar";
+  public static final String PAUSE_TITLE="Paused. Resume with space";
   public static final String START_TITLE = "Click the space bar to start!";
 
   public static final int PAUSE_XPOSITION = 20;
