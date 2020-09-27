@@ -10,16 +10,15 @@ import text.GameText;
 import text.TimerText;
 
 public class GameTimer {
-  public static final int START_TIME_SECONDS=60;
-
   private Timeline timeline;
-  private int timeSeconds = START_TIME_SECONDS;
+  private int timeSeconds;
   private GameText timerText;
   private Group root;
 
   //referenced https://asgteach.com/2011/10/javafx-animation-and-binding-simple-countdown-timer-2/ for how to set up Timeline with javafx
-  public GameTimer(Group gameRoot) {
+  public GameTimer(Group gameRoot, int timeStart) {
     root = gameRoot;
+    this.timeSeconds = timeStart;
     timerText = new TimerText(timeSeconds,root);
     initializeTimeline();
     pauseTimer();
@@ -27,7 +26,7 @@ public class GameTimer {
 
   private void initializeTimeline() {
     timeline = new Timeline();
-    timeline.setCycleCount(START_TIME_SECONDS);
+    timeline.setCycleCount(timeSeconds);
     EventHandler timerUpdate = new EventHandler() {
       public void handle(Event event) {
         timeSeconds--;

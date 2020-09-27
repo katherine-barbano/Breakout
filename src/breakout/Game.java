@@ -170,14 +170,16 @@ public class Game {
   private void initializeGameLevels() {
     try {
       //following line to list files in directory from http://zetcode.com/java/listdirectory/
-      Stream filesInGame = Files.list(new File(BlockConfiguration.FILE_SOURCE_PATH + GAME_NAME).toPath());
+      Stream filesInGame = Files.list(new File(Level.FILE_SOURCE_PATH + GAME_NAME).toPath());
 
       Object[] filesInGameArray = filesInGame.toArray();
       gameLevels = new ArrayList<>();
 
       for(Object filePath:filesInGameArray) {
         int levelNumber = getLevelNumberFromFileName(filePath.toString());
-        gameLevels.add(new Level(gameRoot,GAME_NAME,levelNumber,infoBar));
+        if(levelNumber != -1) {
+          gameLevels.add(new Level(gameRoot,GAME_NAME,levelNumber,infoBar));
+        }
       }
     }
     catch(IOException e) {

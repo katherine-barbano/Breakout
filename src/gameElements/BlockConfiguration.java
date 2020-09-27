@@ -16,7 +16,6 @@ import javafx.scene.Group;
  *      Methods: readTextFile, setBlockRows
  */
 public class BlockConfiguration {
-  public static final String FILE_SOURCE_PATH = "data/";
   public static final int NUMBER_OF_BLOCK_ROWS = Block.NUMBER_OF_BLOCK_ROWS;
   public static final int BLOCK_CONFIGURATION_OFFSET_FROM_PADDLE = 100;
 
@@ -32,7 +31,7 @@ public class BlockConfiguration {
     setLevel(level);
     this.configRows = new BlockRow[NUMBER_OF_BLOCK_ROWS];
     if (!fileName.equals("")) {
-      String filePath = generateFilePathForFile(gameName, fileName);
+      String filePath = myLevel.generateFilePathForFile(gameName, fileName);
       generateBlockRowsFromFile(filePath); // Blocks are dimensionless
     }
   }
@@ -73,6 +72,7 @@ public class BlockConfiguration {
       // TODO: this ^ should never happen
     }
 
+    //TODO: can we use polymorphism here by doing BlockRow movingBlockRow = new MovingBlockRow? And cast to subclass to use methods
     MovingBlockRow movingBlockRow = new MovingBlockRow();
     movingBlockRow.setRowOfBlocks(blockArray);
     return movingBlockRow;
@@ -257,7 +257,6 @@ public class BlockConfiguration {
     return myLevel;
   }
   public void setLevel(Level myLevel) { this.myLevel = myLevel; }
-  String generateFilePathForFile(String gameName, String fileName) { return FILE_SOURCE_PATH + gameName + "/" + fileName + ".txt"; }
 
   public BlockRow[] getBlockRows() { return configRows; }
 

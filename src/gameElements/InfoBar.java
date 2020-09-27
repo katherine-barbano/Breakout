@@ -36,9 +36,12 @@ public class InfoBar extends Rectangle {
     this.livesText = livesText;
     this.levelText = levelText;
     this.scoreToWinText = scoreToWinText;
-    this.gameTimer = new GameTimer(root);
     scoreText.removeText();
     scoreText.addText();
+  }
+
+  public void setTimeLimit(int timeLimit) {
+    this.gameTimer = new GameTimer(root, timeLimit);
   }
 
   public void initiatePauseInText() {
@@ -82,10 +85,6 @@ public class InfoBar extends Rectangle {
 
   public void removeScoreText() {
     scoreText.removeText();
-  }
-
-  public void addScoreText() {
-    scoreText.addText();
   }
 
   /***
