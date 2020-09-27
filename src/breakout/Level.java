@@ -14,6 +14,7 @@ import text.GameText;
 import text.LevelText;
 import text.LivesText;
 import text.PauseText;
+import text.ScoreToWinText;
 
 /***
  * Maintains gameElements for a single level of the game. Handles removal and addition of gameElements
@@ -95,7 +96,8 @@ public class Level {
     GameText gameLivesText = new LivesText(getLives(),gameRoot);
     GameText gamePauseText = new PauseText(gameRoot);
     GameText gameLevelText = new LevelText(getLevelNumber(),gameRoot);
-    infoBar.initializeLevelSpecificText(gamePauseText,gameLivesText,gameLevelText);
+    GameText gameScoreToWinText = new ScoreToWinText(50,gameRoot);
+    infoBar.initializeLevelSpecificText(gamePauseText,gameLivesText,gameLevelText,gameScoreToWinText);
 
     setLives(INITIAL_NUMBER_LIVES);
     initializeNewBallAndPaddle();

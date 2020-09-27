@@ -7,7 +7,7 @@ public class PauseText extends GameText {
   public static final String PAUSE_TITLE="Paused. Resume with space";
   public static final String START_TITLE = "Click the space bar to start!";
 
-  public static final int PAUSE_XPOSITION = 20;
+  public static final int PAUSE_XPOSITION = ScoreToWinText.SCORETOWIN_XPOSITION;
   public static final int PAUSE_YPOSITION = LivesText.LIVES_YPOSITION;
   public static final String PAUSE_ID = "#pauseText";
 

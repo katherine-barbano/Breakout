@@ -19,6 +19,7 @@ public class InfoBar extends Rectangle {
   private GameText scoreText;
   private GameText livesText;
   private GameText levelText;
+  private GameText scoreToWinText;
   private GameTimer gameTimer;
   private Group root;
 
@@ -30,10 +31,11 @@ public class InfoBar extends Rectangle {
     this.root.getChildren().add(this);
   }
 
-  public void initializeLevelSpecificText(GameText pauseText, GameText livesText, GameText levelText) {
+  public void initializeLevelSpecificText(GameText pauseText, GameText livesText, GameText levelText, GameText scoreToWinText) {
     this.pauseText = pauseText;
     this.livesText = livesText;
     this.levelText = levelText;
+    this.scoreToWinText = scoreToWinText;
     this.gameTimer = new GameTimer(root);
     scoreText.removeText();
     scoreText.addText();
@@ -43,12 +45,14 @@ public class InfoBar extends Rectangle {
     PauseText subclassPauseText = (PauseText) pauseText;
     subclassPauseText.startPause();
     pauseText = subclassPauseText;
+    gameTimer.pauseTimer();
   }
 
   public void initiateUnpauseInText() {
     PauseText subclassPauseText = (PauseText) pauseText;
     subclassPauseText.endPause();
     pauseText = subclassPauseText;
+    gameTimer.unpauseTimer();
   }
 
   public void resetPauseText(Group gameRoot) {
@@ -60,6 +64,8 @@ public class InfoBar extends Rectangle {
     livesText.removeText();
     pauseText.removeText();
     levelText.removeText();
+    scoreToWinText.removeText();
+    gameTimer.removeTimerText();
   }
 
   public void updateLivesText(int lives) {

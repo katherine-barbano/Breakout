@@ -1,13 +1,12 @@
 package text;
 
 import javafx.scene.Group;
-import javafx.scene.paint.Color;
 
 public class TimerText extends StatusText {
 
   public static final String TIMER_TITLE = "Time: ";
-  public static final int TIMER_XPOSITION = LevelText.LEVEL_XPOSITION;
-  public static final int TIMER_YPOSITION = LevelText.LEVEL_YPOSITION+20;
+  public static final int TIMER_XPOSITION = LivesText.LIVES_XPOSITION+100;
+  public static final int TIMER_YPOSITION = LivesText.LIVES_YPOSITION;
   public static final String TIMER_ID = "#timerText";
 
   public TimerText(int startTime, Group gameRootArg) {

@@ -2,12 +2,10 @@ package gameElements;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
-import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.scene.Group;
 import javafx.util.Duration;
-import text.GameOverText;
 import text.GameText;
 import text.TimerText;
 
@@ -24,6 +22,7 @@ public class GameTimer {
     root = gameRoot;
     timerText = new TimerText(timeSeconds,root);
     initializeTimeline();
+    pauseTimer();
   }
 
   private void initializeTimeline() {
@@ -47,5 +46,17 @@ public class GameTimer {
     timeline.getKeyFrames().add(keyFrame);
 
     timeline.playFromStart();
+  }
+
+  void removeTimerText() {
+    timerText.removeText();
+  }
+
+  void pauseTimer() {
+    timeline.pause();
+  }
+
+  void unpauseTimer() {
+    timeline.play();
   }
 }

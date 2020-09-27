@@ -32,7 +32,7 @@ import text.StatusText;
 public class Game {
 
   public static final String TITLE = "Breakout";
-  public static final int SCENE_SIZE = 650;
+  public static final int SCENE_SIZE = 670;
   public static final int PLAYABLE_AREA_SIZE = 600;
   public static final int FRAMES_PER_SECOND = 60;
   public static final double SECOND_DELAY = 1.0 / FRAMES_PER_SECOND;
