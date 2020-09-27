@@ -182,9 +182,11 @@ public class Level {
   }
 
   private void resetBallAndPaddle() {
+    int oldScore = gameBall.getScore();
     gamePaddle.removePaddle();
     gameBall.removeBall();
     initializeNewBallAndPaddle();
+    gameBall.setScore(oldScore);
   }
 
   void dropFoundPowerUps(double elapsedTime) {

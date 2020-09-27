@@ -5,7 +5,7 @@ import javafx.scene.Group;
 public class ScoreText extends StatusText {
 
   public static final String SCORE_TITLE = "Score: ";
-  public static final int SCORE_XPOSITION = LivesText.LIVES_XPOSITION-110;
+  public static final int SCORE_XPOSITION = LivesText.LIVES_XPOSITION-120;
   public static final int SCORE_YPOSITION = LivesText.LIVES_YPOSITION;
   public static final String SCORE_ID = "#scoreText";
 

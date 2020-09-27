@@ -22,15 +22,17 @@ public class InfoBar extends Rectangle {
   public InfoBar(GameText scoreText,Group root) {
     super(0,0,Game.SCENE_SIZE,INFO_BAR_HEIGHT);
     setFill(INFO_BAR_COLOR);
-    root.getChildren().add(this);
-    this.scoreText = scoreText;
     this.root = root;
+    this.scoreText = scoreText;
+    this.root.getChildren().add(this);
   }
 
   public void initializeLevelSpecificText(GameText pauseText, GameText livesText, GameText levelText) {
     this.pauseText = pauseText;
     this.livesText = livesText;
     this.levelText = levelText;
+    scoreText.removeText();
+    scoreText.addText();
   }
 
   public void initiatePauseInText() {
@@ -72,6 +74,10 @@ public class InfoBar extends Rectangle {
     scoreText.removeText();
   }
 
+  public void addScoreText() {
+    scoreText.addText();
+  }
+
   /***
    * Returns the gameLivesText object for unit testing.
    * @return LivesText object for the Level
@@ -91,4 +97,5 @@ public class InfoBar extends Rectangle {
   public GameText getScoreText() {
     return scoreText;
   }
+
 }
