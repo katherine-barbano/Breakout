@@ -111,4 +111,8 @@ public class InfoBar extends Rectangle {
     return gameTimer.timeIsUp();
   }
 
+  public GameTimer getGameTimer() {
+    return gameTimer;
+  }
+
 }

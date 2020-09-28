@@ -61,4 +61,8 @@ public class GameTimer {
   boolean timeIsUp() {
     return timeSeconds==0;
   }
+
+  public int getTimeRemaining() {
+    return timeSeconds;
+  }
 }

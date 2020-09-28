@@ -1,8 +1,12 @@
 package gameElements;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import breakout.Game;
+import breakout.Level;
+import java.util.List;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
 import javafx.stage.Stage;
@@ -29,12 +33,10 @@ public class InfoBarTest extends DukeApplicationTest {
   }
 
   @Test
-  void initialTextOnScreen() {
-
-  }
-
-  @Test
   void removeLevelSpecificText() {
-
+    InfoBar infoBar = game.getInfoBar();
+    javafxRun(() -> infoBar.removeAllLevelSpecificText());
+    List<Node> children = game.getRoot().getChildren();
+    assertTrue(children.size()==65);
   }
 }
