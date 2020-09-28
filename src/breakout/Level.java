@@ -37,6 +37,7 @@ public class Level {
 
   public static final int INITIAL_NUMBER_LIVES = 3;
   public static final String FILE_SOURCE_PATH = "data/";
+  public static final int ADDITIONAL_SECONDS = 10;
 
   private int levelLives;
   private int levelNumber;
@@ -235,6 +236,9 @@ public class Level {
     else if(code == KeyCode.K) {
       dropAllPowerUps();
     }
+    else if(code == KeyCode.T) {
+      addExtraTime();
+    }
   }
 
   private void handleSpaceBarInput() {
@@ -340,6 +344,15 @@ public class Level {
   private void dropAllPowerUps() {
     for(int powerUpsLeft = levelConfiguration.getNumberOfPowerUps(); powerUpsLeft>0; powerUpsLeft--) {
       dropFirstPowerUp();
+    }
+  }
+
+  private void addExtraTime() {
+    int timeLeft = infoBar.getTimeRemaining();
+    infoBar.removeGameTimerText();
+    infoBar.setTimeLimit(timeLeft + ADDITIONAL_SECONDS);
+    if(!gameIsPaused) {
+      infoBar.initiateUnpauseInText();
     }
   }
 

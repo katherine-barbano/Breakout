@@ -39,8 +39,16 @@ public class InfoBar extends Rectangle {
     scoreText.addText();
   }
 
+  public void removeGameTimerText() {
+    gameTimer.removeTimerText();
+  }
+
   public void setTimeLimit(int timeLimit) {
     this.gameTimer = new GameTimer(root, timeLimit);
+  }
+
+  public int getTimeRemaining() {
+    return gameTimer.getTimeRemaining();
   }
 
   public void initiatePauseInText() {
