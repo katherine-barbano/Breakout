@@ -11,7 +11,7 @@ Start Date: 9/12/2020
 
 Finish Date: 9/28/2020
 
-Hours Spent: 
+Hours Spent: Katherine - Around 100
 
 ### Resources Used
 - Used a few lines of code from the following source that gives a proof
@@ -25,6 +25,8 @@ https://www.geeksforgeeks.org/check-if-any-point-overlaps-the-given-circle-and-r
 - Used a line of code from the following source that explains how to list
 all the files within a given directory in Java:
 http://zetcode.com/java/listdirectory/
+- Referenced the following to generate random integers: // used https://stackoverflow.com/questions/363681/how-do-i-generate-random-integers-within-a-specific-range-in-java
+
 
 ### Running the Program
 
@@ -68,12 +70,26 @@ so when a block is broken a power up might not show up even
 though there should be one (or when the P or K cheat keys are used).
 - If a power up is dropped using P or K when the game is paused,
 it will disappear instead of drop down.
+- If you win/lose once, then restart and go to the last level, then
+repeatedly decrease the score needed to win with the S cheat key, it will not decrease
+all the way to 0.
 
-Extra credit:
+Extra credit: Implemented a game timer to countdown. Must surpass
+a score by the end of the timer to move onto the next level. Because
+blocks only add 5 points if they are completely broken (given that blocks
+are varying hardnesses), this feature
+gives a different playing experience for every level. The player has to
+adjust their playing technique for each level by deciding which hardness
+blocks are better to go for in that level based on their current score,
+which power ups would actually hinder their ability to gather sufficient points,
+etc. so each level is functionally different for the user, since the game
+goals are changing each level.
 
 
 ### Notes/Assumptions
-- To change the data source, DO THIS LATER?!?
+- To change which levels/games are being played, you need to go into
+the config.properties file and change game_name variable to which folder
+in the data directory you want to play.
 - Each directory within the "data" folder represents a game that can
 be played through. Each file within this directory represents a single
 level. The filename of each level should contain a positive integer
@@ -97,6 +113,12 @@ Block rows are separated by a new line.
 - Moving blocks should only be created in a row with no other blocks present.
 This means that if a level file contains an "M", the rest of the row with
 the "M" in it should be all "0"s.
+-In addition to the level files within a game, each game must also
+have a file without any numeric value in the filename. Each row on this
+file represents a single level. Each row should have two numbers separated
+by a space: first, a number specifying the score needed to win that level,
+and second a number specifying the time limit of the level. See data/sample_game/level_scores_to_win_and_time
+as an example.
 
 ### Impressions
-
+Learned about the importance of inheritance and open-closed principle.
