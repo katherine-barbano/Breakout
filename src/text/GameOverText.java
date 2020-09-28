@@ -8,12 +8,10 @@ import javafx.scene.paint.Paint;
 
 public class GameOverText extends GameText {
 
-  public static final Paint GAMEOVER_COLOR = Color.MEDIUMVIOLETRED;
-
   public GameOverText(Group gameRootArg) {
     super(gameRootArg);
     initializeText(getGameOverTitle());
-    setFill(GAMEOVER_COLOR);
+    setFill(getGameOverColor());
   }
 
   @Override

@@ -79,4 +79,5 @@ public abstract class GameText extends Text {
   String getGameOverId() { return properties.getProperty("game_over_id"); }
   int getGameOverXPosition() { return Integer.parseInt(properties.getProperty("game_over_x_position"));}
   int getGameOverYPosition() { return Integer.parseInt(properties.getProperty("game_over_y_position"));}
+  Paint getGameOverColor() { return Paint.valueOf(properties.getProperty("game_over_color"));}
 }

@@ -74,7 +74,7 @@ it will disappear instead of drop down.
 repeatedly decrease the score needed to win with the S cheat key, it will not decrease
 all the way to 0.
 
-Extra credit: Implemented a game timer to countdown. Must surpass
+Extra credit: Added you won/you lost screen at end. Implemented a game timer to countdown. Must surpass
 a score by the end of the timer to move onto the next level. Because
 blocks only add 5 points if they are completely broken (given that blocks
 are varying hardnesses), this feature
