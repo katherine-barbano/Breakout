@@ -101,20 +101,7 @@ public class Block extends Rectangle {
   }
 
   public boolean isTouchingCircle(Circle collisionCircle) {
-    double R = getBallRadius();
-    double Xcoord = collisionCircle.getCenterX();
-    double Ycoord = collisionCircle.getCenterY();
-    double width = getWidth();
-    double height = getHeight();
-    double xPos = getX();
-    double yPos = getY();
-
-    // from https://www.geeksforgeeks.org/check-if-any-point-overlaps-the-given-circle-and-rectangle/
-    double Xn = Math.max(xPos, Math.min(Xcoord, (xPos+width)));
-    double Yn = Math.max(yPos, Math.min(Ycoord, (yPos + height)));
-    double Dx = Xn - Xcoord;
-    double Dy = Yn - Ycoord;
-    return (Dx * Dx + Dy * Dy) <= R*R;
+    return isTouchingLeftOrRight(collisionCircle) || isTouchingBlockTop(collisionCircle);
   }
 
   private double getBallRadius() { return Double.parseDouble(properties.getProperty("ball_radius"));}

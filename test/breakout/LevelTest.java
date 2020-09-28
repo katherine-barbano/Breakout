@@ -175,4 +175,17 @@ public class LevelTest extends DukeApplicationTest {
     InfoBar infoBar = new InfoBar(new ScoreText(0,testGroup),testGroup);
     assertThrows(IllegalArgumentException.class, () -> new Level(testGroup,"game_score_time_file_format_wrong",3, infoBar));
   }
+
+  @Test
+  void levelStepsCorrectly() {
+    ball = lookup("#ball").query();
+    Scene gameScene = game.getScene();
+    startAnimation();
+    press(gameScene, KeyCode.S);
+    for(int numSteps = 0; numSteps < 10; numSteps ++) {
+      javafxRun(() -> game.getCurrentGameLevel().step(game.getSecondDelay()));
+    }
+    assertEquals(300, ball.getCenterX());
+    assertEquals(600, ball.getCenterY());
+  }
 }

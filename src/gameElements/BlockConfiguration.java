@@ -2,6 +2,7 @@ package gameElements;
 
 import breakout.Game;
 import breakout.Level;
+import gameElements.PowerUp.PowerUpType;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -143,15 +144,6 @@ public class BlockConfiguration {
     return powerUp;
   }
 
-  public void findAndDecrementBlock(Block block, Ball ball) {
-    Block foundBlock = findBlock(block);
-    if (foundBlock == null) return;
-    if (ball.isBreakerBall()) {
-      removeBlockFromConfiguration(foundBlock);
-    }
-    else decrementBlock(foundBlock);
-  }
-
   private Block findBlock(Block block) {
     List<Block> blocks = getBlocksAsList();
     for (Block currentBlock : blocks) {
@@ -165,7 +157,10 @@ public class BlockConfiguration {
     decreaseNumberOfBlocksByOne();
   }
 
-  private void decrementBlock(Block block) {
+  public void decrementBlock(Block block) {
+    if (myLevel.getGameBall().isBreakerBall()) {
+      removeBlockFromConfiguration(block);
+    }
     block.decreaseHardnessByOne();
     if (block.getBlockHardness() == 0) {
       decreaseNumberOfBlocksByOne();
@@ -295,10 +290,53 @@ public class BlockConfiguration {
   public int getSceneSize() { return Integer.parseInt(properties.getProperty("scene_size"));}
   public int getPlayableArea() { return Integer.parseInt(properties.getProperty("playable_area_size"));}
 
+  public void updateBlocks(double elapsedTime, Block touchedBlock, boolean gameIsPaused) {
+    updateBlockAttributes(elapsedTime, gameIsPaused);
+    if (touchedBlock == null) return;
+    else {
+      handleTouchedBlock(touchedBlock);
+    }
+  }
+
   public void updateBlockAttributes(double elapsedTime, boolean gameIsPaused) {
     for (Block block : getBlocksAsList()) {
       if (block instanceof VaryingBlock) ((VaryingBlock) block).waitToChangeHardness(elapsedTime, gameIsPaused);
       if (block instanceof MovingBlock) ((MovingBlock) block).updateVelocityAndPosition(elapsedTime, gameIsPaused);
+    }
+  }
+
+  public void handleTouchedBlock(Block touchedBlock) {
+    if (touchedBlock.hasPowerUp()) {
+      PowerUpType powerUpType = touchedBlock.getPowerUp().getPowerUpType();
+      if (powerUpType == PowerUpType.MOVING_BLOCK) {
+        myLevel.getGameBall().increaseScoreBy(myLevel.getGameBall().getMovingBlockScoreValue());
+      } else if (touchedBlock.getBlockHardness() == touchedBlock.getMinimumHardness()) {
+        handleFoundPowerUpInBlock(touchedBlock);
+      }
+    }
+    decrementBlock(touchedBlock);
+  }
+
+  private void handleFoundPowerUpInBlock(Block block) {
+    PowerUpType powerUpType = block.getPowerUp().getPowerUpType();
+    switch (powerUpType) {
+      case SLOW_BALL :
+      case BREAKER_BALL: {
+        block.getPowerUp().setGameBall(myLevel.getGameBall());
+        break;
+      } case PADDLE: {
+        myLevel.getGamePaddle().setWidth(myLevel.getGamePaddle().getWidth());
+        break;
+      } case MOVING_BLOCK: {
+        myLevel.getGameBall().increaseScoreBy(myLevel.getGameBall().getMovingBlockScoreValue());
+        break;
+      } default: {
+        throw new IllegalStateException("This shouldn't be reached");
+      }
+    }
+    if (powerUpType != PowerUpType.MOVING_BLOCK) {
+      block.releasePowerUp();
+      block.setHasReleasedPowerUp(true);
     }
   }
 }

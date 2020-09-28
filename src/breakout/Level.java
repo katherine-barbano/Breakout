@@ -18,7 +18,6 @@ import java.util.regex.PatternSyntaxException;
 import java.util.stream.Stream;
 import javafx.scene.Group;
 import javafx.scene.input.KeyCode;
-import text.GameOverText;
 import text.GameText;
 import text.LevelText;
 import text.LivesText;
@@ -194,16 +193,20 @@ public class Level {
   }
 
   /***
-   * Returns whether the ball's position is not touching the ground, meaning
-   * it is in a position that allows the game to continue. Also updates
-   * the coordinates of the ball.
-   *
-   * Should be called by step in Game.
-   * @param elapsedTime time elapsed in a single step
-   * @return true if ball is valid and Level should continue
+   * Handles the stepping driven by Game for the current game level.
+   * Updates the ball's, the blocks', and the power ups' positions
+   * and velocity as dictated by gameplay.
+   * @param elapsedTime describes the amount of time represented by this
+   *                    step and determines distance traveled.
    */
-  boolean isBallValid(double elapsedTime) {
-    return gameBall.updateCoordinatesAndContinue(elapsedTime, gameIsPaused);
+  void step(double elapsedTime) {
+    Block touchedBlock = gameBall.getBlockBallIsTouching();
+    boolean ballIsValid = gameBall.updateCoordinatesAndContinue(elapsedTime, gameIsPaused);
+    if (!ballIsValid) {
+      resetCurrentLevel();
+    }
+    levelConfiguration.updateBlocks(elapsedTime, touchedBlock, gameIsPaused);
+    dropFoundPowerUps(elapsedTime);
   }
 
   /***
@@ -297,7 +300,7 @@ public class Level {
   private void dropFirstPowerUp() {
     Block firstPowerUpBlock = getFirstBlockWithPowerUp();
     if(firstPowerUpBlock!=null) {
-      handleFoundPowerUpInBlock(firstPowerUpBlock);
+      levelConfiguration.handleTouchedBlock(firstPowerUpBlock);
     }
   }
 
@@ -331,45 +334,6 @@ public class Level {
     List<PowerUp> powerUps = levelConfiguration.getVisiblePowerUps();
     for (PowerUp fallingPowerUp: powerUps) {
       dropSinglePowerUp(fallingPowerUp,elapsedTime);
-    }
-  }
-
-  void monitorBlocks(double elapsedTime) {
-    levelConfiguration.updateBlockAttributes(elapsedTime, gameIsPaused);
-    Block block = gameBall.getBlockBallIsTouching();
-    if (block != null) {
-      if (block.hasPowerUp()) {
-        PowerUpType powerUpType = block.getPowerUp().getPowerUpType();
-        if (powerUpType == PowerUpType.MOVING_BLOCK) {
-          gameBall.increaseScoreBy(gameBall.getMovingBlockScoreValue());
-        } else if (block.getBlockHardness() == block.getMinimumHardness()) {
-          handleFoundPowerUpInBlock(block);
-        }
-      }
-      levelConfiguration.findAndDecrementBlock(block, gameBall);
-    }
-  }
-
-  private void handleFoundPowerUpInBlock(Block block) {
-    PowerUpType powerUpType = block.getPowerUp().getPowerUpType();
-    switch (powerUpType) {
-      case SLOW_BALL :
-      case BREAKER_BALL: {
-        block.getPowerUp().setGameBall(gameBall);
-        break;
-      } case PADDLE: {
-        gamePaddle.setWidth(gamePaddle.getWidth());
-        break;
-      } case MOVING_BLOCK: {
-        gameBall.increaseScoreBy(gameBall.getMovingBlockScoreValue());
-        break;
-      } default: {
-        throw new IllegalStateException("This shouldn't be reached");
-      }
-    }
-    if (powerUpType != PowerUpType.MOVING_BLOCK) {
-      block.releasePowerUp();
-      block.setHasReleasedPowerUp(true);
     }
   }
 

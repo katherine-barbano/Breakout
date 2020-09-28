@@ -1,10 +1,6 @@
 package text;
 
 import javafx.scene.Group;
-import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
-import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
 
 public class GameOverText extends GameText {
 

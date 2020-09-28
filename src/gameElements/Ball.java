@@ -73,23 +73,36 @@ public class Ball extends Circle {
     gameRoot.getChildren().remove(this);
   }
 
+  /***
+   * Returns whether the ball's position is not touching the ground, meaning
+   * it is in a position that allows the game to continue. Also updates
+   * the coordinates of the ball.
+   *
+   * Should be called by step in Level.
+   * @param elapsedTime time elapsed in a single step
+   * @return true if ball is valid and Level should continue
+   */
   public boolean updateCoordinatesAndContinue(double elapsedTime, boolean isPaused) {
     if (isTouchingBottomWall()) {
       return false;
     }
     if (!isPaused) {
-      if (getBlockBallIsTouching() != null) {
-        updateVelocityXForBlockHit();
-        updateVelocityYForBlockHit();
-      }
-      else {
-        updateVelocityX();
-        updateVelocityY();
-      }
+      updateVelocity();
       updatePositionX(elapsedTime);
       updatePositionY(elapsedTime);
     }
     return true;
+  }
+
+  private void updateVelocity() {
+    if (getBlockBallIsTouching() != null) {
+      updateVelocityXForBlockHit();
+      updateVelocityYForBlockHit();
+    }
+    else {
+      updateVelocityX();
+      updateVelocityY();
+    }
   }
 
   private void updatePositionX(double elapsedTime) {
@@ -179,10 +192,7 @@ public class Ball extends Circle {
   }
 
   private void updateVelocityYForBlockHit() {
-    Block touchedBlock = getBlockBallIsTouching();
-    if (touchedBlock.isTouchingBlockTop(this)) {
-      velocityY = velocityY * -1;
-    }
+    velocityY = velocityY * -1;
   }
 
   private void updateVelocityCanBeUpdated() {
@@ -205,7 +215,7 @@ public class Ball extends Circle {
 
   public Block getBlockBallIsTouching() {
     for (Block block : blockConfiguration.getBlocksAsList()) {
-      if (block== null || block.getBlockHardness() == 0) continue;
+      if (block == null) continue;
       if (block.isTouchingCircle(this)) return block;
     }
     return null;
