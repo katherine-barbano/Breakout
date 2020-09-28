@@ -123,4 +123,13 @@ public class InfoBar extends Rectangle {
     return gameTimer;
   }
 
+  public GameText getScoreToWinText() {
+    return scoreToWinText;
+  }
+
+  public void setScoreToWinText(int newScore) {
+    StatusText subclassUpdateValueText = (StatusText) scoreToWinText;
+    subclassUpdateValueText.updateValue(newScore);
+    scoreToWinText = subclassUpdateValueText;
+  }
 }

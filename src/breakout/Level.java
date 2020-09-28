@@ -38,6 +38,7 @@ public class Level {
   public static final int INITIAL_NUMBER_LIVES = 3;
   public static final String FILE_SOURCE_PATH = "data/";
   public static final int ADDITIONAL_SECONDS = 10;
+  public static final int DECREMENT_POINTS = 10;
 
   private int levelLives;
   private int levelNumber;
@@ -239,6 +240,9 @@ public class Level {
     else if(code == KeyCode.T) {
       addExtraTime();
     }
+    else if(code == KeyCode.S) {
+      decreaseScoreToWin();
+    }
   }
 
   private void handleSpaceBarInput() {
@@ -354,6 +358,13 @@ public class Level {
     if(!gameIsPaused) {
       infoBar.initiateUnpauseInText();
     }
+  }
+
+  private void decreaseScoreToWin() {
+    if(scoreToWinLevel>0) {
+      scoreToWinLevel-=DECREMENT_POINTS;
+    }
+    infoBar.setScoreToWinText(scoreToWinLevel);
   }
 
   /***
