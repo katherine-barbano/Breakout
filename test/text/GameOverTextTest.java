@@ -29,7 +29,7 @@ public class GameOverTextTest extends DukeApplicationTest{
   @Test
   //TODO: do this once blocks can be broken
   void wonText() {
-
+    fail();
   }
 
   @Test

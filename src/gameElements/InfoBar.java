@@ -132,4 +132,8 @@ public class InfoBar extends Rectangle {
     subclassUpdateValueText.updateValue(newScore);
     scoreToWinText = subclassUpdateValueText;
   }
+
+  public void removeInfoBar() {
+    root.getChildren().remove(this);
+  }
 }

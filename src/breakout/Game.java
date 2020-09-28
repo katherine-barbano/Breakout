@@ -8,6 +8,7 @@ import java.util.stream.Stream;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.scene.Group;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
@@ -193,12 +194,12 @@ public class Game {
   void gameOver() {
     Level currentLevel = getCurrentGameLevel();
     infoBar.removeScoreText();
+    infoBar.removeInfoBar();
+    currentLevel.removeLevel();
 
     GameOverText subclassGameOverText = (GameOverText) gameOverText;
     subclassGameOverText.gameOverUpdate(gameIsWon());
     gameOverText = subclassGameOverText;
-
-    currentLevel.removeLevel();
   }
 
   /***
