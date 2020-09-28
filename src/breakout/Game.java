@@ -165,6 +165,7 @@ public class Game {
    * Shows the "game over" or "you won" screen.
    */
   void gameOver() {
+    System.out.println("hi");
     Level currentLevel = getCurrentGameLevel();
     infoBar.removeScoreText();
 
@@ -309,4 +310,12 @@ public class Game {
     currentGameLevelIndex = levelNumber;
   }
   public int getLevelNumber() { return currentGameLevelIndex; }
+
+  public List<Level> getGameLevels() {
+    return gameLevels;
+  }
+
+  public void setScore(int score) {
+    totalScore=score;
+  }
 }

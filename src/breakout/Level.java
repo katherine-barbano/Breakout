@@ -16,6 +16,7 @@ import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Scanner;
 import java.util.regex.PatternSyntaxException;
 import java.util.stream.Stream;
@@ -151,6 +152,9 @@ public class Level {
       throw new IllegalArgumentException("No file provided with scores to win level and time limits.");
     }
     catch (PatternSyntaxException e) {
+      throw new IllegalArgumentException("Invalid number of levels provided in file.");
+    }
+    catch(NoSuchElementException e) {
       throw new IllegalArgumentException("Invalid number of levels provided in file.");
     }
   }
@@ -368,4 +372,13 @@ public class Level {
   }
 
   public int getScoreToWinLevel() {return scoreToWinLevel;}
+
+  public int getLevelTimeLimit() {
+    return levelTimeLimit;
+  }
+
+  public void setLevelTimeLimit(int newTimeLimit) {
+    levelTimeLimit = newTimeLimit;
+  }
+
 }
