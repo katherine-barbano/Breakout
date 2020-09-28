@@ -129,7 +129,6 @@ public class Game {
     totalScore = 0;
     gameRoot = new Group();
     gameOverText = new GameOverText(gameRoot);
-    infoBar = new InfoBar(new ScoreText(totalScore,gameRoot),gameRoot);
 
     initializeGameLevels();
     resetGameToLevelFirstTime(LEVEL_ONE_INDEX);
@@ -140,10 +139,11 @@ public class Game {
     return scene;
   }
 
+  //start here deal with you won logic and add score and high score to end screen
   private void handleKeyInput(KeyCode code) {
     Level currentLevel = getCurrentGameLevel();
     if(code == KeyCode.SPACE && currentLevel.gameIsLost()) {
-      resetGameToLevel(LEVEL_ONE_INDEX);
+      resetGameToLevelFirstTime(LEVEL_ONE_INDEX);
     }
     else if(keyCodeIsNumeric(code)) {
       handleNumericKeyCode(code);
@@ -268,6 +268,7 @@ public class Game {
    * @param levelIndex Index in Levels to show
    */
   public void resetGameToLevelFirstTime(int levelIndex) {
+    infoBar = new InfoBar(new ScoreText(totalScore,gameRoot),gameRoot);
     if (indexIsOutOfBounds(levelIndex)) {
       return;
     }
