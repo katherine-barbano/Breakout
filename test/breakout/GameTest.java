@@ -26,7 +26,7 @@ public class GameTest extends DukeApplicationTest{
   @Test
   void resetGameToLevelOne() {
     javafxRun(() -> {
-      game.gameOver();
+      game.gameOver(true);
       game.resetGameToLevel(0);
       assertEquals(game.getCurrentGameLevel().getLevelNumber(), 1);
     });

@@ -297,8 +297,7 @@ public class Level {
   private void dropFirstPowerUp() {
     Block firstPowerUpBlock = getFirstBlockWithPowerUp();
     if(firstPowerUpBlock!=null) {
-      firstPowerUpBlock.releasePowerUp();
-      firstPowerUpBlock.setHasReleasedPowerUp(true);
+      handleFoundPowerUpInBlock(firstPowerUpBlock);
     }
   }
 

@@ -90,7 +90,7 @@ public class Game {
   public void step (double elapsedTime) {
     Level currentLevel = getCurrentGameLevel();
     if (gameIsEnding(currentLevel)) {
-      gameOver();
+      gameOver(gameIsWon(currentLevel));
     }
     else if (gameIsContinuingToNextLevel(currentLevel)) {
       resetGameToLevel(currentGameLevelIndex+1);
@@ -109,7 +109,16 @@ public class Game {
 
   private boolean gameIsEnding(Level currentLevel) {
     boolean scoreTooLowToContinue = infoBar.timeIsUp() && !scoreSurpassedThresholdToContinue(currentLevel);
-    return currentLevel.gameIsLost() || gameIsWon() || scoreTooLowToContinue;
+    boolean lastLevelFinished = infoBar.timeIsUp() && onLastLevel();
+    return currentLevel.gameIsLost() || scoreTooLowToContinue || lastLevelFinished;
+  }
+
+  private boolean onLastLevel() {
+    return currentGameLevelIndex == gameLevels.size()-1;
+  }
+
+  private boolean gameIsWon(Level currentLevel) {
+    return scoreSurpassedThresholdToContinue(currentLevel) && onLastLevel();
   }
 
   private boolean scoreSurpassedThresholdToContinue(Level level) {
@@ -148,13 +157,13 @@ public class Game {
 
   private void handleKeyInput(KeyCode code) {
     Level currentLevel = getCurrentGameLevel();
-    if(code == KeyCode.SPACE && currentLevel.gameIsLost()) {
+    if(code == KeyCode.SPACE && gameIsEnding(currentLevel)) {
       resetGameToLevel(getLevelOneIndex());
     }
     else if(keyCodeIsNumeric(code)) {
       handleNumericKeyCode(code);
     }
-    else if (gameIsWon()){
+    else if (gameIsWon(currentLevel)){
       currentLevel.handleKeyInputOnEndScreen(code);
     }
     else {
@@ -197,12 +206,12 @@ public class Game {
    * Removes the current Level from the screen because the player lost all their lives or won the game.
    * Shows the "game over" or "you won" screen.
    */
-  void gameOver() {
+  void gameOver(boolean gameIsWon) {
     Level currentLevel = getCurrentGameLevel();
     infoBar.removeScoreText();
 
     GameOverText subclassGameOverText = (GameOverText) gameOverText;
-    subclassGameOverText.gameOverUpdate(gameIsWon());
+    subclassGameOverText.gameOverUpdate(gameIsWon);
     gameOverText = subclassGameOverText;
 
     currentLevel.removeLevel();
@@ -252,10 +261,6 @@ public class Game {
 
   private boolean indexIsOutOfBounds(int index) {
     return (index < getLevelOneIndex()) || (index > getFinalLevelIndex());
-  }
-
-  private boolean gameIsWon() {
-    return getCurrentGameLevel().allBlocksBrokenInLevel() && currentGameLevelIndex == gameLevels.size()-1;
   }
 
   // Getters and setters:

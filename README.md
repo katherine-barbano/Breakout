@@ -63,6 +63,11 @@ of the screen.
 - "S": Decreases the score needed to win the current level by 10 points.
 
 Known Bugs:
+- Does not read in power ups correctly as power up objects,
+so when a block is broken a power up might not show up even
+though there should be one (or when the P or K cheat keys are used).
+- If a power up is dropped using P or K when the game is paused,
+it will disappear instead of drop down.
 
 Extra credit:
 
