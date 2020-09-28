@@ -4,11 +4,6 @@ import javafx.scene.Group;
 
 public class MovingBlockPowerUp extends PowerUp{
 
-  public MovingBlockPowerUp(Group gameRootArg, Paddle paddleArg, Block blockArg) {
-    super(gameRootArg, paddleArg, blockArg);
-    setPowerUpType(PowerUpType.MOVING_BLOCK);
-  }
-
   public MovingBlockPowerUp(Group gameRoot, Paddle gamePaddle) {
     super(gameRoot, gamePaddle);
     setPowerUpType(PowerUpType.MOVING_BLOCK);
@@ -16,7 +11,10 @@ public class MovingBlockPowerUp extends PowerUp{
 
   @Override
   public void givePowerUp() {
-    // TODO: Increase score by MOVING_BLOCK_SCORE_VALUE instead of the normal BLOCK_VALUE
+    int bonusScore = getMovingBlockScoreValue();
+    if (getGameBall() != null) {
+      getGameBall().increaseScoreBy(bonusScore);
+    }
   }
 
   // this power up shouldn't show in the scene, so this is overridden to do nothing.

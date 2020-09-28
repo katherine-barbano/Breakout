@@ -11,8 +11,6 @@ import javafx.scene.Group;
 import javafx.scene.shape.Circle;
 
 public abstract class PowerUp extends Circle {
-  public static final int BALL_RADIUS = 15;
-  public static final int POWER_UP_DROP_SPEED = 100;
 
   private Group gameRoot;
   private Properties properties;
@@ -45,6 +43,16 @@ public abstract class PowerUp extends Circle {
     initializePropertyList();
   }
 
+  public PowerUp(Level level, Block blockArg) {
+    gameRoot = level.getGameRoot();
+    gamePaddle = level.getGamePaddle();
+    ownerBlock = blockArg;
+    initializePropertyList();
+    setProperties();
+  }
+
+  public abstract void givePowerUp();
+
   void assignToBlock(Block block) {
     ownerBlock = block;
     setProperties();
@@ -61,28 +69,17 @@ public abstract class PowerUp extends Circle {
     catch (IOException e) {}
   }
 
-  public PowerUp(Level level, Block blockArg) {
-    gameRoot = level.getGameRoot();
-    gamePaddle = level.getGamePaddle();
-    ownerBlock = blockArg;
-    initializePropertyList();
-    setProperties();
-  }
-
-  public abstract void givePowerUp();
-
   void setProperties() {
     double centerX = GetXCenterOfBlock(getOwnerBlock());
     double centerY = GetYCenterOfBlock(getOwnerBlock());
     setCenterX(centerX);
     setCenterY(centerY);
-
     setIsReleased(false);
-    setRadius(BALL_RADIUS);
+    setRadius(getBallRadius());
   }
 
   public void showInScene() {
-    velocityY = POWER_UP_DROP_SPEED;
+    velocityY = getPowerUpDropSpeed();
     setIsReleased(true);
     addToScene();
   }
@@ -98,11 +95,6 @@ public abstract class PowerUp extends Circle {
         removeFromScene();
       }
     }
-  }
-
-  // inverted since it starts at top left
-  private boolean isBelowPaddle() {
-    return getCenterY() >= gamePaddle.getCenterY();
   }
 
   private boolean isTouchingPaddle() {
@@ -139,17 +131,12 @@ public abstract class PowerUp extends Circle {
   public Block getOwnerBlock() { return ownerBlock; }
   public void setOwnerBlock(Block ownerBlock) { this.ownerBlock = ownerBlock; }
 
-  public boolean isReleased() { return isReleased; }
   public void setIsReleased(boolean released) { isReleased = released; }
 
   public Group getGameRoot() { return gameRoot; }
   public void setGameRoot(Group gameRoot) { this.gameRoot = gameRoot; }
 
-  public Paddle getGamePaddle() { return gamePaddle; }
   public void setPaddle(Paddle gamePaddle) { this.gamePaddle = gamePaddle; }
-
-  public int getVelocityY() { return velocityY; }
-  public void setVelocityY(int velocityY) { this.velocityY = velocityY; }
 
   public void setPowerUpType(PowerUpType type) { this.powerUpType = type; }
   public PowerUpType getPowerUpType() { return this.powerUpType; }
@@ -158,6 +145,8 @@ public abstract class PowerUp extends Circle {
   public void setGameBall(Ball ball) { this.gameBall = ball; }
 
   int getMovingBlockScoreValue() { return Integer.parseInt(properties.getProperty("moving_block_score_value"));}
+  int getBallRadius() { return Integer.parseInt(properties.getProperty("ball_radius"));}
+  int getPowerUpDropSpeed() { return Integer.parseInt(properties.getProperty("power_up_drop_speed"));}
   Paint getPaddlePowerUpColor() { return Paint.valueOf(properties.getProperty("paddle_power_up_color"));}
   Paint getSlowBallPowerUpColor() { return Paint.valueOf(properties.getProperty("slow_ball_power_up_color"));}
   int getSlowBallSpeed() { return Integer.parseInt(properties.getProperty("slow_ball_speed")); }

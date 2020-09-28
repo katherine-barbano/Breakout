@@ -4,7 +4,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import breakout.Game;
-import breakout.Level;
 import java.util.List;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;

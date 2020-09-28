@@ -33,6 +33,10 @@ public class BlockConfiguration {
     initializeProperties();
     setLevel(level);
     this.configRows = new BlockRow[getNumberOfBlockRows()];
+    initializeFromFile(gameName, fileName);
+  }
+
+  private void initializeFromFile(String gameName, String fileName) {
     if (!fileName.equals("")) {
       String filePath = myLevel.generateFilePathForFile(gameName, fileName);
       generateBlockRowsFromFile(filePath); // Blocks are dimensionless
@@ -46,63 +50,43 @@ public class BlockConfiguration {
       ip = new FileInputStream(Game.PROPERTY_FILE);
       properties.load(ip);
     }
-    catch (FileNotFoundException e) {}
-    catch (IOException e) {}
+    catch (FileNotFoundException e) { return;}
+    catch (IOException e) {return;}
   }
 
   void generateBlockRowsFromFile(String filePath) {
+    Scanner fileReader;
     try {
       configFile = new File(filePath);
-      Scanner fileReader = new Scanner(configFile);
-      for (int i = 0; i < getNumberOfBlockRows(); i++) {
-        if (fileReader.hasNextLine()) {
-          String fileLine = fileReader.nextLine();
-          if (containsMovingBlock(fileLine)) {
-            BlockRow movingBlockRow = convertFileLineToMovingBlockRow(fileLine);
-            configRows[i] = movingBlockRow;
-          }
-          else {
-            FilledBlockRow rowForFileLine = convertFileLineToBlockRow(fileLine);
-            configRows[i] = rowForFileLine;
-          }
-        }
+      fileReader = new Scanner(configFile);
+    } catch (FileNotFoundException e) { return; }
+    for (int i = 0; i < getNumberOfBlockRows(); i++) {
+      if (fileReader.hasNextLine()) {
+        String fileLine = fileReader.nextLine();
+        configRows[i] = generateBlockRowFromFileLine(fileLine);
       }
-    } catch (FileNotFoundException e) {}
+    }
   }
 
-  private BlockRow convertFileLineToMovingBlockRow(String fileLine) {
+  private BlockRow generateBlockRowFromFileLine(String fileLine) {
     String[] hardnessArray = fileLine.split(" ");
     Block[] blockArray = new Block[getBlocksPerRow()];
     assert (blockArray.length == hardnessArray.length);
 
+    BlockRow blockRow = new FilledBlockRow();
     for (int i = 0; i < hardnessArray.length; i++) {
       String hardness = hardnessArray[i];
       if (hardness.equals("M")) {
         MovingBlock onlyBlockThisRow = new MovingBlock();
         onlyBlockThisRow.setRandomHardness();
         blockArray[i] = onlyBlockThisRow;
-      } else {}
-      // TODO: this ^ should never happen
+        blockRow = new MovingBlockRow();
+      } else {
+        hardness = hardnessArray[i];
+        Block newBlock = buildBlockWithHardness(hardness);
+        blockArray[i] = newBlock;
+      }
     }
-
-    //TODO: can we use polymorphism here by doing BlockRow movingBlockRow = new MovingBlockRow? And cast to subclass to use methods
-    BlockRow movingBlockRow = new MovingBlockRow();
-    movingBlockRow.setRowOfBlocks(blockArray);
-    return movingBlockRow;
-  }
-
-  // Assumes that fileRow is of format "X X X ".."X X X"
-  private FilledBlockRow convertFileLineToBlockRow(String fileRow) {
-    String[] hardnessArray = fileRow.split(" ");
-    Block[] blockArray = new Block[getBlocksPerRow()];
-    assert (blockArray.length == hardnessArray.length);
-
-    for (int i = 0; i < hardnessArray.length; i++) {
-      String hardness = hardnessArray[i];
-      Block newBlock = buildBlockWithHardness(hardness);
-      blockArray[i] = newBlock;
-    }
-    FilledBlockRow blockRow = new FilledBlockRow();
     blockRow.setRowOfBlocks(blockArray);
     return blockRow;
   }
@@ -194,12 +178,6 @@ public class BlockConfiguration {
    * @param sceneHeight
    */
   public void updateConfiguration(int sceneWidth, int sceneHeight) {
-    int blockWidth = sceneWidth / (getBlocksPerRow());
-    int blockHeight = (sceneHeight-getInfoBarHeight() - getBlockConfigurationOffsetFromPaddle())
-        / getNumberOfBlockRows();
-
-    // TODO: utilize getBlocksAsList()
-    // make delta i,j matrices to assign X and Y?
     for (int i = 0; i < configRows.length; i++) {
       BlockRow blockRow = configRows[i];
       if (blockRow == null) continue;
@@ -207,14 +185,18 @@ public class BlockConfiguration {
       for (int j = 0; j < blocks.length; j++) {
         if (blocks[j] == null) continue;
         if (sceneWidth != 0 && sceneHeight != 0) {
-          blocks[j].setDimensions(sceneWidth,sceneHeight);
-          blocks[j].setX(blocks[j].getBlockWidth(sceneWidth)*j);
-          blocks[j].setY(blocks[j].getBlockHeight(sceneHeight)*i + getInfoBarHeight());
-          blocks[j].setDimensionsPowerUp();
+          orientBlock(blocks[j], sceneWidth, sceneHeight, i, j);
         }
         blocks[j].updateBlockColor();
       }
     }
+  }
+
+  private void orientBlock(Block block, int sceneWidth, int sceneHeight, int i, int j) {
+    block.setDimensions(sceneWidth,sceneHeight);
+    block.setX(block.getBlockWidth(sceneWidth)*j);
+    block.setY(block.getBlockHeight(sceneHeight)*i + getInfoBarHeight());
+    block.setDimensionsPowerUp();
   }
 
   Block getBlock(int row, int col) {
@@ -250,6 +232,7 @@ public class BlockConfiguration {
     return powerUpList;
   }
 
+  // FIXME: currently unused, might not need
   public List<Block> getMovingBlocks() {
     List<Block> movingBlockList = new ArrayList<>();
     for (Block block : getBlocksAsList()) {
@@ -268,6 +251,7 @@ public class BlockConfiguration {
     return varyingBlockList;
   }
 
+  // FIXME: also currently unused.
   boolean containsMovingBlock(String fileLine) {
     for (char key : fileLine.toCharArray()) {
       if (key == 'M') return true;
@@ -289,8 +273,6 @@ public class BlockConfiguration {
   public void setLevel(Level myLevel) { this.myLevel = myLevel; }
 
   public BlockRow[] getBlockRows() { return configRows; }
-
-  void setConfigFile(File configFile) { this.configFile = configFile; }
 
   void decreaseNumberOfBlocksByOne() {
     numberOfBlocksRemaining--;

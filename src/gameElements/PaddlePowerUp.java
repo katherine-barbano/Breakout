@@ -4,11 +4,6 @@ import javafx.scene.Group;
 
 public class PaddlePowerUp extends PowerUp{
 
-  public PaddlePowerUp(Group gameRootArg, Paddle paddleArg, Block blockArg) {
-    super(gameRootArg, paddleArg, blockArg);
-    setPowerUpType(PowerUpType.PADDLE);
-  }
-
   public PaddlePowerUp(Group gameRoot, Paddle gamePaddle) {
     super(gameRoot, gamePaddle);
     setPowerUpType(PowerUpType.PADDLE);
@@ -25,5 +20,4 @@ public class PaddlePowerUp extends PowerUp{
     setFill(getPaddlePowerUpColor());
     setId("Paddle power up");
   }
-
 }

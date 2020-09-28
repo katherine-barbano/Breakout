@@ -138,9 +138,6 @@ public class Block extends Rectangle {
   public Paint getBlockColor() {
     return blockColor;
   }
-  public void setBlockColor(Paint blockColor) {
-    this.blockColor = blockColor;
-  }
 
   public void removeFromScene() {
     setDimensions(0,0);
@@ -170,7 +167,6 @@ public class Block extends Rectangle {
     }
   }
 
-  public void updateLocationAndVelocity(double elapsedTime, boolean gameIsPaused) { }
   public int getVelocity() { return 0; }
 
   public boolean isTouchingBlockTop(Circle collisionCircle) {
@@ -216,8 +212,6 @@ public class Block extends Rectangle {
   private double calculateXn(double xPos, double xCoord) {
     return Math.max(xPos, Math.min(xCoord, (xPos + this.getWidth())));
   }
-
-  void updateAttributes(double elapsedTime, boolean gameIsPaused) {}
 
   private int getInfoBarHeight() { return Integer.parseInt(properties.getProperty("info_bar_height")); }
   private Paint getBackgroundColor() { return Paint.valueOf(properties.getProperty("background_color")); }
