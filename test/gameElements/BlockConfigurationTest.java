@@ -13,6 +13,7 @@ import util.DukeApplicationTest;
 
 public class BlockConfigurationTest extends DukeApplicationTest {
   public static final String GAME_TYPE = "sample_game";
+  public static final int LEVEL_ONE_INDEX = 0;
 
   private Game game;
   private Ball ball;
@@ -22,7 +23,7 @@ public class BlockConfigurationTest extends DukeApplicationTest {
   @Override
   public void start (Stage stage) {
     game = new Game(stage);
-    game.setLevelNumber(Game.LEVEL_ONE_INDEX);
+    game.setLevelNumber(LEVEL_ONE_INDEX);
     ball = lookup("#ball").query();
     paddle = lookup("#paddle").query();
   }
@@ -44,7 +45,7 @@ public class BlockConfigurationTest extends DukeApplicationTest {
     startAnimation();
 
     for(int numSteps = 0; numSteps < 75; numSteps ++) {
-      javafxRun(() -> game.step(Game.SECOND_DELAY));
+      javafxRun(() -> game.step(game.getSecondDelay()));
     }
     assertEquals(59, testConfiguration.getNumberOfBlocksRemaining());
   }
@@ -55,7 +56,7 @@ public class BlockConfigurationTest extends DukeApplicationTest {
     startAnimation();
 
     for(int numSteps = 0; numSteps < 75; numSteps ++) {
-      javafxRun(() -> game.step(Game.SECOND_DELAY));
+      javafxRun(() -> game.step(game.getSecondDelay()));
     }
 
     assertEquals(0, testConfiguration.getNumberOfPowerUps());
@@ -63,7 +64,7 @@ public class BlockConfigurationTest extends DukeApplicationTest {
 
   @Test
   void testPowerUpsLevelTwo() {
-    game.setLevelNumber(Game.LEVEL_ONE_INDEX + 1);
+    game.setLevelNumber(LEVEL_ONE_INDEX + 1);
     testConfiguration = game.getCurrentGameLevel().getLevelConfiguration();
     assertEquals(4, testConfiguration.getNumberOfPowerUps());
   }

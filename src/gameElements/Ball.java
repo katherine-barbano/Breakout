@@ -3,7 +3,11 @@ package gameElements;
 import breakout.Game;
 import breakout.Level;
 import gameElements.PowerUp.PowerUpType;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.List;
+import java.util.Properties;
 import javafx.scene.Group;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
@@ -19,14 +23,6 @@ import javafx.scene.shape.Circle;
  */
 public class Ball extends Circle {
 
-  public static final Paint BALL_COLOR = Color.RED;
-  public static final int BALL_RADIUS = 15;
-  public static final int NORMAL_BALL_SPEED = 150;
-  public static final int SLOW_BALL_SPEED = 75;
-  public static final int VELOCITY_CHANGE_FOR_PADDLE_SIDE = 100;
-  public static final int PLAYABLE_AREA_TOP_BOUND = InfoBar.INFO_BAR_HEIGHT;
-  public static final int RIGHT_ANGLE=90;
-
   private final Paddle paddle;
   private BlockConfiguration blockConfiguration;
   private int ballScore;
@@ -35,26 +31,40 @@ public class Ball extends Circle {
   private Group gameRoot;
   private boolean velocityCanBeUpdated = true;
   private boolean isBreakerBall = false;
+  private Properties properties;
 
   public Ball(Group gameRootArg, Paddle paddleArg, Level levelArg) {
     gameRoot = gameRootArg;
     paddle = paddleArg;
     blockConfiguration = levelArg.getLevelConfiguration();
-
+    initializeProperties();
     setBallProperties();
     gameRoot.getChildren().add(this);
   }
 
+  void initializeProperties() {
+    properties = new Properties();
+    FileInputStream ip = null;
+    try {
+      ip = new FileInputStream(Game.PROPERTY_FILE);
+      properties.load(ip);
+    }
+    catch (FileNotFoundException e) {}
+    catch (IOException e) {}
+  }
+
   public void setBallProperties() {
     setScore(0);
-    setCenterX(Game.PLAYABLE_AREA_SIZE / 2);
-    setCenterY(paddle.getY() - BALL_RADIUS);
-    setRadius(BALL_RADIUS);
-    setFill(BALL_COLOR);
+    setCenterX(getPlayableArea() / 2);
+    setCenterY(paddle.getY() - getBallRadius());
+    setRadius(getBallRadius());
+    setFill(getBallColor());
     setId("ball");
     velocityX = 0;
-    velocityY = NORMAL_BALL_SPEED;
+    velocityY = getNormalBallSpeed();
   }
+
+
 
   public void removeBall() {
     gameRoot.getChildren().remove(this);
@@ -79,7 +89,7 @@ public class Ball extends Circle {
   }
 
   private void updatePositionX(double elapsedTime) {
-    double edgeOfBall = paddle.getWidth()/2 + BALL_RADIUS;
+    double edgeOfBall = paddle.getWidth()/2 + getBallRadius();
     if(paddle.isTouchingPaddleLeftSide(this)) {
       setCenterX(paddle.getCenterX()-edgeOfBall);
     }
@@ -142,17 +152,17 @@ public class Ball extends Circle {
     else if (isTouchingPaddleTop) {
       velocityX = getVelocityXFromPaddleHit();
     }
-    else if (isTouchingPaddleLeft && velocityX >=PLAYABLE_AREA_TOP_BOUND) {
-      velocityX = velocityX + VELOCITY_CHANGE_FOR_PADDLE_SIDE;
+    else if (isTouchingPaddleLeft && velocityX >=getInfoBarHeight()) {
+      velocityX = velocityX + getVelocityChangeForPaddleSide();
     }
-    else if (isTouchingPaddleRight && velocityX <PLAYABLE_AREA_TOP_BOUND ) {
-      velocityX = velocityX * -1 + VELOCITY_CHANGE_FOR_PADDLE_SIDE;
+    else if (isTouchingPaddleRight && velocityX <getInfoBarHeight()) {
+      velocityX = velocityX * -1 + getVelocityChangeForPaddleSide();
     }
-    else if (isTouchingPaddleLeft && velocityX >PLAYABLE_AREA_TOP_BOUND) {
-      velocityX = velocityX * -1 - VELOCITY_CHANGE_FOR_PADDLE_SIDE;
+    else if (isTouchingPaddleLeft && velocityX >getInfoBarHeight()) {
+      velocityX = velocityX * -1 - getVelocityChangeForPaddleSide();
     }
-    else if (isTouchingPaddleLeft && velocityX <=PLAYABLE_AREA_TOP_BOUND) {
-      velocityX = velocityX - VELOCITY_CHANGE_FOR_PADDLE_SIDE;
+    else if (isTouchingPaddleLeft && velocityX <=getInfoBarHeight()) {
+      velocityX = velocityX - getVelocityChangeForPaddleSide();
     }
     velocityCanBeUpdated = false;
   }
@@ -221,8 +231,8 @@ public class Ball extends Circle {
     if (block.hasPowerUp()) {
       PowerUpType powerUpType = block.getPowerUp().getPowerUpType();
       if (powerUpType == PowerUpType.MOVING_BLOCK) {
-        increaseScoreBy(MovingBlockPowerUp.MOVING_BLOCK_SCORE_VALUE);
-      } else if (block.getBlockHardness() == Block.MINIMUM_HARDNESS) {
+        increaseScoreBy(getMovingBlockScoreValue());
+      } else if (block.getBlockHardness() == getMinimumHardness()) {
         handleFoundPowerUpInBlock(block);
       }
     }
@@ -239,7 +249,7 @@ public class Ball extends Circle {
         paddle.setWidth(paddle.getWidth());
         break;
       } case MOVING_BLOCK: {
-        increaseScoreBy(MovingBlockPowerUp.MOVING_BLOCK_SCORE_VALUE);
+        increaseScoreBy(getMovingBlockScoreValue());
         break;
       } default: {
         throw new IllegalStateException("This shouldn't be reached");
@@ -254,24 +264,24 @@ public class Ball extends Circle {
   private int getVelocityXFromPaddleHit() {
     double distanceFromPaddleCenter = getCenterX() - paddle.getCenterX();
     double angleRatio = distanceFromPaddleCenter / paddle.getWidth();
-    double angleRadians = Math.toRadians(angleRatio * RIGHT_ANGLE);
+    double angleRadians = Math.toRadians(angleRatio * getRightAngle());
     return (int) (velocityY * Math.sin(angleRadians));
   }
 
   private boolean isTouchingTopWall() {
-    return getCenterY() - BALL_RADIUS < PLAYABLE_AREA_TOP_BOUND;
+    return getCenterY() - getBallRadius() < getInfoBarHeight();
   }
 
   //assumes Scene has already been instantiated in Game so that it can use the getScene method
   private boolean isTouchingSideWall() {
-    double leftWallBounce = getCenterX() - BALL_RADIUS;
-    double rightWallBounce = getCenterX() + BALL_RADIUS;
+    double leftWallBounce = getCenterX() - getBallRadius();
+    double rightWallBounce = getCenterX() + getBallRadius();
     return leftWallBounce < 0 || rightWallBounce > getScene().getWidth();
   }
 
   //assumes Scene has already been instantiated in Game so that it can use the getScene method
   private boolean isTouchingBottomWall() {
-    return getCenterY() + BALL_RADIUS >= getScene().getHeight();
+    return getCenterY() + getBallRadius() >= getScene().getHeight();
   }
 
   public void setScore(int i) { this.ballScore = i; }
@@ -279,4 +289,17 @@ public class Ball extends Circle {
   public int getScore() { return this.ballScore; }
   public void setIsBreakerBall(boolean isBreakerBall) { this.isBreakerBall = isBreakerBall; }
   public boolean isBreakerBall() { return this.isBreakerBall; }
+
+  private double getPlayableArea() {return Double.parseDouble(properties.getProperty("playable_area_size")); }
+  private double getBallRadius() { return Double.parseDouble(properties.getProperty("ball_radius"));}
+  private Paint getBallColor() { return Paint.valueOf(properties.getProperty("ball_color")); }
+  private int getNormalBallSpeed() {return Integer.parseInt(properties.getProperty("normal_ball_speed")); }
+  private double getRightAngle() { return Double.parseDouble(properties.getProperty("right_angle"));}
+  private int getVelocityChangeForPaddleSide() { return Integer
+      .parseInt(properties.getProperty("velocity_change_for_paddle_side")); }
+
+  private int getInfoBarHeight() { return Integer
+      .parseInt(properties.getProperty("info_bar_height")); }
+  private int getMinimumHardness() { return Integer.parseInt(properties.getProperty("minimum_hardness")); }
+  int getMovingBlockScoreValue() { return Integer.parseInt(properties.getProperty("moving_block_score_value"));}
 }

@@ -1,11 +1,14 @@
 package gameElements;
 
+import breakout.Game;
 import breakout.Level;
-import gameElements.PowerUp.PowerUpType;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 import java.util.Scanner;
 import javafx.scene.Group;
 
@@ -16,10 +19,8 @@ import javafx.scene.Group;
  *      Methods: readTextFile, setBlockRows
  */
 public class BlockConfiguration {
-  public static final int NUMBER_OF_BLOCK_ROWS = Block.NUMBER_OF_BLOCK_ROWS;
-  public static final int BLOCK_CONFIGURATION_OFFSET_FROM_PADDLE = 100;
-  public static final int SCORE_INCREMENT=5;
 
+  private Properties properties;
   private Level myLevel;
   private File configFile;
   private BlockRow[] configRows;
@@ -29,20 +30,31 @@ public class BlockConfiguration {
   public BlockConfiguration () { new BlockConfiguration("",""); }
   public BlockConfiguration(String gameName, String fileName) { new BlockConfiguration(gameName, fileName, null); }
   public BlockConfiguration(String gameName, String fileName, Level level) {
+    initializeProperties();
     setLevel(level);
-    this.configRows = new BlockRow[NUMBER_OF_BLOCK_ROWS];
+    this.configRows = new BlockRow[getNumberOfBlockRows()];
     if (!fileName.equals("")) {
       String filePath = myLevel.generateFilePathForFile(gameName, fileName);
       generateBlockRowsFromFile(filePath); // Blocks are dimensionless
     }
   }
 
+  private void initializeProperties() {
+    properties = new Properties();
+    FileInputStream ip = null;
+    try {
+      ip = new FileInputStream(Game.PROPERTY_FILE);
+      properties.load(ip);
+    }
+    catch (FileNotFoundException e) {}
+    catch (IOException e) {}
+  }
 
   void generateBlockRowsFromFile(String filePath) {
     try {
       configFile = new File(filePath);
       Scanner fileReader = new Scanner(configFile);
-      for (int i = 0; i < NUMBER_OF_BLOCK_ROWS; i++) {
+      for (int i = 0; i < getNumberOfBlockRows(); i++) {
         if (fileReader.hasNextLine()) {
           String fileLine = fileReader.nextLine();
           if (containsMovingBlock(fileLine)) {
@@ -60,7 +72,7 @@ public class BlockConfiguration {
 
   private MovingBlockRow convertFileLineToMovingBlockRow(String fileLine) {
     String[] hardnessArray = fileLine.split(" ");
-    Block[] blockArray = new Block[Block.BLOCKS_PER_ROW];
+    Block[] blockArray = new Block[getBlocksPerRow()];
     assert (blockArray.length == hardnessArray.length);
 
     for (int i = 0; i < hardnessArray.length; i++) {
@@ -82,7 +94,7 @@ public class BlockConfiguration {
   // Assumes that fileRow is of format "X X X ".."X X X"
   private FilledBlockRow convertFileLineToBlockRow(String fileRow) {
     String[] hardnessArray = fileRow.split(" ");
-    Block[] blockArray = new Block[Block.BLOCKS_PER_ROW];
+    Block[] blockArray = new Block[getBlocksPerRow()];
     assert (blockArray.length == hardnessArray.length);
 
     for (int i = 0; i < hardnessArray.length; i++) {
@@ -178,8 +190,9 @@ public class BlockConfiguration {
    * @param sceneHeight
    */
   public void updateConfiguration(int sceneWidth, int sceneHeight) {
-    int blockWidth = sceneWidth / (Block.BLOCKS_PER_ROW);
-    int blockHeight = (sceneHeight-Ball.PLAYABLE_AREA_TOP_BOUND-BlockConfiguration.BLOCK_CONFIGURATION_OFFSET_FROM_PADDLE) / Block.NUMBER_OF_BLOCK_ROWS;
+    int blockWidth = sceneWidth / (getBlocksPerRow());
+    int blockHeight = (sceneHeight-getInfoBarHeight() - getBlockConfigurationOffsetFromPaddle())
+        / getNumberOfBlockRows();
 
     // TODO: utilize getBlocksAsList()
     // make delta i,j matrices to assign X and Y?
@@ -192,7 +205,7 @@ public class BlockConfiguration {
         if (sceneWidth != 0 && sceneHeight != 0) {
           blocks[j].setDimensions(sceneWidth,sceneHeight);
           blocks[j].setX(blocks[j].getBlockWidth(sceneWidth)*j);
-          blocks[j].setY(blocks[j].getBlockHeight(sceneHeight)*i + Ball.PLAYABLE_AREA_TOP_BOUND);
+          blocks[j].setY(blocks[j].getBlockHeight(sceneHeight)*i + getInfoBarHeight());
           blocks[j].setDimensionsPowerUp();
         }
         blocks[j].updateBlockColor();
@@ -265,11 +278,20 @@ public class BlockConfiguration {
 
   void decreaseNumberOfBlocksByOne() {
     numberOfBlocksRemaining--;
-    myLevel.getGameBall().increaseScoreBy(SCORE_INCREMENT);
+    myLevel.getGameBall().increaseScoreBy(getScoreIncrement()); // FIXME horrid
   }
   void setNumberOfBlocksRemaining(int numberOfBlocksRemaining) { this.numberOfBlocksRemaining = numberOfBlocksRemaining; }
   public int getNumberOfBlocksRemaining() { return numberOfBlocksRemaining; }
   boolean isEmpty() { return (numberOfBlocksRemaining == 0);}
   public int getNumberOfPowerUps() { return numberOfPowerUps; }
   public void setNumberOfPowerUps(int powerUps) { this.numberOfPowerUps = powerUps; }
+
+  private int getInfoBarHeight() { return Integer
+      .parseInt(properties.getProperty("info_bar_height")); }
+  private int getBlocksPerRow() { return Integer.parseInt(properties.getProperty("blocks_per_row")); }
+  private int getNumberOfBlockRows() { return Integer.parseInt(properties.getProperty("number_of_block_rows")); }
+  private int getBlockConfigurationOffsetFromPaddle() { return Integer.parseInt(properties.getProperty("block_configuration_offset_from_paddle"));}
+  private int getScoreIncrement() { return Integer.parseInt(properties.getProperty("score_increment")); }
+  public int getSceneSize() { return Integer.parseInt(properties.getProperty("scene_size"));}
+  public int getPlayableArea() { return Integer.parseInt(properties.getProperty("playable_area_size"));}
 }

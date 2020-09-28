@@ -1,12 +1,8 @@
 package gameElements;
 
 import javafx.scene.Group;
-import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
 
 public class MovingBlockPowerUp extends PowerUp{
-
-  public static final int MOVING_BLOCK_SCORE_VALUE = 25;
 
   public MovingBlockPowerUp(Group gameRootArg, Paddle paddleArg, Block blockArg) {
     super(gameRootArg, paddleArg, blockArg);

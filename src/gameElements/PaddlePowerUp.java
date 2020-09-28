@@ -1,12 +1,8 @@
 package gameElements;
 
 import javafx.scene.Group;
-import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
 
 public class PaddlePowerUp extends PowerUp{
-
-  public static final Paint PADDLE_POWER_UP_COLOR = Color.LIGHTGREEN;
 
   public PaddlePowerUp(Group gameRootArg, Paddle paddleArg, Block blockArg) {
     super(gameRootArg, paddleArg, blockArg);
@@ -21,7 +17,7 @@ public class PaddlePowerUp extends PowerUp{
   @Override
   void setProperties() {
     super.setProperties();
-    setFill(PADDLE_POWER_UP_COLOR);
+    setFill(getPaddlePowerUpColor());
     setId("Paddle power up");
   }
 

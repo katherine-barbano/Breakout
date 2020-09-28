@@ -35,7 +35,7 @@ public class PowerUpTest extends DukeApplicationTest {
   void testPowerUpsOnFirstRow(){
     startAnimation();
     for(int numSteps = 0; numSteps < 150; numSteps ++) {
-      javafxRun(() -> game.step(Game.SECOND_DELAY));
+      javafxRun(() -> game.step(game.getSecondDelay()));
     }
     assertEquals(140, paddle.getWidth());
   }
@@ -46,7 +46,7 @@ public class PowerUpTest extends DukeApplicationTest {
   void testPaddleOnlyExtendsOnce() {
     startAnimation();
     for(int numSteps = 0; numSteps < 300; numSteps ++) {
-      javafxRun(() -> game.step(Game.SECOND_DELAY));
+      javafxRun(() -> game.step(game.getSecondDelay()));
     }
     assertEquals(140, paddle.getWidth());
   }
@@ -55,7 +55,7 @@ public class PowerUpTest extends DukeApplicationTest {
   void testPaddleWidthResets() {
     startAnimation();
     for(int numSteps = 0; numSteps < 150; numSteps ++) {
-      javafxRun(() -> game.step(Game.SECOND_DELAY));
+      javafxRun(() -> game.step(game.getSecondDelay()));
     }
     game.getCurrentGameLevel().decreaseLivesByOne();
     assertEquals(70, paddle.getWidth());
@@ -70,7 +70,7 @@ public class PowerUpTest extends DukeApplicationTest {
     game.setCurrentGameLevel(testLevel);
     testLevel.addBlocksToRoot();
     for(int numSteps = 0; numSteps < 150; numSteps ++) {
-      javafxRun(() -> game.step(Game.SECOND_DELAY));
+      javafxRun(() -> game.step(game.getSecondDelay()));
     }
     assertEquals(75, game.getCurrentGameLevel().getGameBall().getVelocityY());
   }
@@ -84,7 +84,7 @@ public class PowerUpTest extends DukeApplicationTest {
     game.setCurrentGameLevel(testLevel);
     testLevel.addBlocksToRoot();
     for(int numSteps = 0; numSteps < 300; numSteps ++) {
-      javafxRun(() -> game.step(Game.SECOND_DELAY));
+      javafxRun(() -> game.step(game.getSecondDelay()));
     }
     assertEquals(75, game.getCurrentGameLevel().getGameBall().getVelocityY());
   }

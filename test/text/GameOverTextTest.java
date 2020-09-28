@@ -52,7 +52,7 @@ public class GameOverTextTest extends DukeApplicationTest{
     ball.setVelocityY(150);
 
     for(int numSteps = 0; numSteps < 3; numSteps ++) {
-      javafxRun(() -> game.step(Game.SECOND_DELAY));
+      javafxRun(() -> game.step(game.getSecondDelay()));
     }
   }
 }

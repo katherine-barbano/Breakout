@@ -13,10 +13,14 @@ public class StatusText extends GameText {
     super(gameRootArg);
     setStatusTextProperties(titleArg, xPositionArg, yPositionArg, idArg);
     updateValue(statusValue);
-    addText();
   }
 
-  private void setStatusTextProperties(String titleArg, int xPositionArg, int yPositionArg, String idArg) {
+  public StatusText(Group gameRootArg, int statusValue) {
+    super(gameRootArg);
+    updateValue(statusValue);
+  }
+
+  void setStatusTextProperties(String titleArg, int xPositionArg, int yPositionArg, String idArg) {
     title=titleArg;
     id=idArg;
     xPosition=xPositionArg;

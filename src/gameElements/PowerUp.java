@@ -1,6 +1,12 @@
 package gameElements;
 
+import breakout.Game;
 import breakout.Level;
+import javafx.scene.paint.Paint;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.Properties;
 import javafx.scene.Group;
 import javafx.scene.shape.Circle;
 
@@ -9,6 +15,7 @@ public abstract class PowerUp extends Circle {
   public static final int POWER_UP_DROP_SPEED = 100;
 
   private Group gameRoot;
+  private Properties properties;
   protected Paddle gamePaddle;
   private Ball gameBall;
   private Block ownerBlock;
@@ -28,13 +35,26 @@ public abstract class PowerUp extends Circle {
     gameRoot = gameRootArg;
     gamePaddle = paddleArg;
     ownerBlock = blockArg;
+    initializePropertyList();
     setProperties();
+  }
+
+  private void initializePropertyList() {
+    properties = new Properties();
+    FileInputStream ip = null;
+    try {
+      ip = new FileInputStream(Game.PROPERTY_FILE);
+      properties.load(ip);
+    }
+    catch (FileNotFoundException e) {}
+    catch (IOException e) {}
   }
 
   public PowerUp(Level level, Block blockArg) {
     gameRoot = level.getGameRoot();
     gamePaddle = level.getGamePaddle();
     ownerBlock = blockArg;
+    initializePropertyList();
     setProperties();
   }
 
@@ -122,4 +142,9 @@ public abstract class PowerUp extends Circle {
 
   public Ball getGameBall() { return this.gameBall; }
   public void setGameBall(Ball ball) { this.gameBall = ball; }
+
+  int getMovingBlockScoreValue() { return Integer.parseInt(properties.getProperty("moving_block_score_value"));}
+  Paint getPaddlePowerUpColor() { return Paint.valueOf(properties.getProperty("paddle_power_up_color"));}
+  Paint getSlowBallPowerUpColor() { return Paint.valueOf(properties.getProperty("slow_ball_power_up_color"));}
+  int getSlowBallSpeed() { return Integer.parseInt(properties.getProperty("slow_ball_speed")); }
 }

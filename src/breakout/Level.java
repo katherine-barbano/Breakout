@@ -45,7 +45,7 @@ public class Level {
   private int levelTimeLimit;
   private InfoBar infoBar;
   private Group gameRoot;
-  private Ball gameBall; // TODO extension: List<Ball> myBalls, to accomodate multi-gameBall powerups
+  private Ball gameBall;
   private Paddle gamePaddle;
 
   /***
@@ -92,7 +92,7 @@ public class Level {
 
   private void initializeLevelProperties(String gameName) {
     this.gameIsPaused = true;
-    this.levelConfiguration.updateConfiguration(Game.PLAYABLE_AREA_SIZE, Game.SCENE_SIZE);
+    this.levelConfiguration.updateConfiguration(levelConfiguration.getPlayableArea(), levelConfiguration.getSceneSize());
     readLevelScoresAndTimeFile(getFileNameOfScoreToWinAndLivesFile(gameName));
     System.out.println("Level has " + levelConfiguration.getNumberOfBlocksRemaining() + " blocks");
   }

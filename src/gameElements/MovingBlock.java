@@ -5,14 +5,11 @@ package gameElements;
  */
 public class MovingBlock extends Block {
 
-  public static final int MOVING_BLOCK_VELOCITY = 75;
-
-  private boolean isMovingLeft;
   private int velocity;
 
   public MovingBlock(){
     super();
-    setVelocity(MOVING_BLOCK_VELOCITY);
+    setVelocity(super.getMovingBlockVelocity());
   }
 
   @Override
@@ -35,7 +32,7 @@ public class MovingBlock extends Block {
   }
 
   private void negateVelocity() {
-    if (Math.abs(velocity) != MOVING_BLOCK_VELOCITY) velocity = MOVING_BLOCK_VELOCITY;
+    if (Math.abs(velocity) != getMovingBlockVelocity()) velocity = getMovingBlockVelocity();
     velocity *= -1;
   }
 

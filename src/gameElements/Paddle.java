@@ -1,6 +1,10 @@
 package gameElements;
 
 import breakout.Game;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.Properties;
 import javafx.scene.Group;
 import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
@@ -16,35 +20,42 @@ import javafx.scene.shape.Rectangle;
  */
 public class Paddle extends Rectangle{
 
-  public static final Paint PADDLE_COLOR = Color.DARKBLUE;
-  public static final int NORMAL_PADDLE_WIDTH = 70;
-  public static final int PADDLE_HEIGHT = 10;
-  public static final int VERTICAL_PADDLE_OFFSET_FROM_BOTTOM = 30;
-  public static final int PADDLE_SPEED = 10;
-
   private Group gameRoot;
+  private Properties properties;
 
   public Paddle(Group gameRootArg) {
     gameRoot = gameRootArg;
+    initializeProperties();
     setPaddleProperties();
     gameRoot.getChildren().add(this);
+  }
+
+  void initializeProperties() {
+    properties = new Properties();
+    FileInputStream ip = null;
+    try {
+      ip = new FileInputStream(Game.PROPERTY_FILE);
+      properties.load(ip);
+    }
+    catch (FileNotFoundException e) {}
+    catch (IOException e) {}
   }
 
   public void removePaddle() {
     gameRoot.getChildren().remove(this);
   }
 
-  void extendPaddleWidth() { setWidth(NORMAL_PADDLE_WIDTH * 2); }
+  void extendPaddleWidth() { setWidth(getNormalPaddleWidth() * 2); }
   void setNormalPaddleWidth() {
-    setWidth(NORMAL_PADDLE_WIDTH);
+    setWidth(getNormalPaddleWidth());
   }
 
   public void setPaddleProperties() {
-    setX(Game.PLAYABLE_AREA_SIZE / 2 - NORMAL_PADDLE_WIDTH/2);
-    setY(Game.SCENE_SIZE - VERTICAL_PADDLE_OFFSET_FROM_BOTTOM);
-    setWidth(NORMAL_PADDLE_WIDTH);
-    setHeight(PADDLE_HEIGHT);
-    setFill(PADDLE_COLOR);
+    setX(getPlayableAreaSize() / 2 - getNormalPaddleWidth()/2);
+    setY(getSceneSize() - getVerticalPaddleOffset());
+    setWidth(getNormalPaddleWidth());
+    setHeight(getPaddleHeight());
+    setFill(getPaddleColor());
     setId("paddle");
   }
 
@@ -58,7 +69,7 @@ public class Paddle extends Rectangle{
   }
 
   void moveLeft() {
-    double newXPosition = getX() - PADDLE_SPEED;
+    double newXPosition = getX() - getPaddleSpeed();
     if(newXPosition>0) {
       setX(newXPosition);
     }
@@ -66,7 +77,7 @@ public class Paddle extends Rectangle{
 
   //assumes Scene has already been instantiated in Game so that it can use getScene
   private void moveRight() {
-    double newXPosition = getX() + PADDLE_SPEED;
+    double newXPosition = getX() + getPaddleSpeed();
     if(newXPosition + getWidth() <getScene().getWidth()) {
       setX(newXPosition);
     }
@@ -112,4 +123,13 @@ public class Paddle extends Rectangle{
   private double calculateXn(double xPos, double xCoord) {
     return Math.max(xPos, Math.min(xCoord, (xPos + this.getWidth())));
   }
+
+
+  Paint getPaddleColor() { return Paint.valueOf(properties.getProperty("paddle_color"));}
+  int getNormalPaddleWidth() { return Integer.parseInt(properties.getProperty("normal_paddle_width"));}
+  int getPaddleHeight() { return Integer.parseInt(properties.getProperty("paddle_height"));}
+  int getVerticalPaddleOffset() { return Integer.parseInt(properties.getProperty("vertical_paddle_offset"));}
+  int getPaddleSpeed() { return Integer.parseInt(properties.getProperty("paddle_speed"));}
+  int getSceneSize() { return Integer.parseInt(properties.getProperty("scene_size"));}
+  int getPlayableAreaSize() { return Integer.parseInt(properties.getProperty("playable_area_size"));}
 }

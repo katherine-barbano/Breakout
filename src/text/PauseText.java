@@ -1,25 +1,37 @@
 package text;
 
+import breakout.Game;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.Properties;
 import javafx.scene.Group;
 
 public class PauseText extends GameText {
 
-  public static final String PAUSE_TITLE="Paused. Resume with space";
-  public static final String START_TITLE = "Click the space bar to start!";
-
-  public static final int PAUSE_XPOSITION = ScoreToWinText.SCORETOWIN_XPOSITION;
-  public static final int PAUSE_YPOSITION = LivesText.LIVES_YPOSITION;
-  public static final String PAUSE_ID = "#pauseText";
+  private Properties properties;
 
   public PauseText(Group gameRootArg) {
     super(gameRootArg);
+    initializePropertiesFile();
     startGame();
+  }
+
+  void initializePropertiesFile() {
+    properties = new Properties();
+    FileInputStream ip = null;
+    try {
+      ip = new FileInputStream(Game.PROPERTY_FILE);
+      properties.load(ip);
+    }
+    catch (FileNotFoundException e) {}
+    catch (IOException e) {}
   }
 
   @Override
   public void initializeText(String words) {
     setText(words);
-    initializeProperties(words, PAUSE_XPOSITION, PAUSE_YPOSITION, PAUSE_ID);
+    initializeProperties(words, getPauseXPosition(), getPauseYPosition(), getPauseId());
   }
 
   @Override
@@ -29,16 +41,21 @@ public class PauseText extends GameText {
   }
 
   public void startGame() {
-    updateText(START_TITLE);
+    updateText(getStartTitle());
   }
 
   public void startPause() {
     removeText();
-    updateText(PAUSE_TITLE);
+    updateText(getPauseTitle());
   }
 
   public void endPause() {
     removeText();
   }
 
+  private String getPauseTitle() { return properties.getProperty("pause_title");}
+  private String getStartTitle() { return properties.getProperty("start_title");}
+  private String getPauseId() { return properties.getProperty("pause_id");}
+  private int getPauseXPosition() { return Integer.parseInt(properties.getProperty("pause_x_position"));}
+  private int getPauseYPosition() { return Integer.parseInt(properties.getProperty("pause_y_position"));}
 }

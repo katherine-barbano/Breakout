@@ -1,9 +1,12 @@
 package breakout;
 
 import gameElements.InfoBar;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Properties;
 import java.util.stream.Stream;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -29,20 +32,11 @@ import text.ScoreText;
  */
 public class Game {
 
-  public static final String TITLE = "Breakout";
-  public static final int SCENE_SIZE = 670;
-  public static final int PLAYABLE_AREA_SIZE = 600;
-  public static final int FRAMES_PER_SECOND = 60;
-  public static final double SECOND_DELAY = 1.0 / FRAMES_PER_SECOND;
-  public static final Paint BACKGROUND = Color.AZURE;
-  //public static final String GAME_NAME = "sample_game_no_powerups";
-  public static final String GAME_NAME = "sample_game";
-  //public static final String GAME_NAME = "game_for_testing_main";
+  public static final String PROPERTY_FILE = "src/config.properties";
   public static final String[] NUMERICS = {"1", "2", "3", "4", "5","6","7","8","9","0"};
-  public static final int LEVEL_ONE_INDEX = 0;
-  public static final int FINAL_LEVEL_INDEX = 2;
 
   private final Scene gameScene;
+  private Properties properties;
   private Group gameRoot;
 
   private List<Level> gameLevels;
@@ -57,10 +51,22 @@ public class Game {
    * @param stage Stage to set the JavaFX game on
    */
   public Game(Stage stage) {
+    getPropertiesList();
     gameScene = setupScene();
     stage.setScene(gameScene);
-    stage.setTitle(TITLE);
+    stage.setTitle(getTitle());
     stage.show();
+  }
+
+  void getPropertiesList() {
+    properties = new Properties();
+    FileInputStream ip = null;
+    try {
+      ip = new FileInputStream(Game.PROPERTY_FILE);
+      properties.load(ip);
+    }
+    catch (FileNotFoundException e) {}
+    catch (IOException e) {}
   }
 
   /***
@@ -68,7 +74,7 @@ public class Game {
    * Should not be used for JUnit tests.
    */
   void beginInfiniteLoop() {
-    KeyFrame frame = new KeyFrame(Duration.seconds(SECOND_DELAY), e -> step(SECOND_DELAY));
+    KeyFrame frame = new KeyFrame(Duration.seconds(getSecondDelay()), e -> step(getSecondDelay()));
     Timeline animation = new Timeline();
     animation.setCycleCount(Timeline.INDEFINITE);
     animation.getKeyFrames().add(frame);
@@ -131,9 +137,9 @@ public class Game {
     infoBar = new InfoBar(new ScoreText(totalScore,gameRoot),gameRoot);
 
     initializeGameLevels();
-    resetGameToLevelFirstTime(LEVEL_ONE_INDEX);
+    resetGameToLevelFirstTime(getLevelOneIndex());
 
-    Scene scene = new Scene(gameRoot, PLAYABLE_AREA_SIZE, SCENE_SIZE, BACKGROUND);
+    Scene scene = new Scene(gameRoot, getPlayableAreaSize(), getSceneSize(), getBackgroundColor());
     scene.setOnKeyPressed(e -> handleKeyInput(e.getCode()));
     scene.setOnMouseClicked(e -> handleMouseInput(e.getButton()));
     return scene;
@@ -142,7 +148,7 @@ public class Game {
   private void handleKeyInput(KeyCode code) {
     Level currentLevel = getCurrentGameLevel();
     if(code == KeyCode.SPACE && currentLevel.gameIsLost()) {
-      resetGameToLevel(LEVEL_ONE_INDEX);
+      resetGameToLevel(getLevelOneIndex());
     }
     else {
       currentLevel.handleKeyInput(code);
@@ -151,7 +157,7 @@ public class Game {
 
   private void handleMouseInput(MouseButton button) {
     //left mouse click
-    if(button == MouseButton.PRIMARY && currentGameLevelIndex!=LEVEL_ONE_INDEX) {
+    if(button == MouseButton.PRIMARY && currentGameLevelIndex!=getLevelOneIndex()) {
       resetGameToLevel(currentGameLevelIndex-1);
     }
     //right mouse click
@@ -183,7 +189,7 @@ public class Game {
   private void initializeGameLevels() {
     try {
       //following line to list files in directory from http://zetcode.com/java/listdirectory/
-      Stream filesInGame = Files.list(new File(Level.FILE_SOURCE_PATH + GAME_NAME).toPath());
+      Stream filesInGame = Files.list(new File(Level.FILE_SOURCE_PATH + getGameName()).toPath());
 
       Object[] filesInGameArray = filesInGame.toArray();
       gameLevels = new ArrayList<>();
@@ -191,7 +197,7 @@ public class Game {
       for(Object filePath:filesInGameArray) {
         int levelNumber = getLevelNumberFromFileName(filePath.toString());
         if(levelNumber != -1) {
-          gameLevels.add(new Level(gameRoot,GAME_NAME,levelNumber,infoBar));
+          gameLevels.add(new Level(gameRoot,getGameName(),levelNumber,infoBar));
         }
       }
     }
@@ -218,7 +224,7 @@ public class Game {
   }
 
   private boolean indexIsOutOfBounds(int index) {
-    return (index < LEVEL_ONE_INDEX) || (index > FINAL_LEVEL_INDEX);
+    return (index < getLevelOneIndex()) || (index > getFinalLevelIndex());
   }
 
   private boolean gameIsWon() {
@@ -231,7 +237,7 @@ public class Game {
    * @return Level object currently running
    */
   public Level getCurrentGameLevel() {
-    if (indexIsOutOfBounds(currentGameLevelIndex)) return gameLevels.get(LEVEL_ONE_INDEX);
+    if (indexIsOutOfBounds(currentGameLevelIndex)) return gameLevels.get(getLevelOneIndex());
     return gameLevels.get(currentGameLevelIndex);
   }
 
@@ -309,4 +315,13 @@ public class Game {
     currentGameLevelIndex = levelNumber;
   }
   public int getLevelNumber() { return currentGameLevelIndex; }
+  String getTitle() { return properties.getProperty("title"); }
+  int getSceneSize() { return Integer.parseInt(properties.getProperty("scene_size"));}
+  int getPlayableAreaSize() { return Integer.parseInt(properties.getProperty("playable_area_size"));}
+  int getFramesPerSecond() { return Integer.parseInt(properties.getProperty("frames_per_second"));}
+  public double getSecondDelay() { return 1.0 / getFramesPerSecond(); }
+  Paint getBackgroundColor() { return Paint.valueOf(properties.getProperty("background_color"));}
+  String getGameName() { return properties.getProperty("game_name");}
+  int getLevelOneIndex() { return Integer.parseInt(properties.getProperty("level_one_index"));}
+  int getFinalLevelIndex() { return Integer.parseInt(properties.getProperty("final_level_index"));}
 }

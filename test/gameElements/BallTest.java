@@ -38,7 +38,7 @@ public class BallTest extends DukeApplicationTest {
     startAnimation();
 
     for(int numSteps = 0; numSteps < 2; numSteps ++) {
-      game.step(Game.SECOND_DELAY);
+      game.step(game.getSecondDelay());
     }
 
     assertEquals(150,ball.getVelocityX());
@@ -69,7 +69,7 @@ public class BallTest extends DukeApplicationTest {
     startAnimation();
 
     for(int numSteps = 0; numSteps < 5; numSteps ++) {
-      javafxRun(() -> game.step(Game.SECOND_DELAY));
+      javafxRun(() -> game.step(game.getSecondDelay()));
     }
 
     ball = lookup("#ball").query();

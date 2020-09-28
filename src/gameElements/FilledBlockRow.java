@@ -1,7 +1,5 @@
 package gameElements;
 
-import static gameElements.Block.BLOCKS_PER_ROW;
-
 /***
  *   Contains private array (size 12) of multiple Block objects. Array
  *   might contain empty values if no blocks are present in that space from the text file.
