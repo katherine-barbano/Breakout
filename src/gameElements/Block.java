@@ -117,7 +117,9 @@ public class Block extends Rectangle {
   }
 
   public boolean hasPowerUp() { return hasPowerUp; }
-  public void setHasPowerUp(boolean powerUpBoolean) { hasPowerUp = powerUpBoolean; }
+  public void setHasPowerUp(boolean powerUpBoolean) {
+    hasPowerUp = powerUpBoolean;
+  }
 
   public boolean hasReleasedPowerUp() { return (randomPowerUp!= null  && hasReleasedPowerUp); }
   public void setHasReleasedPowerUp(boolean hasReleasedPowerUp) {

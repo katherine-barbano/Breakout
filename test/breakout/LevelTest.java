@@ -2,6 +2,7 @@ package breakout;
 
 import gameElements.Ball;
 import gameElements.Block;
+import gameElements.BlockConfiguration;
 import gameElements.InfoBar;
 import gameElements.Paddle;
 import java.util.ArrayList;
@@ -118,6 +119,30 @@ public class LevelTest extends DukeApplicationTest {
       press(gameScene, KeyCode.D);
       assertEquals(blockNumber,level.getLevelConfiguration().getNumberOfBlocksRemaining());
     }
+  }
+
+  @Test
+  void releasePowerUpWithPCheatKey() {
+    startAnimation();
+    Scene gameScene = game.getScene();
+    press(gameScene, KeyCode.DIGIT2);
+    press(gameScene,KeyCode.SPACE);
+    Block firstPowerUpBlock = game.getCurrentGameLevel().getFirstBlockWithPowerUp();
+    press(gameScene, KeyCode.P);
+    javafxRun(() -> game.step(Game.SECOND_DELAY));
+    assertFalse(firstPowerUpBlock.hasPowerUp());
+  }
+
+  @Test
+  void releaseAllPowerUpWithKCheatKey() {
+    startAnimation();
+    Scene gameScene = game.getScene();
+    press(gameScene, KeyCode.DIGIT2);
+    press(gameScene,KeyCode.SPACE);
+    press(gameScene, KeyCode.K);
+    javafxRun(() -> game.step(Game.SECOND_DELAY));
+    Block firstPowerUpBlock = game.getCurrentGameLevel().getFirstBlockWithPowerUp();
+    assertTrue(firstPowerUpBlock==null);
   }
 
   @Test

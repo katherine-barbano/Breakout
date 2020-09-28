@@ -298,7 +298,7 @@ public class Level {
   }
 
   //define first block as the block that exists farthest to the top left.
-  private Block getFirstBlockWithPowerUp() {
+  public Block getFirstBlockWithPowerUp() {
     int indexFirstPowerUpBlock = -1;
     Block firstPowerUpBlock = new Block();
     boolean indexInRange = indexFirstPowerUpBlock<levelConfiguration.getNumberOfBlocksRemaining()-1;
