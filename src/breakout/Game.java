@@ -102,6 +102,7 @@ public class Game {
       if (!ballIsValid) {
         currentLevel.resetCurrentLevel();
       }
+      currentLevel.monitorBlocks();
     }
     updateGameScore(currentLevel);
   }

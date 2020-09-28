@@ -153,32 +153,48 @@ public class Block extends Rectangle {
   public void updateLocationAndVelocity(double elapsedTime, boolean gameIsPaused) { }
   public int getVelocity() { return 0; }
 
-  public boolean isTouchingLeftOrRight(Ball ball) {
-    double minCircleHeight = ball.getCenterY() - ball.getRadius();
-    double maxCircleHeight = ball.getCenterY() - ball.getRadius();
-    double maxBlockHeight = getHeight() + getY();
-    if (minCircleHeight < maxBlockHeight && maxCircleHeight > getY()) {
-      boolean touchingLeft = (ball.getCenterX() + ball.getRadius()) > getX();
-      boolean touchingRight = (ball.getCenterX() - ball.getRadius()) < getX() + getWidth();
-      return touchingLeft || touchingRight;
-    }
-    return false;
+  public boolean isTouchingBlockTop(Circle collisionCircle) {
+    double R = collisionCircle.getRadius();
+    double Xcoord = collisionCircle.getCenterX();
+    double Ycoord = collisionCircle.getCenterY();
+    double xPos = this.getX();
+    double yPos = this.getY();
+
+    // from https://www.geeksforgeeks.org/check-if-any-point-overlaps-the-given-circle-and-rectangle/
+    double Xn = Math.max(xPos, Math.min(Xcoord, (xPos + this.getWidth())));
+    double Yn = Math.max(yPos, Math.min(Ycoord, (yPos + this.getHeight())));
+    double Dx = Xn - Xcoord;
+    double Dy = Yn - Ycoord;
+
+    return (Dx * Dx + Dy * Dy) <= R*R;
   }
 
-  public boolean isTouchingBottomOrTop(Ball ball) {
-    double minCircleWidth = ball.getCenterX() - ball.getRadius();
-    double maxCircleWidth = ball.getCenterX() - ball.getRadius();
-    double minCircleHeight = ball.getCenterY() - ball.getRadius();
-    double maxCircleHeight = ball.getCenterY() - ball.getRadius();
+  boolean isTouchingBlockRightSide(Circle collisionCircle) {
+    double xPos = this.getX();
+    double xCoord = collisionCircle.getCenterX();
+    double Xn = calculateXn(xPos, xCoord);
+    boolean touchingRightSide = Xn==this.getCenterX()+this.getWidth()/2;
+    return isTouchingBlockTop(collisionCircle) && touchingRightSide;
+  }
 
-    double maxBlockWidth = getWidth() + getX();
-    double maxBlockHeight = getHeight() + getY();
-    if (minCircleWidth < maxBlockWidth && maxCircleWidth > getX()) {
-      boolean touchingTop = (maxCircleHeight > getY()) && (minCircleHeight < getY());
-      boolean touchingBottom = (minCircleHeight < maxBlockHeight) && (maxBlockWidth > maxBlockHeight);
-      return touchingTop || touchingBottom;
-    }
-    return false;
+  boolean isTouchingBlockLeftSide(Circle collisionCircle) {
+    double xPos = this.getX();
+    double xCoord = collisionCircle.getCenterX();
+    double Xn = calculateXn(xPos, xCoord);
+    boolean touchingLeftSide = Xn==this.getCenterX()-this.getWidth()/2;
+    return isTouchingBlockTop(collisionCircle) && touchingLeftSide;
+  }
+
+  public boolean isTouchingLeftOrRight(Circle circle) {
+    return isTouchingBlockLeftSide(circle) || isTouchingBlockRightSide(circle);
+  }
+
+  private double getCenterX() {
+    return (getX() + getWidth())/2.0;
+  }
+
+  private double calculateXn(double xPos, double xCoord) {
+    return Math.max(xPos, Math.min(xCoord, (xPos + this.getWidth())));
   }
 
   private int getInfoBarHeight() { return Integer.parseInt(properties.getProperty("info_bar_height")); }

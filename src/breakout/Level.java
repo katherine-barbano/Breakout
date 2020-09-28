@@ -277,6 +277,14 @@ public class Level {
     }
   }
 
+  void monitorBlocks() {
+    Block block = gameBall.getBlockBallIsTouching();
+    if (block != null) {
+      levelConfiguration.findAndDecrementBlock(block, gameBall);
+      gameBall.handleBlockBehavior(block);
+    }
+  }
+
   /***
    * Called by Game class to remove all nodes from the current Level
    * from the root. This effectively removes the entire Level from

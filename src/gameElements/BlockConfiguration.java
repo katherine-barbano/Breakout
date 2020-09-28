@@ -157,10 +157,10 @@ public class BlockConfiguration {
     return powerUp;
   }
 
-  void findAndDecrementBlock(Block block, Ball ball) {
+  public void findAndDecrementBlock(Block block, Ball ball) {
     Block foundBlock = findBlock(block);
     if (foundBlock == null) return;
-    if (foundBlock.getBlockHardness() == 1 || ball.isBreakerBall()) {
+    if (ball.isBreakerBall()) {
       removeBlockFromConfiguration(foundBlock);
     }
     else decrementBlock(foundBlock);
@@ -175,12 +175,14 @@ public class BlockConfiguration {
   }
 
   private void removeBlockFromConfiguration(Block block) {
+    // TODO: update ball score to reflect this
     block.removeFromScene();
     decreaseNumberOfBlocksByOne();
   }
 
   private void decrementBlock(Block block) {
     block.decreaseHardnessByOne();
+    if (block.getBlockHardness() == 0) block.removeFromScene();
     block.updateBlockColor();
   }
 
