@@ -110,6 +110,17 @@ public class LevelTest extends DukeApplicationTest {
   }
 
   @Test
+  void deleteBlockWithDCheatKey() {
+    startAnimation();
+    Scene gameScene = game.getScene();
+    Level level = game.getCurrentGameLevel();
+    for(int blockNumber=59;blockNumber>0;blockNumber--) {
+      press(gameScene, KeyCode.D);
+      assertEquals(blockNumber,level.getLevelConfiguration().getNumberOfBlocksRemaining());
+    }
+  }
+
+  @Test
   void scoreAndTimeFileNotFound() {
     Group testGroup = new Group();
     InfoBar infoBar = new InfoBar(new ScoreText(0,testGroup),testGroup);

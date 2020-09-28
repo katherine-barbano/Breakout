@@ -269,7 +269,8 @@ public class Level {
     gameBall.setScore(oldScore);
   }
 
-  //define first block as
+  //define first block as the block that exists farthest to the top left. This block should have a
+  //hardness greater than 0, meaning it still exists on the screen.
   private void removeFirstBlock() {
     int indexFirstHardnessZeroBlock = -1;
     Block firstHardnessZeroBlock = new Block();
