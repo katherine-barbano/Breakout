@@ -151,8 +151,14 @@ public class Game {
     if(code == KeyCode.SPACE && currentLevel.gameIsLost()) {
       resetGameToLevel(getLevelOneIndex());
     }
+    else if(keyCodeIsNumeric(code)) {
+      handleNumericKeyCode(code);
+    }
+    else if (gameIsWon()){
+      currentLevel.handleKeyInputOnEndScreen(code);
+    }
     else {
-      currentLevel.handleKeyInput(code);
+      currentLevel.handleKeyInputDuringGame(code);
     }
   }
 
@@ -164,6 +170,26 @@ public class Game {
     //right mouse click
     else if(button == MouseButton.SECONDARY && currentGameLevelIndex!=gameLevels.size()-1) {
       resetGameToLevel(currentGameLevelIndex+1);
+    }
+  }
+
+  private String parseKeyCodeToDigit(KeyCode code) {
+    String codeAsString = code.toString();
+    String digitOfCode = codeAsString.substring(codeAsString.length()-1);
+    return digitOfCode;
+  }
+
+  private boolean keyCodeIsNumeric(KeyCode code) {
+    List<String> numericsAsList = Arrays.asList(NUMERICS);
+    String digit = parseKeyCodeToDigit(code);
+    return numericsAsList.contains(digit);
+  }
+
+  private void handleNumericKeyCode(KeyCode code) {
+    int codeAsInteger = Integer.parseInt(parseKeyCodeToDigit(code));
+    int maxAllowableLevel = gameLevels.size();
+    if(codeAsInteger<=maxAllowableLevel && codeAsInteger>0) {
+      resetGameToLevel(codeAsInteger-1);
     }
   }
 
@@ -325,4 +351,12 @@ public class Game {
   String getGameName() { return properties.getProperty("game_name");}
   int getLevelOneIndex() { return Integer.parseInt(properties.getProperty("level_one_index"));}
   int getFinalLevelIndex() { return Integer.parseInt(properties.getProperty("final_level_index"));}
+
+  public List<Level> getGameLevels() {
+    return gameLevels;
+  }
+
+  public void setScore(int score) {
+    totalScore=score;
+  }
 }

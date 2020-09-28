@@ -160,8 +160,7 @@ public class BlockConfiguration {
     return null;
   }
 
-  private void removeBlockFromConfiguration(Block block) {
-    // TODO: update ball score to reflect this
+  public void removeBlockFromConfiguration(Block block) {
     block.removeFromScene();
     decreaseNumberOfBlocksByOne();
   }

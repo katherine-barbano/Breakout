@@ -63,8 +63,16 @@ public class InfoBar extends Rectangle {
     scoreText.addText();
   }
 
+  public void removeGameTimerText() {
+    gameTimer.removeTimerText();
+  }
+
   public void setTimeLimit(int timeLimit) {
     this.gameTimer = new GameTimer(root, timeLimit);
+  }
+
+  public int getTimeRemaining() {
+    return gameTimer.getTimeRemaining();
   }
 
   public void initiatePauseInText() {
@@ -137,4 +145,18 @@ public class InfoBar extends Rectangle {
   private int getInfoBarHeight() { return Integer.parseInt(properties.getProperty("info_bar_height")); }
   private Paint getInfoBarColor() { return Paint.valueOf(properties.getProperty("info_bar_color")); }
   private int getSceneSize() { return Integer.parseInt(properties.getProperty("scene_size")); }
+
+  public GameTimer getGameTimer() {
+    return gameTimer;
+  }
+
+  public GameText getScoreToWinText() {
+    return scoreToWinText;
+  }
+
+  public void setScoreToWinText(int newScore) {
+    StatusText subclassUpdateValueText = (StatusText) scoreToWinText;
+    subclassUpdateValueText.updateValue(newScore);
+    scoreToWinText = subclassUpdateValueText;
+  }
 }

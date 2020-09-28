@@ -33,7 +33,7 @@ public class BallTest extends DukeApplicationTest {
     ball.setVelocityX(-150);
     ball.setVelocityY(-150);
     ball.setCenterX(15);
-    ball.setCenterY(65);
+    ball.setCenterY(85);
 
     startAnimation();
 
@@ -45,13 +45,13 @@ public class BallTest extends DukeApplicationTest {
     assertEquals(150,ball.getVelocityY());
 
     assertEquals(15, ball.getCenterX());
-    assertEquals(65, ball.getCenterY());
+    assertEquals(85, ball.getCenterY());
   }
 
   @Test
   void verifyInitialPositionSizeVelocityOfBall() {
     assertEquals(300, ball.getCenterX());
-    assertEquals(605, ball.getCenterY());
+    assertEquals(625, ball.getCenterY());
 
     assertEquals(15, ball.getRadius());
 
@@ -62,7 +62,7 @@ public class BallTest extends DukeApplicationTest {
   @Test
   void resetBallPosition() {
     ball.setCenterX(20);
-    ball.setCenterY(625);
+    ball.setCenterY(645);
     ball.setVelocityX(0);
     ball.setVelocityY(150);
 
@@ -74,6 +74,6 @@ public class BallTest extends DukeApplicationTest {
 
     ball = lookup("#ball").query();
     assertEquals(300,ball.getCenterX());
-    assertEquals(605,ball.getCenterY());
+    assertEquals(625,ball.getCenterY());
   }
 }

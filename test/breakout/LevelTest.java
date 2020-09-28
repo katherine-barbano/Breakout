@@ -2,6 +2,7 @@ package breakout;
 
 import gameElements.Ball;
 import gameElements.Block;
+import gameElements.BlockConfiguration;
 import gameElements.InfoBar;
 import gameElements.Paddle;
 import java.util.ArrayList;
@@ -77,13 +78,13 @@ public class LevelTest extends DukeApplicationTest {
     assertEquals(150,ball.getVelocityY());
 
     assertEquals(300, ball.getCenterX());
-    assertEquals(605, ball.getCenterY());
+    assertEquals(625, ball.getCenterY());
   }
 
   private void ballTouchesGround() {
     ball = lookup("#ball").query();
     ball.setCenterX(20);
-    ball.setCenterY(635);
+    ball.setCenterY(665);
     ball.setVelocityX(0);
     ball.setVelocityY(150);
 
@@ -107,5 +108,71 @@ public class LevelTest extends DukeApplicationTest {
     ballTouchesGround();
     GameOverText gameOverText = lookup("#gameOverText").query();
     assertEquals("Game Over! Tap the space bar to restart from Level 1.",gameOverText.getText());
+  }
+
+  @Test
+  void deleteBlockWithDCheatKey() {
+    startAnimation();
+    Scene gameScene = game.getScene();
+    Level level = game.getCurrentGameLevel();
+    for(int blockNumber=59;blockNumber>0;blockNumber--) {
+      press(gameScene, KeyCode.D);
+      assertEquals(blockNumber,level.getLevelConfiguration().getNumberOfBlocksRemaining());
+    }
+  }
+
+  @Test
+  void releasePowerUpWithPCheatKey() {
+    startAnimation();
+    Scene gameScene = game.getScene();
+    press(gameScene, KeyCode.DIGIT2);
+    press(gameScene,KeyCode.SPACE);
+    Block firstPowerUpBlock = game.getCurrentGameLevel().getFirstBlockWithPowerUp();
+    press(gameScene, KeyCode.P);
+    javafxRun(() -> game.step(game.getSecondDelay()));
+    assertFalse(firstPowerUpBlock.hasPowerUp());
+  }
+
+  @Test
+  void releaseAllPowerUpWithKCheatKey() {
+    startAnimation();
+    Scene gameScene = game.getScene();
+    press(gameScene, KeyCode.DIGIT2);
+    press(gameScene,KeyCode.SPACE);
+    press(gameScene, KeyCode.K);
+    javafxRun(() -> game.step(game.getSecondDelay()));
+    Block firstPowerUpBlock = game.getCurrentGameLevel().getFirstBlockWithPowerUp();
+    assertTrue(firstPowerUpBlock==null);
+  }
+
+  @Test
+  void addTimeWithTCheatKey() {
+    Scene gameScene = game.getScene();
+    Level level = game.getCurrentGameLevel();
+    press(gameScene, KeyCode.T);
+    assertEquals(70,level.getInfoBar().getTimeRemaining());
+  }
+
+  @Test
+  void decreaseScoreToWinWithSCheatKey() {
+    Scene gameScene = game.getScene();
+    Level level = game.getCurrentGameLevel();
+    press(gameScene, KeyCode.S);
+    assertEquals(90,level.getScoreToWinLevel());
+  }
+
+
+  @Test
+  void scoreAndTimeFileNotFound() {
+    Group testGroup = new Group();
+    InfoBar infoBar = new InfoBar(new ScoreText(0,testGroup),testGroup);
+    assertThrows(IllegalArgumentException.class, () -> new Level(testGroup,"game_without_score_time_file",1, infoBar));
+  }
+
+  @Test
+  void scoreAndTimeFileFormattedIncorrectly() {
+    Group testGroup = new Group();
+    InfoBar infoBar = new InfoBar(new ScoreText(0,testGroup),testGroup);
+    assertThrows(IllegalArgumentException.class, () -> new Level(testGroup,"game_score_time_file_format_wrong",3, infoBar));
   }
 }

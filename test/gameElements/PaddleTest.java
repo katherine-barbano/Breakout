@@ -32,7 +32,7 @@ public class PaddleTest extends DukeApplicationTest {
   @Test
   void verifyInitialPositionSizeOfPaddle() {
     assertEquals(265, paddle.getX());
-    assertEquals(620, paddle.getY());
+    assertEquals(640, paddle.getY());
 
     assertEquals(70, paddle.getWidth());
     assertEquals(10, paddle.getHeight());
@@ -60,7 +60,7 @@ public class PaddleTest extends DukeApplicationTest {
     press(myScene, KeyCode.RIGHT);
     assertTrue(paddle.getX()<=game.getScene().getWidth());
 
-    assertEquals(620, paddle.getY());
+    assertEquals(640, paddle.getY());
   }
 
   @Test

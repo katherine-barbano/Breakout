@@ -14,10 +14,12 @@ public class ScoreTextTest extends DukeApplicationTest {
   private Game game;
   private GameText scoreText;
   private Scene myScene;
+  private Ball ball;
 
   @Override
   public void start (Stage stage) {
     game = new Game(stage);
+    ball = lookup("#ball").query();
     scoreText = game.getInfoBar().getScoreText();
   }
 
@@ -33,6 +35,12 @@ public class ScoreTextTest extends DukeApplicationTest {
 
   @Test
   void testGainPoint() {
+    ball.setCenterX(180);
+    ball.setCenterY(460);
+    ball.setVelocityX(0);
+    ball.setVelocityY(-150);
+    sleep(2000);
+
     startAnimation();
     for(int numSteps = 0; numSteps < 69; numSteps ++) {
       javafxRun(() -> game.step(game.getSecondDelay()));

@@ -53,6 +53,14 @@ game from level 1 again.
 this click does nothing.
 - Left mouse click: Skips to the previous level. If the current level is
 the first level, this mouse click does nothing.
+- Numeric keys (e.g. "1", "2", or "3"): Jumps to the level associated with that value. If that level
+does not exist, no action is taken.
+- "D": Deletes the first block in the level and adds 5 to score. First block is defined as the block that exists farthest to the top left
+of the screen.
+- "P": Drops the first power up in the level. First power up is defined as the one in the block that exists farthest to the top left of the screen.
+- "T": Adds 10 seconds to the time for the current level.
+- "K": Drops all power ups in the level at one time.
+- "S": Decreases the score needed to win the current level by 10 points.
 
 Known Bugs:
 
