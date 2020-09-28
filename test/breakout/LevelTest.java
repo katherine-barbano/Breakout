@@ -154,6 +154,15 @@ public class LevelTest extends DukeApplicationTest {
   }
 
   @Test
+  void decreaseScoreToWinWithSCheatKey() {
+    Scene gameScene = game.getScene();
+    Level level = game.getCurrentGameLevel();
+    press(gameScene, KeyCode.S);
+    assertEquals(90,level.getScoreToWinLevel());
+  }
+
+
+  @Test
   void scoreAndTimeFileNotFound() {
     Group testGroup = new Group();
     InfoBar infoBar = new InfoBar(new ScoreText(0,testGroup),testGroup);
