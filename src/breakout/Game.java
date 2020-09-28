@@ -144,8 +144,11 @@ public class Game {
     if(code == KeyCode.SPACE && currentLevel.gameIsLost()) {
       resetGameToLevel(LEVEL_ONE_INDEX);
     }
+    else if (gameIsWon()){
+      currentLevel.handleKeyInputOnEndScreen(code);
+    }
     else {
-      currentLevel.handleKeyInput(code);
+      currentLevel.handleKeyInputDuringGame(code);
     }
   }
 
@@ -165,7 +168,6 @@ public class Game {
    * Shows the "game over" or "you won" screen.
    */
   void gameOver() {
-    System.out.println("hi");
     Level currentLevel = getCurrentGameLevel();
     infoBar.removeScoreText();
 

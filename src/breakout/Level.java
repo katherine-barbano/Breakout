@@ -211,7 +211,11 @@ public class Level {
    * Handles key input relating to cheat keys and paddle control.
    * @param code KeyCode input by player
    */
-  void handleKeyInput(KeyCode code) {
+  void handleKeyInputOnEndScreen(KeyCode code) {
+
+  }
+
+  void handleKeyInputDuringGame(KeyCode code) {
     gamePaddle.handleKeyInput(code, gameIsPaused);
     if(code == KeyCode.SPACE) {
       handleSpaceBarInput();
@@ -221,6 +225,9 @@ public class Level {
     }
     else if(code == KeyCode.L) {
       setLives(levelLives+1);
+    }
+    else if(code == KeyCode.D) {
+      removeFirstBlock();
     }
   }
 
@@ -260,6 +267,19 @@ public class Level {
     gameBall.removeBall();
     initializeNewBallAndPaddle();
     gameBall.setScore(oldScore);
+  }
+
+  //define first block as
+  private void removeFirstBlock() {
+    int indexFirstHardnessZeroBlock = -1;
+    Block firstHardnessZeroBlock = new Block();
+    while(firstHardnessZeroBlock.getBlockHardness() == 0) {
+      indexFirstHardnessZeroBlock++;
+      List<Block> currentBlockList = levelConfiguration.getBlocksAsList();
+      firstHardnessZeroBlock = currentBlockList.get(indexFirstHardnessZeroBlock);
+    }
+    levelConfiguration.removeBlockFromConfiguration(firstHardnessZeroBlock);
+    firstHardnessZeroBlock.setBlockHardness(0);
   }
 
   void dropFoundPowerUps(double elapsedTime) {

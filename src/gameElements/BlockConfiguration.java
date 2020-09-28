@@ -162,7 +162,7 @@ public class BlockConfiguration {
     return null;
   }
 
-  private void removeBlockFromConfiguration(Block block) {
+  public void removeBlockFromConfiguration(Block block) {
     block.removeFromScene();
     decreaseNumberOfBlocksByOne();
   }
