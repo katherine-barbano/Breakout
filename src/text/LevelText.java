@@ -6,6 +6,13 @@ public class LevelText extends StatusText {
 
   public LevelText(int levelNumber, Group gameRootArg) {
     super(gameRootArg, levelNumber);
-    setStatusTextProperties(getLevelTitle(), getLevelXPosition(), getLevelYPosition(), getLevelId());
+  }
+
+  @Override
+  void setStatusTextProperties(){
+    setTitle(getLevelTitle());
+    setX(getLevelXPosition());
+    setY(getLevelYPosition());
+    setId(getLevelId());
   }
 }

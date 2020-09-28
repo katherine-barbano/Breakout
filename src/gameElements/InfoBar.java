@@ -9,6 +9,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
 import breakout.Game;
+import text.GameOverText;
 import text.GameText;
 import text.LevelText;
 import text.LivesText;
@@ -55,10 +56,10 @@ public class InfoBar extends Rectangle {
   }
   // FIXME
   public void initializeLevelSpecificText(GameText pauseText, GameText livesText, GameText levelText, GameText scoreToWinText) {
-    this.pauseText = pauseText;
-    this.livesText = livesText;
     this.levelText = levelText;
     this.scoreToWinText = scoreToWinText;
+    this.pauseText = pauseText;
+    this.livesText = livesText;
     scoreText.removeText();
     scoreText.addText();
   }

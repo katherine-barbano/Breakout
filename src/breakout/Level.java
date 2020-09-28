@@ -18,6 +18,7 @@ import java.util.regex.PatternSyntaxException;
 import java.util.stream.Stream;
 import javafx.scene.Group;
 import javafx.scene.input.KeyCode;
+import text.GameOverText;
 import text.GameText;
 import text.LevelText;
 import text.LivesText;

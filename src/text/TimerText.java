@@ -6,6 +6,13 @@ public class TimerText extends StatusText {
 
   public TimerText(int startTime, Group gameRootArg) {
     super(gameRootArg, startTime);
-    setStatusTextProperties(getTimerTitle(), getTimerXPosition(), getTimerYPosition(), getTimerId());
+  }
+
+  @Override
+  void setStatusTextProperties(){
+    setTitle(getTimerTitle());
+    setX(getTimerXPosition());
+    setY(getTimerYPosition());
+    setId(getTimerId());
   }
 }

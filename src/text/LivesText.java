@@ -6,7 +6,13 @@ public class LivesText extends StatusText {
 
   public LivesText(int numberOfLives, Group gameRootArg) {
     super(gameRootArg, numberOfLives);
-    setStatusTextProperties(getLivesTitle(), getLivesXPosition(), getLivesYPosition(), getLivesId());
-    addText();
+  }
+
+  @Override
+  void setStatusTextProperties(){
+    setTitle(getLivesTitle());
+    setX(getLivesXPosition());
+    setY(getLivesYPosition());
+    setId(getLivesId());
   }
 }
