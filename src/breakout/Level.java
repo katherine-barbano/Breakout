@@ -493,6 +493,7 @@ public class Level {
 
   public void setLevelTimeLimit(int newTimeLimit) {
     levelTimeLimit = newTimeLimit;
+    infoBar.setTimeLimit(newTimeLimit);
   }
 
 }

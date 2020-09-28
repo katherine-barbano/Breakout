@@ -107,7 +107,7 @@ public class LevelTest extends DukeApplicationTest {
     assertEquals(1,level.getLives());
     ballTouchesGround();
     GameOverText gameOverText = lookup("#gameOverText").query();
-    assertEquals("Game Over! Tap the space bar to restart from Level 1.",gameOverText.getText());
+    assertEquals("You lost! Tap the space bar to restart from Level 1.",gameOverText.getText());
   }
 
   @Test

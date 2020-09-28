@@ -42,7 +42,7 @@ public class ScoreTextTest extends DukeApplicationTest {
     sleep(2000);
 
     startAnimation();
-    for(int numSteps = 0; numSteps < 69; numSteps ++) {
+    for(int numSteps = 0; numSteps < 10; numSteps ++) {
       javafxRun(() -> game.step(game.getSecondDelay()));
     }
     assertEquals("Score: 5", scoreText.getText());

@@ -13,6 +13,8 @@ import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
+
+import text.GameText;
 import util.DukeApplicationTest;
 
 public class GameTest extends DukeApplicationTest{
@@ -91,11 +93,6 @@ public class GameTest extends DukeApplicationTest{
   }
 
   @Test
-  void directoryNotFoundWhenInitializingLevels() {
-    fail();
-  }
-
-  @Test
   void levelOneScoreToWinWinningCondition() {
     Level level = game.getGameLevels().get(0);
     assertEquals(100, level.getScoreToWinLevel());
@@ -139,39 +136,46 @@ public class GameTest extends DukeApplicationTest{
   @Test
   void levelOneScoreDoesNotSurpassWinningCondition() {
     Level level = game.getGameLevels().get(0);
-    level.setLevelTimeLimit(1);
+    javafxRun(() -> level.setLevelTimeLimit(1));
     startAnimation();
     for(int numSteps = 0; numSteps < 10; numSteps ++) {
       javafxRun(() -> game.step(game.getSecondDelay()));
     }
 
-    List<Node> children = game.getRoot().getChildren();
-    assertTrue(children.size()<=63);
+    GameText gameOverText = lookup("#gameOverText").query();
+    assertNotEquals("You lost! Tap the space bar to restart from Level 1.",gameOverText.getText());
+
   }
 
   @Test
   void levelTwoScoreDoesNotSurpassWinningCondition() {
-    Level level = game.getGameLevels().get(1);
-    level.setLevelTimeLimit(1);
+    javafxRun(() -> game.getScene().getOnMouseClicked().handle(new MouseEvent(MouseEvent.MOUSE_CLICKED, 10, 10, 10, 10, MouseButton.SECONDARY, 1,
+        false, false, false, false, true, false, false, true, false, false, null)));
     startAnimation();
     for(int numSteps = 0; numSteps < 10; numSteps ++) {
       javafxRun(() -> game.step(game.getSecondDelay()));
     }
 
-    List<Node> children = game.getRoot().getChildren();
-    assertTrue(children.size()<=63);
+    javafxRun(() -> {
+      GameText gameOverText = lookup("#gameOverText").query();
+      assertNotEquals("You lost! Tap the space bar to restart from Level 1.",gameOverText.getText());
+    });
   }
 
   @Test
   void levelThreeScoreDoesNotSurpassWinningCondition() {
-    Level level = game.getGameLevels().get(2);
-    level.setLevelTimeLimit(1);
     startAnimation();
+    for (int levelNext = 0; levelNext<2; levelNext++) {
+      javafxRun(() -> game.getScene().getOnMouseClicked().handle(new MouseEvent(MouseEvent.MOUSE_CLICKED, 10, 10, 10, 10, MouseButton.SECONDARY, 1,
+          false, false, false, false, true, false, false, true, false, false, null)));
+    }
     for(int numSteps = 0; numSteps < 10; numSteps ++) {
       javafxRun(() -> game.step(game.getSecondDelay()));
     }
 
-    List<Node> children = game.getRoot().getChildren();
-    assertTrue(children.size()<=63);
+    javafxRun(() -> {
+      GameText gameOverText = lookup("#gameOverText").query();
+      assertNotEquals("You lost! Tap the space bar to restart from Level 1.",gameOverText.getText());
+    });
   }
 }
