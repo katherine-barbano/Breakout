@@ -9,6 +9,7 @@ import gameElements.InfoBar;
 import gameElements.MovingBlockRow;
 import gameElements.Paddle;
 import gameElements.PowerUp;
+import gameElements.PowerUp.PowerUpType;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -261,6 +262,7 @@ public class Level {
   void dropFoundPowerUps(double elapsedTime) {
     List<PowerUp> powerUps = levelConfiguration.getVisiblePowerUps();
     for (PowerUp fallingPowerUp: powerUps) {
+      fallingPowerUp.setPaddle(gamePaddle);
       fallingPowerUp.updateLocation(elapsedTime, gameIsPaused);
       if (gamePaddle.isTouchingPaddleTop(fallingPowerUp)){
         fallingPowerUp.setPaddle(gamePaddle);
@@ -277,11 +279,42 @@ public class Level {
     }
   }
 
-  void monitorBlocks() {
+  void monitorBlocks(double elapsedTime) {
+    updatePositionMovingBlocks(elapsedTime);
     Block block = gameBall.getBlockBallIsTouching();
     if (block != null) {
+      if (block.hasPowerUp()) {
+        PowerUpType powerUpType = block.getPowerUp().getPowerUpType();
+        if (powerUpType == PowerUpType.MOVING_BLOCK) {
+          gameBall.increaseScoreBy(gameBall.getMovingBlockScoreValue());
+        } else if (block.getBlockHardness() == block.getMinimumHardness()) {
+          handleFoundPowerUpInBlock(block);
+        }
+      }
       levelConfiguration.findAndDecrementBlock(block, gameBall);
-      gameBall.handleBlockBehavior(block);
+    }
+  }
+
+  private void handleFoundPowerUpInBlock(Block block) {
+    PowerUpType powerUpType = block.getPowerUp().getPowerUpType();
+    switch (powerUpType) {
+      case SLOW_BALL :
+      case BREAKER_BALL: {
+        block.getPowerUp().setGameBall(gameBall);
+        break;
+      } case PADDLE: {
+        gamePaddle.setWidth(gamePaddle.getWidth());
+        break;
+      } case MOVING_BLOCK: {
+        gameBall.increaseScoreBy(gameBall.getMovingBlockScoreValue());
+        break;
+      } default: {
+        throw new IllegalStateException("This shouldn't be reached");
+      }
+    }
+    if (powerUpType != PowerUpType.MOVING_BLOCK) {
+      block.releasePowerUp();
+      block.setHasReleasedPowerUp(true);
     }
   }
 

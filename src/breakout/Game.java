@@ -96,13 +96,13 @@ public class Game {
       resetGameToLevel(currentGameLevelIndex+1);
     }
     else {
+      currentLevel.monitorBlocks(elapsedTime);
       currentLevel.dropFoundPowerUps(elapsedTime);
-      currentLevel.updatePositionMovingBlocks(elapsedTime);
+
       boolean ballIsValid = currentLevel.isBallValid(elapsedTime);
       if (!ballIsValid) {
         currentLevel.resetCurrentLevel();
       }
-      currentLevel.monitorBlocks();
     }
     updateGameScore(currentLevel);
   }

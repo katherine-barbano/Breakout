@@ -211,42 +211,6 @@ public class Ball extends Circle {
     return null;
   }
 
-  // TODO: move into higher level class
-  public void handleBlockBehavior(Block block) {
-    if (block.hasPowerUp()) {
-      PowerUpType powerUpType = block.getPowerUp().getPowerUpType();
-      if (powerUpType == PowerUpType.MOVING_BLOCK) {
-        increaseScoreBy(getMovingBlockScoreValue());
-      } else if (block.getBlockHardness() == getMinimumHardness()) {
-        handleFoundPowerUpInBlock(block);
-      }
-    }
-  }
-
-  // TODO: move into higher level class
-  private void handleFoundPowerUpInBlock(Block block) {
-    PowerUpType powerUpType = block.getPowerUp().getPowerUpType();
-    switch (powerUpType) {
-      case SLOW_BALL :
-      case BREAKER_BALL: {
-        block.getPowerUp().setGameBall(this);
-        break;
-      } case PADDLE: {
-        paddle.setWidth(paddle.getWidth());
-        break;
-      } case MOVING_BLOCK: {
-        increaseScoreBy(getMovingBlockScoreValue());
-        break;
-      } default: {
-        throw new IllegalStateException("This shouldn't be reached");
-      }
-    }
-    if (powerUpType != PowerUpType.MOVING_BLOCK) {
-      block.releasePowerUp();
-      block.setHasReleasedPowerUp(true);
-    }
-  }
-
   private int getVelocityXFromPaddleHit() {
     double distanceFromPaddleCenter = getCenterX() - paddle.getCenterX();
     double angleRatio = distanceFromPaddleCenter / paddle.getWidth();
@@ -287,5 +251,5 @@ public class Ball extends Circle {
   private int getInfoBarHeight() { return Integer
       .parseInt(properties.getProperty("info_bar_height")); }
   private int getMinimumHardness() { return Integer.parseInt(properties.getProperty("minimum_hardness")); }
-  int getMovingBlockScoreValue() { return Integer.parseInt(properties.getProperty("moving_block_score_value"));}
+  public int getMovingBlockScoreValue() { return Integer.parseInt(properties.getProperty("moving_block_score_value"));}
 }

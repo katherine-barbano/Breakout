@@ -77,13 +77,21 @@ public abstract class PowerUp extends Circle {
   }
 
   public void updateLocation(double elapsedTime, boolean isPaused) {
-    if (!isPaused) {
+    if (isPaused) {
+      removeFromScene();
+    }
+    else {
       updatePositionY(elapsedTime);
       if (isTouchingPaddle()) {
         givePowerUp();
         removeFromScene();
-      } else if (isTouchingBottomWall()) removeFromScene();
+      }
     }
+  }
+
+  // inverted since it starts at top left
+  private boolean isBelowPaddle() {
+    return getCenterY() >= gamePaddle.getCenterY();
   }
 
   private boolean isTouchingPaddle() {
@@ -91,11 +99,6 @@ public abstract class PowerUp extends Circle {
     return gamePaddle.isTouchingPaddleTop(this) ||
         gamePaddle.isTouchingPaddleLeftSide(this) ||
         gamePaddle.isTouchingPaddleRightSide(this);
-  }
-
-  private boolean isTouchingBottomWall() {
-    if (gamePaddle == null) return false;
-    return getCenterY() < gamePaddle.getY();
   }
 
   private double GetXCenterOfBlock(Block block) {

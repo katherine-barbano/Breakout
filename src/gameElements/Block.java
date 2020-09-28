@@ -138,7 +138,7 @@ public class Block extends Rectangle {
   }
   public void setPowerUp(PowerUp powerUp) { randomPowerUp = powerUp; }
   public PowerUp getPowerUp() { return randomPowerUp; }
-  void releasePowerUp() {
+  public void releasePowerUp() {
     randomPowerUp.showInScene();
   }
 
@@ -204,7 +204,7 @@ public class Block extends Rectangle {
   private Paint getBlockColorThree() { return Paint.valueOf(properties.getProperty("block_strength_three")); }
   private int getBlocksPerRow() { return Integer.parseInt(properties.getProperty("blocks_per_row")); }
   private int getNumberOfBlockRows() { return Integer.parseInt(properties.getProperty("number_of_block_rows")); }
-  private int getMinimumHardness() { return Integer.parseInt(properties.getProperty("minimum_hardness")); }
+  public int getMinimumHardness() { return Integer.parseInt(properties.getProperty("minimum_hardness")); }
   private int getMaximumHardness() { return Integer.parseInt(properties.getProperty("maximum_hardness")); }
   private int getBlockConfigurationOffsetFromPaddle() { return Integer.parseInt(properties.getProperty("block_configuration_offset_from_paddle"));}
   public int getMovingBlockVelocity() {

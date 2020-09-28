@@ -85,7 +85,8 @@ public class Paddle extends Rectangle{
 
   double getCenterX() {
     return getX() + getWidth()/2;
-  }
+  } // TODO: should this have brackets around it?
+  double getCenterY() { return (getY() + getHeight())/2; }
 
   //TODO: fix for edges of ball that are not in center
   public boolean isTouchingPaddleTop(Circle collisionCircle) {
