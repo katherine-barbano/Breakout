@@ -229,6 +229,9 @@ public class Level {
     else if(code == KeyCode.D) {
       removeFirstBlock();
     }
+    else if(code == KeyCode.P) {
+      dropFirstPowerUp();
+    }
   }
 
   private void handleSpaceBarInput() {
@@ -283,15 +286,44 @@ public class Level {
     firstHardnessZeroBlock.setBlockHardness(0);
   }
 
+  private void dropFirstPowerUp() {
+    Block firstPowerUpBlock = getFirstBlockWithPowerUp();
+    if(firstPowerUpBlock!=null) {
+      firstPowerUpBlock.releasePowerUp();
+      firstPowerUpBlock.setHasReleasedPowerUp(true);
+    }
+  }
+
+  //define first block as the block that exists farthest to the top left.
+  private Block getFirstBlockWithPowerUp() {
+    int indexFirstPowerUpBlock = -1;
+    Block firstPowerUpBlock = new Block();
+    boolean indexInRange = indexFirstPowerUpBlock<levelConfiguration.getNumberOfBlocksRemaining()-1;
+    while(!firstPowerUpBlock.hasPowerUp() && indexInRange) {
+      indexFirstPowerUpBlock++;
+      List<Block> currentBlockList = levelConfiguration.getBlocksAsList();
+      firstPowerUpBlock = currentBlockList.get(indexFirstPowerUpBlock);
+      indexInRange = indexFirstPowerUpBlock<levelConfiguration.getNumberOfBlocksRemaining()-1;
+    }
+    if(firstPowerUpBlock.hasPowerUp()) {
+      return firstPowerUpBlock;
+    }
+    return null;
+  }
+
+  private void dropSinglePowerUp(PowerUp fallingPowerUp, double elapsedTime) {
+    fallingPowerUp.updateLocation(elapsedTime, gameIsPaused);
+    if (gamePaddle.isTouchingPaddleTop(fallingPowerUp)) {
+      fallingPowerUp.setPaddle(gamePaddle);
+      fallingPowerUp.setGameBall(gameBall);
+      fallingPowerUp.givePowerUp();
+    }
+  }
+
   void dropFoundPowerUps(double elapsedTime) {
     List<PowerUp> powerUps = levelConfiguration.getVisiblePowerUps();
     for (PowerUp fallingPowerUp: powerUps) {
-      fallingPowerUp.updateLocation(elapsedTime, gameIsPaused);
-      if (gamePaddle.isTouchingPaddleTop(fallingPowerUp)){
-        fallingPowerUp.setPaddle(gamePaddle);
-        fallingPowerUp.setGameBall(gameBall);
-        fallingPowerUp.givePowerUp();
-      }
+      dropSinglePowerUp(fallingPowerUp,elapsedTime);
     }
   }
 
