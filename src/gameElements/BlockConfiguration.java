@@ -167,7 +167,10 @@ public class BlockConfiguration {
 
   private void decrementBlock(Block block) {
     block.decreaseHardnessByOne();
-    if (block.getBlockHardness() == 0) block.removeFromScene();
+    if (block.getBlockHardness() == 0) {
+      decreaseNumberOfBlocksByOne();
+      block.removeFromScene();
+    }
     block.updateBlockColor();
   }
 
