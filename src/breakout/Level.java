@@ -232,6 +232,9 @@ public class Level {
     else if(code == KeyCode.P) {
       dropFirstPowerUp();
     }
+    else if(code == KeyCode.K) {
+      dropAllPowerUps();
+    }
   }
 
   private void handleSpaceBarInput() {
@@ -331,6 +334,12 @@ public class Level {
     List<Block> movingBlocks = levelConfiguration.getMovingBlocks();
     for (Block movingBlock : movingBlocks) {
       movingBlock.updateLocationAndVelocity(elapsedTime, gameIsPaused);
+    }
+  }
+
+  private void dropAllPowerUps() {
+    for(int powerUpsLeft = levelConfiguration.getNumberOfPowerUps(); powerUpsLeft>0; powerUpsLeft--) {
+      dropFirstPowerUp();
     }
   }
 

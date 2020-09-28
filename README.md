@@ -57,7 +57,7 @@ the first level, this mouse click does nothing.
 does not exist, no action is taken.
 - "D": Deletes the first block in the level and adds 5 to score. First block is defined as the block that exists farthest to the top left
 of the screen.
-- "P": Drops the first power up in the level. First power up is defined as TODO!!!!
+- "P": Drops the first power up in the level. First power up is defined as the one in the block that exists farthest to the top left of the screen.
 - "T": Adds 10 seconds to the time for the current level.
 - "K": Drops all power ups in the level at one time.
 - "S": Decreases the score needed to win the current level by 10 points.
