@@ -56,6 +56,19 @@ public class GameTest extends DukeApplicationTest{
   }
 
   @Test
+  void jumpToLevelsWithNumericCheatKey() {
+    press(game.getScene(), KeyCode.DIGIT2);
+    assertEquals(2, game.getCurrentGameLevel().getLevelNumber());
+    press(game.getScene(), KeyCode.DIGIT1);
+    assertEquals(1, game.getCurrentGameLevel().getLevelNumber());
+    press(game.getScene(), KeyCode.DIGIT0);
+    assertEquals(1, game.getCurrentGameLevel().getLevelNumber());
+    press(game.getScene(), KeyCode.DIGIT9);
+    assertEquals(1, game.getCurrentGameLevel().getLevelNumber());
+  }
+
+
+  @Test
   void verifyInitialLevelsList() {
     List<Level> actualLevelList = game.getGameLevelsList();
     assertEquals(3, actualLevelList.size());
