@@ -39,6 +39,17 @@ public abstract class PowerUp extends Circle {
     setProperties();
   }
 
+  public PowerUp(Group gameRootArg, Paddle paddleArg) {
+    gameRoot = gameRootArg;
+    gamePaddle = paddleArg;
+    initializePropertyList();
+  }
+
+  void assignToBlock(Block block) {
+    ownerBlock = block;
+    setProperties();
+  }
+
   private void initializePropertyList() {
     properties = new Properties();
     FileInputStream ip = null;

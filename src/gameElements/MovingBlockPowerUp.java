@@ -9,6 +9,11 @@ public class MovingBlockPowerUp extends PowerUp{
     setPowerUpType(PowerUpType.MOVING_BLOCK);
   }
 
+  public MovingBlockPowerUp(Group gameRoot, Paddle gamePaddle) {
+    super(gameRoot, gamePaddle);
+    setPowerUpType(PowerUpType.MOVING_BLOCK);
+  }
+
   @Override
   public void givePowerUp() {
     // TODO: Increase score by MOVING_BLOCK_SCORE_VALUE instead of the normal BLOCK_VALUE

@@ -9,6 +9,11 @@ public class PaddlePowerUp extends PowerUp{
     setPowerUpType(PowerUpType.PADDLE);
   }
 
+  public PaddlePowerUp(Group gameRoot, Paddle gamePaddle) {
+    super(gameRoot, gamePaddle);
+    setPowerUpType(PowerUpType.PADDLE);
+  }
+
   @Override
   public void givePowerUp() {
     gamePaddle.extendPaddleWidth();

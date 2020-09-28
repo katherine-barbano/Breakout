@@ -58,7 +58,7 @@ public class BlockConfiguration {
         if (fileReader.hasNextLine()) {
           String fileLine = fileReader.nextLine();
           if (containsMovingBlock(fileLine)) {
-            MovingBlockRow movingBlockRow = convertFileLineToMovingBlockRow(fileLine);
+            BlockRow movingBlockRow = convertFileLineToMovingBlockRow(fileLine);
             configRows[i] = movingBlockRow;
           }
           else {
@@ -70,7 +70,7 @@ public class BlockConfiguration {
     } catch (FileNotFoundException e) {}
   }
 
-  private MovingBlockRow convertFileLineToMovingBlockRow(String fileLine) {
+  private BlockRow convertFileLineToMovingBlockRow(String fileLine) {
     String[] hardnessArray = fileLine.split(" ");
     Block[] blockArray = new Block[getBlocksPerRow()];
     assert (blockArray.length == hardnessArray.length);
@@ -86,7 +86,7 @@ public class BlockConfiguration {
     }
 
     //TODO: can we use polymorphism here by doing BlockRow movingBlockRow = new MovingBlockRow? And cast to subclass to use methods
-    MovingBlockRow movingBlockRow = new MovingBlockRow();
+    BlockRow movingBlockRow = new MovingBlockRow();
     movingBlockRow.setRowOfBlocks(blockArray);
     return movingBlockRow;
   }
@@ -113,43 +113,45 @@ public class BlockConfiguration {
     if (Character.isDigit(hardnessChar)) {
       int hardValue = Integer.parseInt(hardness);
       if (hardValue > 0) {
-        createdBlock  = new Block();
-        createdBlock.setBlockHardness(hardValue);
+        createdBlock  = new Block(hardValue);
         numberOfBlocksRemaining++;
       }
     } else {
-      createdBlock = makeBlockWithPowerUp(hardnessChar);
+      createdBlock = makeSpecialBlock(hardnessChar);
     }
     return createdBlock;
   }
 
-  private Block makeBlockWithPowerUp(char hardnessChar) {
-    Block createdBlock = new Block();
-    createdBlock.setRandomHardness();
-    PowerUp createdPowerUp = makePowerUp(hardnessChar, myLevel, createdBlock);
-    createdBlock.setPowerUp(createdPowerUp);
-    createdBlock.setHasPowerUp(true);
-    numberOfPowerUps++;
+  private Block makeSpecialBlock(char hardnessChar) {
+    Block createdBlock;
+    if (hardnessChar == 'V') {
+      createdBlock = new VaryingBlock();
+    }
+    else {
+      PowerUp createdPowerUp = makePowerUp(hardnessChar, myLevel);
+      createdBlock = new Block(createdPowerUp);
+      numberOfPowerUps++;
+    }
     numberOfBlocksRemaining++;
     return createdBlock;
   }
 
-  private PowerUp makePowerUp(char hardnessChar, Level level, Block createdBlock) {
+  private PowerUp makePowerUp(char hardnessChar, Level level) {
     Group gameRoot = level.getGameRoot();
     Paddle gamePaddle = level.getGamePaddle();
     PowerUp powerUp;
     switch (hardnessChar) {
       case 'S':
-        powerUp = new SlowBallPowerUp(gameRoot, gamePaddle, createdBlock);
+        powerUp = new SlowBallPowerUp(gameRoot, gamePaddle);
         break;
       case 'P':
-        powerUp = new PaddlePowerUp(gameRoot, gamePaddle, createdBlock);
+        powerUp = new PaddlePowerUp(gameRoot, gamePaddle);
         break;
       case 'B':
-        powerUp = new BreakerBallPowerUp(gameRoot, gamePaddle, createdBlock);
+        powerUp = new BreakerBallPowerUp(gameRoot, gamePaddle);
         break;
       case 'M':
-        powerUp = new MovingBlockPowerUp(gameRoot, gamePaddle, createdBlock);
+        powerUp = new MovingBlockPowerUp(gameRoot, gamePaddle);
         break;
       default:
         throw new IllegalStateException("Unexpected value: " + hardnessChar);
@@ -224,10 +226,14 @@ public class BlockConfiguration {
   public List<Block> getBlocksAsList() {
     List<Block> blockList = new ArrayList<>();
     for (BlockRow blockRow : configRows) {
-      if (blockRow != null && blockRow.getRowOfBlocks() != null) {
-        for (Block block : blockRow.getRowOfBlocks()) {
-          if (block != null) blockList.add(block);
+      if (blockRow == null || blockRow.getRowOfBlocks() == null) {
+        continue;
+      }
+      for (Block block : blockRow.getRowOfBlocks()) {
+        if (block == null) {
+          continue;
         }
+        blockList.add(block);
       }
     }
     return blockList;
@@ -246,12 +252,20 @@ public class BlockConfiguration {
 
   public List<Block> getMovingBlocks() {
     List<Block> movingBlockList = new ArrayList<>();
-    List<Block> blockList = getBlocksAsList();
-    for (Block block : blockList) {
+    for (Block block : getBlocksAsList()) {
       if (block != null && block instanceof MovingBlock)
         movingBlockList.add(block);
     }
     return movingBlockList;
+  }
+
+  public List<Block> getVaryingBlocks() {
+    List<Block> varyingBlockList = new ArrayList<>();
+    for (Block block : getBlocksAsList()) {
+      if (block != null && block instanceof VaryingBlock)
+        varyingBlockList.add(block);
+    }
+    return varyingBlockList;
   }
 
   boolean containsMovingBlock(String fileLine) {
@@ -296,4 +310,11 @@ public class BlockConfiguration {
   private int getScoreIncrement() { return Integer.parseInt(properties.getProperty("score_increment")); }
   public int getSceneSize() { return Integer.parseInt(properties.getProperty("scene_size"));}
   public int getPlayableArea() { return Integer.parseInt(properties.getProperty("playable_area_size"));}
+
+  public void updateBlockAttributes(double elapsedTime, boolean gameIsPaused) {
+    for (Block block : getBlocksAsList()) {
+      if (block instanceof VaryingBlock) ((VaryingBlock) block).waitToChangeHardness(elapsedTime, gameIsPaused);
+      if (block instanceof MovingBlock) ((MovingBlock) block).updateVelocityAndPosition(elapsedTime, gameIsPaused);
+    }
+  }
 }

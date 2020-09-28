@@ -18,6 +18,12 @@ public class BreakerBallPowerUp extends PowerUp {
     initializeProperties();
   }
 
+  public BreakerBallPowerUp(Group gameRoot, Paddle gamePaddle) {
+    super(gameRoot, gamePaddle);
+    setPowerUpType(PowerUpType.BREAKER_BALL);
+    initializeProperties();
+  }
+
   void initializeProperties() {
     properties = new Properties();
     FileInputStream ip = null;

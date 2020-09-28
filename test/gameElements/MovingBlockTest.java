@@ -13,7 +13,6 @@ import util.DukeApplicationTest;
 
 public class MovingBlockTest extends DukeApplicationTest {
   private Game game;
-
   private Ball ball;
   private Paddle paddle;
 

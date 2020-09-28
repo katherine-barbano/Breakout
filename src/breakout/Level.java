@@ -272,15 +272,8 @@ public class Level {
     }
   }
 
-  void updatePositionMovingBlocks(double elapsedTime) {
-    List<Block> movingBlocks = levelConfiguration.getMovingBlocks();
-    for (Block movingBlock : movingBlocks) {
-      movingBlock.updateLocationAndVelocity(elapsedTime, gameIsPaused);
-    }
-  }
-
   void monitorBlocks(double elapsedTime) {
-    updatePositionMovingBlocks(elapsedTime);
+    levelConfiguration.updateBlockAttributes(elapsedTime, gameIsPaused);
     Block block = gameBall.getBlockBallIsTouching();
     if (block != null) {
       if (block.hasPowerUp()) {

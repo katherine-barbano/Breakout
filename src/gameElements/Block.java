@@ -28,10 +28,30 @@ public class Block extends Rectangle {
   private boolean hasReleasedPowerUp;
 
   public Block() {}
+
+  public Block(PowerUp powerUp) {
+    this.randomPowerUp = powerUp;
+    this.hasPowerUp = true;
+    powerUp.assignToBlock(this);
+    initializeProperties();
+    setRandomHardness();
+    colorBlock();
+  }
+
   public Block(int sceneWidth, int sceneHeight, int blockHardness) {
     initializeProperties();
-    setDimensions(sceneWidth, sceneHeight);
     setBlockHardness(blockHardness);
+    colorBlock();
+    setDimensions(sceneWidth,sceneHeight);
+  }
+
+  public Block(int blockHardness) {
+    initializeProperties();
+    setBlockHardness(blockHardness);
+    colorBlock();
+  }
+
+  void colorBlock() {
     updateBlockColor();
     setFill(blockColor);
     setId("block");
@@ -197,6 +217,8 @@ public class Block extends Rectangle {
     return Math.max(xPos, Math.min(xCoord, (xPos + this.getWidth())));
   }
 
+  void updateAttributes(double elapsedTime, boolean gameIsPaused) {}
+
   private int getInfoBarHeight() { return Integer.parseInt(properties.getProperty("info_bar_height")); }
   private Paint getBackgroundColor() { return Paint.valueOf(properties.getProperty("background_color")); }
   private Paint getBlockColorOne() { return Paint.valueOf(properties.getProperty("block_strength_one")); }
@@ -210,4 +232,5 @@ public class Block extends Rectangle {
   public int getMovingBlockVelocity() {
     if (properties == null) initializeProperties();
     return Integer.parseInt(properties.getProperty("moving_block_speed"));}
+    public double getVaryingBlockDownTime() { return Double.parseDouble(properties.getProperty("varying_block_down_time"));}
 }

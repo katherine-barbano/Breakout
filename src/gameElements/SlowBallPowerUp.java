@@ -9,6 +9,11 @@ public class SlowBallPowerUp extends PowerUp {
     setPowerUpType(PowerUpType.SLOW_BALL);
   }
 
+  public SlowBallPowerUp(Group gameRoot, Paddle gamePaddle) {
+    super(gameRoot, gamePaddle);
+    setPowerUpType(PowerUpType.SLOW_BALL);
+  }
+
   @Override
   public void givePowerUp() {
     if (getGameBall() != null)

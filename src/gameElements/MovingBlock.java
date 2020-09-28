@@ -12,8 +12,7 @@ public class MovingBlock extends Block {
     setVelocity(super.getMovingBlockVelocity());
   }
 
-  @Override
-  public void updateLocationAndVelocity(double elapsedTime, boolean gameIsPaused) {
+  public void updateVelocityAndPosition(double elapsedTime, boolean gameIsPaused) {
     if (!gameIsPaused) {
       updateLocation(elapsedTime);
       updateVelocity();
