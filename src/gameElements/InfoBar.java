@@ -39,8 +39,16 @@ public class InfoBar extends Rectangle {
     scoreText.addText();
   }
 
+  public void removeGameTimerText() {
+    gameTimer.removeTimerText();
+  }
+
   public void setTimeLimit(int timeLimit) {
     this.gameTimer = new GameTimer(root, timeLimit);
+  }
+
+  public int getTimeRemaining() {
+    return gameTimer.getTimeRemaining();
   }
 
   public void initiatePauseInText() {
@@ -115,4 +123,13 @@ public class InfoBar extends Rectangle {
     return gameTimer;
   }
 
+  public GameText getScoreToWinText() {
+    return scoreToWinText;
+  }
+
+  public void setScoreToWinText(int newScore) {
+    StatusText subclassUpdateValueText = (StatusText) scoreToWinText;
+    subclassUpdateValueText.updateValue(newScore);
+    scoreToWinText = subclassUpdateValueText;
+  }
 }

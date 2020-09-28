@@ -144,8 +144,14 @@ public class Game {
     if(code == KeyCode.SPACE && currentLevel.gameIsLost()) {
       resetGameToLevel(LEVEL_ONE_INDEX);
     }
+    else if(keyCodeIsNumeric(code)) {
+      handleNumericKeyCode(code);
+    }
+    else if (gameIsWon()){
+      currentLevel.handleKeyInputOnEndScreen(code);
+    }
     else {
-      currentLevel.handleKeyInput(code);
+      currentLevel.handleKeyInputDuringGame(code);
     }
   }
 
@@ -160,12 +166,31 @@ public class Game {
     }
   }
 
+  private String parseKeyCodeToDigit(KeyCode code) {
+    String codeAsString = code.toString();
+    String digitOfCode = codeAsString.substring(codeAsString.length()-1);
+    return digitOfCode;
+  }
+
+  private boolean keyCodeIsNumeric(KeyCode code) {
+    List<String> numericsAsList = Arrays.asList(NUMERICS);
+    String digit = parseKeyCodeToDigit(code);
+    return numericsAsList.contains(digit);
+  }
+
+  private void handleNumericKeyCode(KeyCode code) {
+    int codeAsInteger = Integer.parseInt(parseKeyCodeToDigit(code));
+    int maxAllowableLevel = gameLevels.size();
+    if(codeAsInteger<=maxAllowableLevel && codeAsInteger>0) {
+      resetGameToLevel(codeAsInteger-1);
+    }
+  }
+
   /***
    * Removes the current Level from the screen because the player lost all their lives or won the game.
    * Shows the "game over" or "you won" screen.
    */
   void gameOver() {
-    System.out.println("hi");
     Level currentLevel = getCurrentGameLevel();
     infoBar.removeScoreText();
 

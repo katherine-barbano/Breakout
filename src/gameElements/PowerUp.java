@@ -98,7 +98,9 @@ public abstract class PowerUp extends Circle {
       gameRoot.getChildren().add(this);
     }
   }
-  public void removeFromScene() { gameRoot.getChildren().remove(this); }
+  public void removeFromScene() {
+    gameRoot.getChildren().remove(this);
+  }
 
   private void updatePositionY(double elapsedTime) { setCenterY(getCenterY() + velocityY * elapsedTime); }
 

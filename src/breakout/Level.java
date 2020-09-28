@@ -37,6 +37,8 @@ public class Level {
 
   public static final int INITIAL_NUMBER_LIVES = 3;
   public static final String FILE_SOURCE_PATH = "data/";
+  public static final int ADDITIONAL_SECONDS = 10;
+  public static final int DECREMENT_POINTS = 10;
 
   private int levelLives;
   private int levelNumber;
@@ -211,7 +213,11 @@ public class Level {
    * Handles key input relating to cheat keys and paddle control.
    * @param code KeyCode input by player
    */
-  void handleKeyInput(KeyCode code) {
+  void handleKeyInputOnEndScreen(KeyCode code) {
+
+  }
+
+  void handleKeyInputDuringGame(KeyCode code) {
     gamePaddle.handleKeyInput(code, gameIsPaused);
     if(code == KeyCode.SPACE) {
       handleSpaceBarInput();
@@ -221,6 +227,21 @@ public class Level {
     }
     else if(code == KeyCode.L) {
       setLives(levelLives+1);
+    }
+    else if(code == KeyCode.D) {
+      removeFirstBlock();
+    }
+    else if(code == KeyCode.P) {
+      dropFirstPowerUp();
+    }
+    else if(code == KeyCode.K) {
+      dropAllPowerUps();
+    }
+    else if(code == KeyCode.T) {
+      addExtraTime();
+    }
+    else if(code == KeyCode.S) {
+      decreaseScoreToWin();
     }
   }
 
@@ -262,15 +283,58 @@ public class Level {
     gameBall.setScore(oldScore);
   }
 
+  //define first block as the block that exists farthest to the top left. This block should have a
+  //hardness greater than 0, meaning it still exists on the screen.
+  private void removeFirstBlock() {
+    int indexFirstHardnessZeroBlock = -1;
+    Block firstHardnessZeroBlock = new Block();
+    while(firstHardnessZeroBlock.getBlockHardness() == 0) {
+      indexFirstHardnessZeroBlock++;
+      List<Block> currentBlockList = levelConfiguration.getBlocksAsList();
+      firstHardnessZeroBlock = currentBlockList.get(indexFirstHardnessZeroBlock);
+    }
+    levelConfiguration.removeBlockFromConfiguration(firstHardnessZeroBlock);
+    firstHardnessZeroBlock.setBlockHardness(0);
+  }
+
+  private void dropFirstPowerUp() {
+    Block firstPowerUpBlock = getFirstBlockWithPowerUp();
+    if(firstPowerUpBlock!=null) {
+      firstPowerUpBlock.releasePowerUp();
+      firstPowerUpBlock.setHasReleasedPowerUp(true);
+    }
+  }
+
+  //define first block as the block that exists farthest to the top left.
+  public Block getFirstBlockWithPowerUp() {
+    int indexFirstPowerUpBlock = -1;
+    Block firstPowerUpBlock = new Block();
+    boolean indexInRange = indexFirstPowerUpBlock<levelConfiguration.getNumberOfBlocksRemaining()-1;
+    while(!firstPowerUpBlock.hasPowerUp() && indexInRange) {
+      indexFirstPowerUpBlock++;
+      List<Block> currentBlockList = levelConfiguration.getBlocksAsList();
+      firstPowerUpBlock = currentBlockList.get(indexFirstPowerUpBlock);
+      indexInRange = indexFirstPowerUpBlock<levelConfiguration.getNumberOfBlocksRemaining()-1;
+    }
+    if(firstPowerUpBlock.hasPowerUp()) {
+      return firstPowerUpBlock;
+    }
+    return null;
+  }
+
+  private void dropSinglePowerUp(PowerUp fallingPowerUp, double elapsedTime) {
+    fallingPowerUp.updateLocation(elapsedTime, gameIsPaused);
+    if (gamePaddle.isTouchingPaddleTop(fallingPowerUp)) {
+      fallingPowerUp.setPaddle(gamePaddle);
+      fallingPowerUp.setGameBall(gameBall);
+      fallingPowerUp.givePowerUp();
+    }
+  }
+
   void dropFoundPowerUps(double elapsedTime) {
     List<PowerUp> powerUps = levelConfiguration.getVisiblePowerUps();
     for (PowerUp fallingPowerUp: powerUps) {
-      fallingPowerUp.updateLocation(elapsedTime, gameIsPaused);
-      if (gamePaddle.isTouchingPaddleTop(fallingPowerUp)){
-        fallingPowerUp.setPaddle(gamePaddle);
-        fallingPowerUp.setGameBall(gameBall);
-        fallingPowerUp.givePowerUp();
-      }
+      dropSinglePowerUp(fallingPowerUp,elapsedTime);
     }
   }
 
@@ -279,6 +343,28 @@ public class Level {
     for (Block movingBlock : movingBlocks) {
       movingBlock.updateLocationAndVelocity(elapsedTime, gameIsPaused);
     }
+  }
+
+  private void dropAllPowerUps() {
+    for(int powerUpsLeft = levelConfiguration.getNumberOfPowerUps(); powerUpsLeft>0; powerUpsLeft--) {
+      dropFirstPowerUp();
+    }
+  }
+
+  private void addExtraTime() {
+    int timeLeft = infoBar.getTimeRemaining();
+    infoBar.removeGameTimerText();
+    infoBar.setTimeLimit(timeLeft + ADDITIONAL_SECONDS);
+    if(!gameIsPaused) {
+      infoBar.initiateUnpauseInText();
+    }
+  }
+
+  private void decreaseScoreToWin() {
+    if(scoreToWinLevel>0) {
+      scoreToWinLevel-=DECREMENT_POINTS;
+    }
+    infoBar.setScoreToWinText(scoreToWinLevel);
   }
 
   /***
