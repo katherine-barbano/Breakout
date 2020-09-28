@@ -146,6 +146,14 @@ public class LevelTest extends DukeApplicationTest {
   }
 
   @Test
+  void addTimeWithTCheatKey() {
+    Scene gameScene = game.getScene();
+    Level level = game.getCurrentGameLevel();
+    press(gameScene, KeyCode.T);
+    assertEquals(70,level.getInfoBar().getTimeRemaining());
+  }
+
+  @Test
   void scoreAndTimeFileNotFound() {
     Group testGroup = new Group();
     InfoBar infoBar = new InfoBar(new ScoreText(0,testGroup),testGroup);
