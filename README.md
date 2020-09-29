@@ -65,11 +65,11 @@ of the screen.
 - "S": Decreases the score needed to win the current level by 10 points.
 
 Known Bugs:
-- Does not read in power ups correctly as power up objects,
-so when a block is broken a power up might not show up even
-though there should be one (or when the P or K cheat keys are used).
+- If the level changes when there are still power ups that haven't been accepted by the paddle or
+fallen off the screen, they remain on the screen the rest of the game.
 - If a power up is dropped using P or K when the game is paused,
-it will disappear instead of drop down.
+it will disappear instead of drop down. The P and K cheat keys also only work if the game is not
+paused (otherwise they just destroy the block with power ups and nothing falls down).
 - If you win/lose once, then restart and go to the last level, then
 repeatedly decrease the score needed to win with the S cheat key, it will not decrease
 all the way to 0.
