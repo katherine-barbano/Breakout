@@ -9,11 +9,13 @@ import javafx.scene.Group;
 public class GameOverScoreText extends GameOverText {
 
   private List<String> previousGameScores;
+  private boolean hasLastScore;
 
   public GameOverScoreText(Group gameRootArg) {
     super(gameRootArg);
     setFill(getGameOverScoreColor());
     previousGameScores = new ArrayList<>();
+    hasLastScore = false;
   }
 
   @Override
@@ -22,14 +24,22 @@ public class GameOverScoreText extends GameOverText {
     addText();
   }
 
-  private void updateScoreBoard() {
-    StringBuilder stringBuilder = new StringBuilder(getGameOverScoreTitle());
+  private String getUpdatedScoreBoard(int score) {
+    previousGameScores.add(String.valueOf(score));
+    String headerString = makeHeaderString(score);
+    StringBuilder stringBuilder = new StringBuilder(headerString);
+
     String[] highestScores = getHighestScores();
-    for (String score : highestScores) {
-      stringBuilder.append(makeHighScore(score));
+    for (String highScore : highestScores) {
+      stringBuilder.append(makeHighScore(highScore));
     }
     stringBuilder.append(getScoreBoardExitText());
-    updateText(stringBuilder.toString());
+    return stringBuilder.toString();
+  }
+
+  private String makeHeaderString(int score) {
+    String yourScoreLine = getGameOverYourScoreTitle() + score;
+    return yourScoreLine + getGameOverScoreTitle();
   }
 
   private String makeHighScore(String score) {
@@ -37,7 +47,8 @@ public class GameOverScoreText extends GameOverText {
   }
 
   private String[] getHighestScores() {
-    Collections.sort(previousGameScores);
+    Collections.sort(previousGameScores, Collections.reverseOrder());
+    System.out.println(previousGameScores.toString());
     String[] highScores = new String[getGameOverScoreAmountShown()];
     for (int i = 0; i < highScores.length; i++) {
       highScores[i] = (i >= previousGameScores.size()) ?  "TBD" : String.valueOf(previousGameScores.get(i));
@@ -46,8 +57,11 @@ public class GameOverScoreText extends GameOverText {
   }
 
   public void addScoreToList(int score) {
-    this.previousGameScores.add(String.valueOf(score));
-    updateScoreBoard();
+    if (!hasLastScore) {
+      String newScoreBoard = getUpdatedScoreBoard(score);
+      updateText(newScoreBoard);
+      hasLastScore = true;
+    }
   }
 
   @Override
@@ -61,5 +75,9 @@ public class GameOverScoreText extends GameOverText {
   @Override
   public int hashCode() {
     return Objects.hash(previousGameScores);
+  }
+
+  public void setHasLastScore(boolean hasLastScore) {
+    this.hasLastScore = hasLastScore;
   }
 }

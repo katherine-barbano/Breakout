@@ -11,7 +11,6 @@ public class VaryingBlock extends Block {
 
   void waitToChangeHardness(double elapsedTime, boolean isPaused) {
     if (! isPaused) {
-
       pseudoClockCounter += elapsedTime;
       if (pseudoClockCounter > getVaryingBlockDownTime()) {
         varyHardness();
@@ -24,6 +23,4 @@ public class VaryingBlock extends Block {
     setRandomHardness();
     colorBlock();
   }
-
-  boolean canBeRemoved() { return getBlockHardness() == getMinimumHardness();}
 }

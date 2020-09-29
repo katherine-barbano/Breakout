@@ -162,11 +162,16 @@ public class BlockConfiguration {
     block.decreaseHardnessByOne();
     boolean isBreakerBall = myLevel.getGameBall().isBreakerBall();
     if (block.getBlockHardness() == 0 || isBreakerBall) {
-      increaseScoreBy(getScoreIncrement());
+      addScoreBasedOnProperties(block);
       decreaseNumberOfBlocksByOne();
       block.removeFromScene();
     }
     block.updateBlockColor();
+  }
+
+  private void addScoreBasedOnProperties(Block block) {
+    increaseScoreBy(getScoreIncrement());
+    // TODO continuing
   }
 
   /**

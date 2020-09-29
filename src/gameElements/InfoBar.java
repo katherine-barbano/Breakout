@@ -81,6 +81,7 @@ public class InfoBar extends Rectangle {
     subclassPauseText.startPause();
     pauseText = subclassPauseText;
     gameTimer.pauseTimer();
+    // setIsPaused = true
   }
 
   public void initiateUnpauseInText() {
@@ -94,6 +95,7 @@ public class InfoBar extends Rectangle {
     pauseText.removeText();
     pauseText = new PauseText(gameRoot);
     gameTimer.pauseTimer();
+    // setIsPaused = true
   }
 
   public void removeAllLevelSpecificText() {

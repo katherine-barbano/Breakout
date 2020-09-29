@@ -68,7 +68,6 @@ public class Ball extends Circle {
     velocityY = getNormalBallSpeed();
   }
 
-
   public void removeBall() {
     gameRoot.getChildren().remove(this);
   }

@@ -93,7 +93,6 @@ public class Level {
     this.gameIsPaused = true;
     this.levelConfiguration.updateConfiguration(levelConfiguration.getPlayableArea(), levelConfiguration.getSceneSize());
     readLevelScoresAndTimeFile(getFileNameOfScoreToWinAndLivesFile(gameName));
-    System.out.println("Level has " + levelConfiguration.getNumberOfBlocksRemaining() + " blocks");
   }
 
   public String generateFilePathForFile(String gameName, String fileName) {
@@ -256,16 +255,16 @@ public class Level {
 
   private void pauseGame() {
     infoBar.initiatePauseInText();
-    gameIsPaused = true;
+    setGameIsPaused(true);
   }
 
   private void unpauseGame() {
     infoBar.initiateUnpauseInText();
-    gameIsPaused = false;
+    setGameIsPaused(false);
   }
 
   private void resetPosition() {
-    gameIsPaused = true;
+    setGameIsPaused(true);
     infoBar.resetPauseText(gameRoot);
     resetBallAndPaddle();
   }
@@ -317,10 +316,6 @@ public class Level {
         levelConfiguration.releasePowerUpInBlock(block);
       }
     }
-    /*
-    for(int powerUpsLeft = levelConfiguration.getNumberOfPowerUps(); powerUpsLeft>0; powerUpsLeft--) {
-      dropFirstPowerUp();
-    }*/
   }
 
   private void addExtraTime() {
@@ -440,4 +435,10 @@ public class Level {
     infoBar.setTimeLimit(newTimeLimit);
   }
 
+  public void setGameIsPaused(boolean isPaused) {
+    this.gameIsPaused = isPaused;
+    for (PowerUp powerUp : getLevelConfiguration().getVisiblePowerUps()) {
+      powerUp.removeFromScene();
+    }
+  }
 }

@@ -100,6 +100,7 @@ public abstract class GameText extends Text {
   int getGameOverScoreYPosition() { return Integer.parseInt(properties.getProperty("game_over_score_y_position"));}
   Paint getGameOverScoreColor() { return Paint.valueOf(properties.getProperty("game_over_score_color"));}
   String getGameOverScoreTitle() { return properties.getProperty("game_over_score_title");}
+  String getGameOverYourScoreTitle() { return properties.getProperty("game_over_your_score_title");}
   String getGameOverScoreSeparator() { return properties.getProperty("game_over_score_separator");}
   String getGameOverScorePrefix() { return properties.getProperty("game_over_score_prefix");}
   String getScoreBoardExitText() { return properties.getProperty("game_score_board_exit_text");}

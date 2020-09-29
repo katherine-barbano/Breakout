@@ -41,7 +41,6 @@ public class Game {
   private Group gameRoot;
 
   private List<Level> gameLevels;
-  private List<Integer> gameScores;
   private int totalScore;
   private int currentGameLevelIndex;
   private InfoBar infoBar;
@@ -92,16 +91,13 @@ public class Game {
    */
   public void step (double elapsedTime) {
     Level currentLevel = getCurrentGameLevel();
+    updateGameScore(currentLevel);
     if (gameIsEnding(currentLevel)) {
       gameOver(gameIsWon(currentLevel));
+      return;
     }
-    else if (gameIsContinuingToNextLevel(currentLevel)) {
-      resetGameToLevel(currentGameLevelIndex+1);
-    }
-    else {
-      currentLevel.step(elapsedTime);
-    }
-    updateGameScore(currentLevel);
+    if (gameIsContinuingToNextLevel(currentLevel)) resetGameToLevel(currentGameLevelIndex+1);
+    else currentLevel.step(elapsedTime);
   }
 
   private boolean gameIsEnding(Level currentLevel) {
@@ -126,7 +122,6 @@ public class Game {
     boolean scoreHighEnoughToContinue = infoBar.timeIsUp() && scoreSurpassedThresholdToContinue(currentLevel);
     return currentLevel.allBlocksBrokenInLevel() || scoreHighEnoughToContinue;
   }
-
 
   public void updateGameScore(Level level) {
     totalScore = level.getScore();
@@ -206,6 +201,7 @@ public class Game {
    */
   void gameOver(boolean gameIsWon) {
     Level currentLevel = getCurrentGameLevel();
+    currentLevel.setGameIsPaused(true);
     infoBar.removeScoreText();
 
     GameOverText subclassGameOverText = (GameOverText) gameOverText;
@@ -216,6 +212,7 @@ public class Game {
     gameOverScoreText = gameScoresText;
 
     currentLevel.removeLevel();
+    totalScore = 0;
   }
 
   /***
@@ -293,8 +290,15 @@ public class Game {
   }
 
   public void resetGameToLevel(int levelIndex) {
+    prepareScoreList();
     getCurrentGameLevel().removeLevel();
     resetGameToLevelFirstTime(levelIndex);
+  }
+
+  private void prepareScoreList() {
+    GameOverScoreText gameScoreText = (GameOverScoreText) gameOverScoreText;
+    gameScoreText.setHasLastScore(false);
+    gameOverScoreText = gameScoreText;
   }
 
   /**
