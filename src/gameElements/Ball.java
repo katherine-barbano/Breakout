@@ -43,6 +43,9 @@ public class Ball extends Circle {
     gameRoot.getChildren().add(this);
   }
 
+  /**
+   * load properties from config.properties
+   */
   void initializeProperties() {
     properties = new Properties();
     FileInputStream ip = null;
@@ -150,7 +153,6 @@ public class Ball extends Circle {
     if (!velocityCanBeUpdated) {
       return;
     }
-    // FIXME: can we extract this into a helper method?
     else if (isTouchingPaddleTop) {
       velocityX = getVelocityXFromPaddleHit();
     } else if (isTouchingPaddleLeft && velocityX >= getInfoBarHeight()) {

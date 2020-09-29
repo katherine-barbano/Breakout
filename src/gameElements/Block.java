@@ -112,14 +112,6 @@ public class Block extends Rectangle {
     return isTouchingLeftOrRight(collisionCircle) || isTouchingBlockTop(collisionCircle);
   }
 
-  public int getBlockHardness() {
-    return blockHardness;
-  }
-
-  public void setBlockHardness(int blockHardness) {
-    this.blockHardness = blockHardness;
-  }
-
   // using Math.random()
   // used https://stackoverflow.com/questions/363681/how-do-i-generate-random-integers-within-a-specific-range-in-java
   public void setRandomHardness() {
@@ -226,6 +218,14 @@ public class Block extends Rectangle {
 
   private double calculateXn(double xPos, double xCoord) {
     return Math.max(xPos, Math.min(xCoord, (xPos + this.getWidth())));
+  }
+
+  public int getBlockHardness() {
+    return blockHardness;
+  }
+
+  public void setBlockHardness(int blockHardness) {
+    this.blockHardness = blockHardness;
   }
 
   // properties accessors//
