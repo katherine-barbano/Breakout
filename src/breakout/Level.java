@@ -6,7 +6,6 @@ import gameElements.BlockConfiguration;
 import gameElements.InfoBar;
 import gameElements.Paddle;
 import gameElements.PowerUp;
-import gameElements.PowerUp.PowerUpType;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -91,7 +90,8 @@ public class Level {
 
   private void initializeLevelProperties(String gameName) {
     this.gameIsPaused = true;
-    this.levelConfiguration.updateConfiguration(levelConfiguration.getPlayableArea(), levelConfiguration.getSceneSize());
+    this.levelConfiguration.updateConfiguration(levelConfiguration.getPlayableArea(),
+        levelConfiguration.getSceneSize());
     readLevelScoresAndTimeFile(getFileNameOfScoreToWinAndLivesFile(gameName));
   }
 
@@ -106,21 +106,20 @@ public class Level {
 
       Object[] filesInGameArray = filesInGame.toArray();
 
-      for(Object filePath:filesInGameArray) {
+      for (Object filePath : filesInGameArray) {
         if (!stringContainsNumeric(filePath.toString())) {
           return filePath.toString();
         }
       }
       throw new IOException();
-    }
-    catch(IOException e) {
+    } catch (IOException e) {
       throw new IllegalArgumentException("Invalid argument given for gameName or filenames.");
     }
   }
 
   private boolean stringContainsNumeric(String s) {
-    for(int index=0;index<Game.NUMERICS.length;index++) {
-      if(s.contains(Game.NUMERICS[index])) {
+    for (int index = 0; index < Game.NUMERICS.length; index++) {
+      if (s.contains(Game.NUMERICS[index])) {
         return true;
       }
     }
@@ -137,21 +136,19 @@ public class Level {
     try {
       File scoresAndTimeFile = new File(filePath);
       Scanner fileReader = new Scanner(scoresAndTimeFile);
-      String fileLine="";
+      String fileLine = "";
       for (int i = 0; i < levelNumber; i++) {
         fileLine = fileReader.nextLine();
       }
       String[] scoresAndTime = fileLine.split(" ");
-      scoreToWinLevel=Integer.parseInt(scoresAndTime[0]);
-      levelTimeLimit=Integer.parseInt(scoresAndTime[1]);
-    }
-    catch (FileNotFoundException e) {
-      throw new IllegalArgumentException("No file provided with scores to win level and time limits.");
-    }
-    catch (PatternSyntaxException e) {
+      scoreToWinLevel = Integer.parseInt(scoresAndTime[0]);
+      levelTimeLimit = Integer.parseInt(scoresAndTime[1]);
+    } catch (FileNotFoundException e) {
+      throw new IllegalArgumentException(
+          "No file provided with scores to win level and time limits.");
+    } catch (PatternSyntaxException e) {
       throw new IllegalArgumentException("Invalid number of levels provided in file.");
-    }
-    catch(NoSuchElementException e) {
+    } catch (NoSuchElementException e) {
       throw new IllegalArgumentException("Invalid number of levels provided in file.");
     }
   }
@@ -160,11 +157,12 @@ public class Level {
    * Display the current level on the screen
    */
   public void showLevel() {
-    GameText gameLivesText = new LivesText(getLives(),gameRoot);
+    GameText gameLivesText = new LivesText(getLives(), gameRoot);
     GameText gamePauseText = new PauseText(gameRoot);
-    GameText gameLevelText = new LevelText(getLevelNumber(),gameRoot);
-    GameText gameScoreToWinText = new ScoreToWinText(scoreToWinLevel,gameRoot);
-    infoBar.initializeLevelSpecificText(gamePauseText,gameLivesText,gameLevelText,gameScoreToWinText);
+    GameText gameLevelText = new LevelText(getLevelNumber(), gameRoot);
+    GameText gameScoreToWinText = new ScoreToWinText(scoreToWinLevel, gameRoot);
+    infoBar.initializeLevelSpecificText(gamePauseText, gameLivesText, gameLevelText,
+        gameScoreToWinText);
     infoBar.setTimeLimit(levelTimeLimit);
 
     setLives(INITIAL_NUMBER_LIVES);
@@ -175,7 +173,9 @@ public class Level {
   public void addBlocksToRoot() {
     List<Block> allBlocks = levelConfiguration.getBlocksAsList();
     for (Block block : allBlocks) {
-      if (!gameRoot.getChildren().contains(block)) gameRoot.getChildren().add(block);
+      if (!gameRoot.getChildren().contains(block)) {
+        gameRoot.getChildren().add(block);
+      }
     }
   }
 
@@ -218,37 +218,29 @@ public class Level {
 
   void handleKeyInputDuringGame(KeyCode code) {
     gamePaddle.handleKeyInput(code, gameIsPaused);
-    if(code == KeyCode.SPACE) {
+    if (code == KeyCode.SPACE) {
       handleSpaceBarInput();
-    }
-    else if(code == KeyCode.R) {
+    } else if (code == KeyCode.R) {
       resetPosition();
-    }
-    else if(code == KeyCode.L) {
-      setLives(levelLives+1);
-    }
-    else if(code == KeyCode.D) {
+    } else if (code == KeyCode.L) {
+      setLives(levelLives + 1);
+    } else if (code == KeyCode.D) {
       removeFirstBlock();
-    }
-    else if(code == KeyCode.P) {
+    } else if (code == KeyCode.P) {
       dropFirstPowerUp();
-    }
-    else if(code == KeyCode.K) {
+    } else if (code == KeyCode.K) {
       dropAllPowerUps();
-    }
-    else if(code == KeyCode.T) {
+    } else if (code == KeyCode.T) {
       addExtraTime();
-    }
-    else if(code == KeyCode.S) {
+    } else if (code == KeyCode.S) {
       decreaseScoreToWin();
     }
   }
 
   private void handleSpaceBarInput() {
-    if(gameIsPaused) {
+    if (gameIsPaused) {
       unpauseGame();
-    }
-    else {
+    } else {
       pauseGame();
     }
   }
@@ -271,7 +263,7 @@ public class Level {
 
   private void initializeNewBallAndPaddle() {
     gamePaddle = new Paddle(gameRoot);
-    gameBall = new Ball (gameRoot, gamePaddle, this);
+    gameBall = new Ball(gameRoot, gamePaddle, this);
   }
 
   private void resetBallAndPaddle() {
@@ -287,7 +279,7 @@ public class Level {
   private void removeFirstBlock() {
     int indexFirstHardnessZeroBlock = -1;
     Block firstHardnessZeroBlock = new Block();
-    while(firstHardnessZeroBlock.getBlockHardness() == 0) {
+    while (firstHardnessZeroBlock.getBlockHardness() == 0) {
       indexFirstHardnessZeroBlock++;
       List<Block> currentBlockList = levelConfiguration.getBlocksAsList();
       firstHardnessZeroBlock = currentBlockList.get(indexFirstHardnessZeroBlock);
@@ -298,14 +290,16 @@ public class Level {
 
   private void dropFirstPowerUp() {
     Block firstPowerUpBlock = getFirstBlockWithPowerUp();
-    if(firstPowerUpBlock!=null) {
+    if (firstPowerUpBlock != null) {
       levelConfiguration.releasePowerUpInBlock(firstPowerUpBlock);
     }
   }
 
   public Block getFirstBlockWithPowerUp() {
     for (Block block : levelConfiguration.getBlocksAsList()) {
-      if (block.hasPowerUp()) return block;
+      if (block.hasPowerUp()) {
+        return block;
+      }
     }
     return null;
   }
@@ -322,14 +316,14 @@ public class Level {
     int timeLeft = infoBar.getTimeRemaining();
     infoBar.removeGameTimerText();
     infoBar.setTimeLimit(timeLeft + ADDITIONAL_SECONDS);
-    if(!gameIsPaused) {
+    if (!gameIsPaused) {
       infoBar.initiateUnpauseInText();
     }
   }
 
   private void decreaseScoreToWin() {
-    if(scoreToWinLevel>0) {
-      scoreToWinLevel-=DECREMENT_POINTS;
+    if (scoreToWinLevel > 0) {
+      scoreToWinLevel -= DECREMENT_POINTS;
     }
     infoBar.setScoreToWinText(scoreToWinLevel);
   }
@@ -361,7 +355,7 @@ public class Level {
 
   // made public for unit testing
   public void decreaseLivesByOne() {
-    setLives(levelLives-1);
+    setLives(levelLives - 1);
   }
 
   /***
@@ -388,8 +382,6 @@ public class Level {
     return levelConfiguration;
   }
 
-  public void setLevelConfiguration(BlockConfiguration blockConfiguration) { this.levelConfiguration = blockConfiguration; }
-
   /***
    * Returns which level is currently being run
    * @return int level number
@@ -398,33 +390,37 @@ public class Level {
     return levelNumber;
   }
 
-  /***
-   * Sets the level number that is currently being run
-   * @param levelNumber int level number
-   */
-  void setLevelNumber(int levelNumber) {
-    this.levelNumber = levelNumber;
+  int getScore() {
+    return gameBall.getScore();
   }
 
-  int getScore() { return gameBall.getScore(); }
   void increaseBallScore(int points) {
     gameBall.increaseScoreBy(points);
   }
 
-  public Group getGameRoot() { return gameRoot; }
-  public void setGameRoot(Group gameRoot) { this.gameRoot = gameRoot; }
+  public Group getGameRoot() {
+    return gameRoot;
+  }
 
-  public Paddle getGamePaddle() { return gamePaddle; }
-  public void setGamePaddle(Paddle gamePaddle) { this.gamePaddle = gamePaddle; }
+  public void setGameRoot(Group gameRoot) {
+    this.gameRoot = gameRoot;
+  }
 
-  public Ball getGameBall() { return this.gameBall; }
-  public void setGameBall(Ball ball) { this.gameBall = ball; }
+  public Paddle getGamePaddle() {
+    return gamePaddle;
+  }
+
+  public Ball getGameBall() {
+    return this.gameBall;
+  }
 
   public InfoBar getInfoBar() {
     return infoBar;
   }
 
-  public int getScoreToWinLevel() {return scoreToWinLevel;}
+  public int getScoreToWinLevel() {
+    return scoreToWinLevel;
+  }
 
   public int getLevelTimeLimit() {
     return levelTimeLimit;
@@ -437,8 +433,10 @@ public class Level {
 
   public void setGameIsPaused(boolean isPaused) {
     this.gameIsPaused = isPaused;
-    for (PowerUp powerUp : getLevelConfiguration().getVisiblePowerUps()) {
-      powerUp.removeFromScene();
+    if (isPaused == true) {
+      for (PowerUp powerUp : getLevelConfiguration().getVisiblePowerUps()) {
+        powerUp.removeFromScene();
+      }
     }
   }
 }

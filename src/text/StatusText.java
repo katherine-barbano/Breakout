@@ -22,7 +22,7 @@ public abstract class StatusText extends GameText {
   @Override
   public void initializeText(String words) {
     setText(words);
-    initializeProperties(words, (int)getX(), (int)getY(), getId());
+    initializeProperties(words, (int) getX(), (int) getY(), getId());
   }
 
   @Override
@@ -32,6 +32,6 @@ public abstract class StatusText extends GameText {
   }
 
   public void updateValue(int integerNewText) {
-    updateText(""+integerNewText);
+    updateText("" + integerNewText);
   }
 }

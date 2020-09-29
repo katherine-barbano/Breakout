@@ -9,7 +9,7 @@ public class LevelText extends StatusText {
   }
 
   @Override
-  void setStatusTextProperties(){
+  void setStatusTextProperties() {
     setTitle(getLevelTitle());
     setX(getLevelXPosition());
     setY(getLevelYPosition());

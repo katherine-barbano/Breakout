@@ -28,12 +28,20 @@ public abstract class BlockRow {
     try {
       ip = new FileInputStream(Game.PROPERTY_FILE);
       properties.load(ip);
+    } catch (FileNotFoundException e) {
+    } catch (IOException e) {
     }
-    catch (FileNotFoundException e) {}
-    catch (IOException e) {}
   }
 
-  public Block[] getRowOfBlocks() { return rowOfBlocks; }
-  public void setRowOfBlocks(Block[] rowOfBlocks) { this.rowOfBlocks = rowOfBlocks; }
-  private int getBlocksPerRow() { return Integer.parseInt(properties.getProperty("blocks_per_row")); }
+  public Block[] getRowOfBlocks() {
+    return rowOfBlocks;
+  }
+
+  public void setRowOfBlocks(Block[] rowOfBlocks) {
+    this.rowOfBlocks = rowOfBlocks;
+  }
+
+  private int getBlocksPerRow() {
+    return Integer.parseInt(properties.getProperty("blocks_per_row"));
+  }
 }

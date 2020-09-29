@@ -10,7 +10,7 @@ public class VaryingBlock extends Block {
   }
 
   void waitToChangeHardness(double elapsedTime, boolean isPaused) {
-    if (! isPaused) {
+    if (!isPaused) {
       pseudoClockCounter += elapsedTime;
       if (pseudoClockCounter > getVaryingBlockDownTime()) {
         varyHardness();

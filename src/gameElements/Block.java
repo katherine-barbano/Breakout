@@ -5,7 +5,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Properties;
-import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
@@ -27,7 +26,8 @@ public class Block extends Rectangle {
   private boolean hasPowerUp;
   private boolean hasReleasedPowerUp;
 
-  public Block() {}
+  public Block() {
+  }
 
   public Block(PowerUp powerUp) {
     this.randomPowerUp = powerUp;
@@ -42,7 +42,7 @@ public class Block extends Rectangle {
     initializeProperties();
     setBlockHardness(blockHardness);
     colorBlock();
-    setDimensions(sceneWidth,sceneHeight);
+    setDimensions(sceneWidth, sceneHeight);
   }
 
   public Block(int blockHardness) {
@@ -63,9 +63,9 @@ public class Block extends Rectangle {
     try {
       ip = new FileInputStream(Game.PROPERTY_FILE);
       properties.load(ip);
+    } catch (FileNotFoundException e) {
+    } catch (IOException e) {
     }
-    catch (FileNotFoundException e) {}
-    catch (IOException e) {}
   }
 
   public void updateBlockColor() {
@@ -75,7 +75,9 @@ public class Block extends Rectangle {
   }
 
   void setDimensions(int sceneWidth, int sceneHeight) {
-    if (properties == null) initializeProperties();
+    if (properties == null) {
+      initializeProperties();
+    }
     int blockWidth = getBlockWidth(sceneWidth);
     int blockHeight = getBlockHeight(sceneHeight);
     setWidth(blockWidth);
@@ -87,16 +89,22 @@ public class Block extends Rectangle {
   }
 
   int getBlockHeight(int sceneHeight) {
-    return (sceneHeight-getInfoBarHeight()-getBlockConfigurationOffsetFromPaddle()) / getNumberOfBlockRows();
+    return (sceneHeight - getInfoBarHeight() - getBlockConfigurationOffsetFromPaddle())
+        / getNumberOfBlockRows();
   }
 
   Paint getBlockColor(int blockHardness) {
     switch (blockHardness) {
-      case 0 : return getBackgroundColor();
-      case 1 : return getBlockColorOne();
-      case 2: return getBlockColorTwo();
-      case 3: return getBlockColorThree();
-      default : throw new IllegalStateException("Unexpected value: " + blockHardness);
+      case 0:
+        return getBackgroundColor();
+      case 1:
+        return getBlockColorOne();
+      case 2:
+        return getBlockColorTwo();
+      case 3:
+        return getBlockColorThree();
+      default:
+        throw new IllegalStateException("Unexpected value: " + blockHardness);
     }
   }
 
@@ -104,48 +112,62 @@ public class Block extends Rectangle {
     return isTouchingLeftOrRight(collisionCircle) || isTouchingBlockTop(collisionCircle);
   }
 
-  private double getBallRadius() { return Double.parseDouble(properties.getProperty("ball_radius"));}
-
   public int getBlockHardness() {
     return blockHardness;
   }
+
   public void setBlockHardness(int blockHardness) {
     this.blockHardness = blockHardness;
   }
+
   // using Math.random()
   // used https://stackoverflow.com/questions/363681/how-do-i-generate-random-integers-within-a-specific-range-in-java
   public void setRandomHardness() {
-    if (properties == null) initializeProperties();
+    if (properties == null) {
+      initializeProperties();
+    }
     int inclusiveRange = getMaximumHardness() - getMinimumHardness() + 1;
-    int randomHardness = getMinimumHardness() + (int)(Math.random() * inclusiveRange);
+    int randomHardness = getMinimumHardness() + (int) (Math.random() * inclusiveRange);
     setBlockHardness(randomHardness);
   }
-  void decreaseHardnessByOne() { setBlockHardness(blockHardness-1); }
+
+  void decreaseHardnessByOne() {
+    setBlockHardness(blockHardness - 1);
+  }
 
   public Paint getBlockColor() {
     return blockColor;
   }
 
   public void removeFromScene() {
-    setDimensions(0,0);
+    setDimensions(0, 0);
     setX(0.0);
     setY(0.0);
   }
 
-  public boolean hasPowerUp() { return hasPowerUp; }
+  public boolean hasPowerUp() {
+    return hasPowerUp;
+  }
+
   public void setHasPowerUp(boolean powerUpBoolean) {
     hasPowerUp = powerUpBoolean;
   }
 
-  public boolean hasReleasedPowerUp() { return (randomPowerUp!= null  && hasReleasedPowerUp); }
+  public boolean hasReleasedPowerUp() {
+    return (randomPowerUp != null && hasReleasedPowerUp);
+  }
+
   public void setHasReleasedPowerUp(boolean hasReleasedPowerUp) {
     this.hasReleasedPowerUp = hasReleasedPowerUp;
     this.randomPowerUp.setIsReleased(true);
     setHasPowerUp(false);
     removeFromScene();
   }
-  public void setPowerUp(PowerUp powerUp) { randomPowerUp = powerUp; }
-  public PowerUp getPowerUp() { return randomPowerUp; }
+
+  public PowerUp getPowerUp() {
+    return randomPowerUp;
+  }
+
   public void releasePowerUp() {
     randomPowerUp.showInScene();
   }
@@ -158,7 +180,9 @@ public class Block extends Rectangle {
     }
   }
 
-  public int getVelocity() { return 0; }
+  public int getVelocity() {
+    return 0;
+  }
 
   public boolean isTouchingBlockTop(Circle collisionCircle) {
     double R = collisionCircle.getRadius();
@@ -173,14 +197,14 @@ public class Block extends Rectangle {
     double Dx = Xn - Xcoord;
     double Dy = Yn - Ycoord;
 
-    return (Dx * Dx + Dy * Dy) <= R*R;
+    return (Dx * Dx + Dy * Dy) <= R * R;
   }
 
   boolean isTouchingBlockRightSide(Circle collisionCircle) {
     double xPos = this.getX();
     double xCoord = collisionCircle.getCenterX();
     double Xn = calculateXn(xPos, xCoord);
-    boolean touchingRightSide = Xn==this.getCenterX()+this.getWidth()/2;
+    boolean touchingRightSide = Xn == this.getCenterX() + this.getWidth() / 2;
     return isTouchingBlockTop(collisionCircle) && touchingRightSide;
   }
 
@@ -188,7 +212,7 @@ public class Block extends Rectangle {
     double xPos = this.getX();
     double xCoord = collisionCircle.getCenterX();
     double Xn = calculateXn(xPos, xCoord);
-    boolean touchingLeftSide = Xn==this.getCenterX()-this.getWidth()/2;
+    boolean touchingLeftSide = Xn == this.getCenterX() - this.getWidth() / 2;
     return isTouchingBlockTop(collisionCircle) && touchingLeftSide;
   }
 
@@ -197,25 +221,62 @@ public class Block extends Rectangle {
   }
 
   private double getCenterX() {
-    return (getX() + getWidth())/2.0;
+    return (getX() + getWidth()) / 2.0;
   }
 
   private double calculateXn(double xPos, double xCoord) {
     return Math.max(xPos, Math.min(xCoord, (xPos + this.getWidth())));
   }
 
-  private int getInfoBarHeight() { return Integer.parseInt(properties.getProperty("info_bar_height")); }
-  private Paint getBackgroundColor() { return Paint.valueOf(properties.getProperty("background_color")); }
-  private Paint getBlockColorOne() { return Paint.valueOf(properties.getProperty("block_strength_one")); }
-  private Paint getBlockColorTwo() { return Paint.valueOf(properties.getProperty("block_strength_two")); }
-  private Paint getBlockColorThree() { return Paint.valueOf(properties.getProperty("block_strength_three")); }
-  private int getBlocksPerRow() { return Integer.parseInt(properties.getProperty("blocks_per_row")); }
-  private int getNumberOfBlockRows() { return Integer.parseInt(properties.getProperty("number_of_block_rows")); }
-  public int getMinimumHardness() { return Integer.parseInt(properties.getProperty("minimum_hardness")); }
-  private int getMaximumHardness() { return Integer.parseInt(properties.getProperty("maximum_hardness")); }
-  private int getBlockConfigurationOffsetFromPaddle() { return Integer.parseInt(properties.getProperty("block_configuration_offset_from_paddle"));}
+  // properties accessors//
+  private int getInfoBarHeight() {
+    return Integer.parseInt(properties.getProperty("info_bar_height"));
+  }
+
+  private Paint getBackgroundColor() {
+    return Paint.valueOf(properties.getProperty("background_color"));
+  }
+
+  private Paint getBlockColorOne() {
+    return Paint.valueOf(properties.getProperty("block_strength_one"));
+  }
+
+  private Paint getBlockColorTwo() {
+    return Paint.valueOf(properties.getProperty("block_strength_two"));
+  }
+
+  private Paint getBlockColorThree() {
+    return Paint.valueOf(properties.getProperty("block_strength_three"));
+  }
+
+  private int getBlocksPerRow() {
+    return Integer.parseInt(properties.getProperty("blocks_per_row"));
+  }
+
+  private int getNumberOfBlockRows() {
+    return Integer.parseInt(properties.getProperty("number_of_block_rows"));
+  }
+
+  public int getMinimumHardness() {
+    return Integer.parseInt(properties.getProperty("minimum_hardness"));
+  }
+
+  private int getMaximumHardness() {
+    return Integer.parseInt(properties.getProperty("maximum_hardness"));
+  }
+
+  private int getBlockConfigurationOffsetFromPaddle() {
+    return Integer.parseInt(properties.getProperty("block_configuration_offset_from_paddle"));
+  }
+
   public int getMovingBlockVelocity() {
-    if (properties == null) initializeProperties();
-    return Integer.parseInt(properties.getProperty("moving_block_speed"));}
-    public double getVaryingBlockDownTime() { return Double.parseDouble(properties.getProperty("varying_block_down_time"));}
+    if (properties == null) {
+      initializeProperties();
+    }
+    return Integer.parseInt(properties.getProperty("moving_block_speed"));
+  }
+
+  public double getVaryingBlockDownTime() {
+    return Double.parseDouble(properties.getProperty("varying_block_down_time"));
+  }
 }

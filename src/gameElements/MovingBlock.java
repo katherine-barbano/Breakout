@@ -7,7 +7,7 @@ public class MovingBlock extends Block {
 
   private int velocity;
 
-  public MovingBlock(){
+  public MovingBlock() {
     super();
     setVelocity(super.getMovingBlockVelocity());
   }
@@ -31,7 +31,9 @@ public class MovingBlock extends Block {
   }
 
   private void negateVelocity() {
-    if (Math.abs(velocity) != getMovingBlockVelocity()) velocity = getMovingBlockVelocity();
+    if (Math.abs(velocity) != getMovingBlockVelocity()) {
+      velocity = getMovingBlockVelocity();
+    }
     velocity *= -1;
   }
 
@@ -46,6 +48,11 @@ public class MovingBlock extends Block {
   }
 
   @Override
-  public int getVelocity() { return this.velocity; }
-  public void setVelocity(int velocity) { this.velocity = velocity; }
+  public int getVelocity() {
+    return this.velocity;
+  }
+
+  public void setVelocity(int velocity) {
+    this.velocity = velocity;
+  }
 }

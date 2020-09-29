@@ -23,9 +23,9 @@ public class PauseText extends GameText {
     try {
       ip = new FileInputStream(Game.PROPERTY_FILE);
       properties.load(ip);
+    } catch (FileNotFoundException e) {
+    } catch (IOException e) {
     }
-    catch (FileNotFoundException e) {}
-    catch (IOException e) {}
   }
 
   @Override
@@ -52,10 +52,4 @@ public class PauseText extends GameText {
   public void endPause() {
     removeText();
   }
-
-  private String getPauseTitle() { return properties.getProperty("pause_title");}
-  private String getStartTitle() { return properties.getProperty("start_title");}
-  private String getPauseId() { return properties.getProperty("pause_id");}
-  private int getPauseXPosition() { return Integer.parseInt(properties.getProperty("pause_x_position"));}
-  private int getPauseYPosition() { return Integer.parseInt(properties.getProperty("pause_y_position"));}
 }

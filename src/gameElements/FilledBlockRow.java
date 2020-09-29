@@ -11,7 +11,7 @@ package gameElements;
  */
 public class FilledBlockRow extends BlockRow {
 
-  public FilledBlockRow () {
+  public FilledBlockRow() {
     super();
   }
 

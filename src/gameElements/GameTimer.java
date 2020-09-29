@@ -10,6 +10,7 @@ import text.GameText;
 import text.TimerText;
 
 public class GameTimer {
+
   private Timeline timeline;
   private int timeSeconds;
   private GameText timerText;
@@ -19,7 +20,7 @@ public class GameTimer {
   public GameTimer(Group gameRoot, int timeStart) {
     root = gameRoot;
     this.timeSeconds = timeStart;
-    timerText = new TimerText(timeSeconds,root);
+    timerText = new TimerText(timeSeconds, root);
     initializeTimeline();
     pauseTimer();
   }
@@ -35,7 +36,7 @@ public class GameTimer {
         subclassTimerText.updateValue(timeSeconds);
         timerText = subclassTimerText;
 
-        if(timeSeconds <=0) {
+        if (timeSeconds <= 0) {
           timeline.stop();
         }
       }
@@ -59,7 +60,7 @@ public class GameTimer {
   }
 
   boolean timeIsUp() {
-    return timeSeconds==0;
+    return timeSeconds == 0;
   }
 
   public int getTimeRemaining() {

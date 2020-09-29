@@ -2,14 +2,11 @@ package gameElements;
 
 import breakout.Game;
 import breakout.Level;
-import gameElements.PowerUp.PowerUpType;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.List;
 import java.util.Properties;
 import javafx.scene.Group;
-import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Circle;
 
@@ -22,10 +19,10 @@ import javafx.scene.shape.Circle;
  * Method: isOnScreen, breakBlock, isTouchingBlockInBlockConfiguration, isTouchingPaddle
  */
 public class Ball extends Circle {
-  private Group gameRoot;
-  private Properties properties;
 
   private final Paddle paddle;
+  private Group gameRoot;
+  private Properties properties;
   private BlockConfiguration blockConfiguration;
 
   private int velocityX;
@@ -52,9 +49,9 @@ public class Ball extends Circle {
     try {
       ip = new FileInputStream(Game.PROPERTY_FILE);
       properties.load(ip);
+    } catch (FileNotFoundException e) {
+    } catch (IOException e) {
     }
-    catch (FileNotFoundException e) {}
-    catch (IOException e) {}
   }
 
   public void setBallProperties() {
@@ -97,31 +94,20 @@ public class Ball extends Circle {
     if (getBlockBallIsTouching() != null) {
       updateVelocityXForBlockHit();
       updateVelocityYForBlockHit();
-    }
-    else {
+    } else {
       updateVelocityX();
       updateVelocityY();
     }
   }
 
   private void updatePositionX(double elapsedTime) {
-    double edgeOfBall = paddle.getWidth()/2 + getBallRadius();
-    if(paddle.isTouchingPaddleLeftSide(this)) {
-      setCenterX(paddle.getCenterX()-edgeOfBall);
-    }
-    else if(paddle.isTouchingPaddleRightSide(this)) {
-      setCenterX(paddle.getCenterX()+edgeOfBall);
+    double edgeOfBall = paddle.getWidth() / 2 + getBallRadius();
+    if (paddle.isTouchingPaddleLeftSide(this)) {
+      setCenterX(paddle.getCenterX() - edgeOfBall);
+    } else if (paddle.isTouchingPaddleRightSide(this)) {
+      setCenterX(paddle.getCenterX() + edgeOfBall);
     }
     setCenterX(getCenterX() + velocityX * elapsedTime);
-  }
-
-  private void updateCenterXForPaddle(double edgeOfBall){
-    if(paddle.isTouchingPaddleLeftSide(this)) {
-      setCenterX(paddle.getCenterX()-edgeOfBall);
-    }
-    else if(paddle.isTouchingPaddleRightSide(this)) {
-      setCenterX(paddle.getCenterX()+edgeOfBall);
-    }
   }
 
   private void updatePositionY(double elapsedTime) {
@@ -161,23 +147,19 @@ public class Ball extends Circle {
     boolean isTouchingPaddleRight = paddle.isTouchingPaddleRightSide(this);
     boolean isTouchingPaddleLeft = paddle.isTouchingPaddleLeftSide(this);
 
-    if(!velocityCanBeUpdated) {
+    if (!velocityCanBeUpdated) {
       return;
     }
     // FIXME: can we extract this into a helper method?
     else if (isTouchingPaddleTop) {
       velocityX = getVelocityXFromPaddleHit();
-    }
-    else if (isTouchingPaddleLeft && velocityX >=getInfoBarHeight()) {
+    } else if (isTouchingPaddleLeft && velocityX >= getInfoBarHeight()) {
       velocityX = velocityX + getVelocityChangeForPaddleSide();
-    }
-    else if (isTouchingPaddleRight && velocityX <getInfoBarHeight()) {
+    } else if (isTouchingPaddleRight && velocityX < getInfoBarHeight()) {
       velocityX = velocityX * -1 + getVelocityChangeForPaddleSide();
-    }
-    else if (isTouchingPaddleLeft && velocityX >getInfoBarHeight()) {
+    } else if (isTouchingPaddleLeft && velocityX > getInfoBarHeight()) {
       velocityX = velocityX * -1 - getVelocityChangeForPaddleSide();
-    }
-    else if (isTouchingPaddleLeft && velocityX <=getInfoBarHeight()) {
+    } else if (isTouchingPaddleLeft && velocityX <= getInfoBarHeight()) {
       velocityX = velocityX - getVelocityChangeForPaddleSide();
     }
     velocityCanBeUpdated = false;
@@ -185,7 +167,7 @@ public class Ball extends Circle {
 
   private void updateVelocityXForBlockHit() {
     Block touchedBlock = getBlockBallIsTouching();
-    if  (touchedBlock.isTouchingLeftOrRight(this)) {
+    if (touchedBlock.isTouchingLeftOrRight(this)) {
       velocityX = velocityX * -1;
     }
   }
@@ -195,7 +177,8 @@ public class Ball extends Circle {
   }
 
   private void updateVelocityCanBeUpdated() {
-    boolean notTouchingPaddleSides = !paddle.isTouchingPaddleLeftSide(this) && !paddle.isTouchingPaddleRightSide(this);
+    boolean notTouchingPaddleSides =
+        !paddle.isTouchingPaddleLeftSide(this) && !paddle.isTouchingPaddleRightSide(this);
     boolean notTouchingPaddleTop = !paddle.isTouchingPaddleTop(this);
     if (notTouchingPaddleTop && notTouchingPaddleSides) {
       velocityCanBeUpdated = true;
@@ -203,7 +186,8 @@ public class Ball extends Circle {
   }
 
   private void updateVelocityY() {
-    boolean notTouchingPaddleSides = !paddle.isTouchingPaddleRightSide(this) && !paddle.isTouchingPaddleLeftSide(this);
+    boolean notTouchingPaddleSides =
+        !paddle.isTouchingPaddleRightSide(this) && !paddle.isTouchingPaddleLeftSide(this);
     if (paddle.isTouchingPaddleTop(this) && notTouchingPaddleSides) {
       velocityY = velocityY * -1;
     }
@@ -214,8 +198,12 @@ public class Ball extends Circle {
 
   public Block getBlockBallIsTouching() {
     for (Block block : blockConfiguration.getBlocksAsList()) {
-      if (block == null) continue;
-      if (block.isTouchingCircle(this)) return block;
+      if (block == null) {
+        continue;
+      }
+      if (block.isTouchingCircle(this)) {
+        return block;
+      }
     }
     return null;
   }
@@ -243,22 +231,58 @@ public class Ball extends Circle {
     return getCenterY() + getBallRadius() >= getScene().getHeight();
   }
 
-  public void setScore(int i) { this.ballScore = i; }
-  public void increaseScoreBy(int i) { this.ballScore+= i; }
-  public int getScore() { return this.ballScore; }
-  public void setIsBreakerBall(boolean isBreakerBall) { this.isBreakerBall = isBreakerBall; }
-  public boolean isBreakerBall() { return this.isBreakerBall; }
+  public void increaseScoreBy(int i) {
+    this.ballScore += i;
+  }
 
-  private double getPlayableArea() {return Double.parseDouble(properties.getProperty("playable_area_size")); }
-  private double getBallRadius() { return Double.parseDouble(properties.getProperty("ball_radius"));}
-  private Paint getBallColor() { return Paint.valueOf(properties.getProperty("ball_color")); }
-  private int getNormalBallSpeed() {return Integer.parseInt(properties.getProperty("normal_ball_speed")); }
-  private double getRightAngle() { return Double.parseDouble(properties.getProperty("right_angle"));}
-  private int getVelocityChangeForPaddleSide() { return Integer
-      .parseInt(properties.getProperty("velocity_change_for_paddle_side")); }
+  public int getScore() {
+    return this.ballScore;
+  }
 
-  private int getInfoBarHeight() { return Integer
-      .parseInt(properties.getProperty("info_bar_height")); }
-  private int getMinimumHardness() { return Integer.parseInt(properties.getProperty("minimum_hardness")); }
-  public int getMovingBlockScoreValue() { return Integer.parseInt(properties.getProperty("moving_block_score_value"));}
+  public void setScore(int i) {
+    this.ballScore = i;
+  }
+
+  public void setIsBreakerBall(boolean isBreakerBall) {
+    this.isBreakerBall = isBreakerBall;
+  }
+
+  public boolean isBreakerBall() {
+    return this.isBreakerBall;
+  }
+
+  // properties accessors//
+  private double getPlayableArea() {
+    return Double.parseDouble(properties.getProperty("playable_area_size"));
+  }
+
+  private double getBallRadius() {
+    return Double.parseDouble(properties.getProperty("ball_radius"));
+  }
+
+  private Paint getBallColor() {
+    return Paint.valueOf(properties.getProperty("ball_color"));
+  }
+
+  private int getNormalBallSpeed() {
+    return Integer.parseInt(properties.getProperty("normal_ball_speed"));
+  }
+
+  private double getRightAngle() {
+    return Double.parseDouble(properties.getProperty("right_angle"));
+  }
+
+  private int getVelocityChangeForPaddleSide() {
+    return Integer
+        .parseInt(properties.getProperty("velocity_change_for_paddle_side"));
+  }
+
+  private int getInfoBarHeight() {
+    return Integer
+        .parseInt(properties.getProperty("info_bar_height"));
+  }
+
+  public int getMovingBlockScoreValue() {
+    return Integer.parseInt(properties.getProperty("moving_block_score_value"));
+  }
 }

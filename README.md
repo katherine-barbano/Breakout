@@ -12,6 +12,7 @@ Start Date: 9/12/2020
 Finish Date: 9/28/2020
 
 Hours Spent: Katherine - Around 100
+             Anna - 50-60
 
 ### Resources Used
 - Used a few lines of code from the following source that gives a proof
@@ -73,6 +74,8 @@ paused (otherwise they just destroy the block with power ups and nothing falls d
 - If you win/lose once, then restart and go to the last level, then
 repeatedly decrease the score needed to win with the S cheat key, it will not decrease
 all the way to 0.
+- If you exceed minimum score, the paddle freezes. Something about totalScore/getLevelScore
+is prompting level gameIsPaused = true.
 
 Extra credit: Added you won/you lost screen at end. Implemented a game timer to countdown. Must surpass
 a score by the end of the timer to move onto the next level. Because
@@ -84,6 +87,10 @@ blocks are better to go for in that level based on their current score,
 which power ups would actually hinder their ability to gather sufficient points,
 etc. so each level is functionally different for the user, since the game
 goals are changing each level.
+Implemented a scoreboard to accompany the you won/you lost screen. As the Game is played in a given
+window, the Game compiles a list of the highest scores achieved so far and displays them if the
+player's game terminates. If not enough games have been played to populat the entire score board,
+the unpopulated high scores say TBD.
 
 
 ### Notes/Assumptions

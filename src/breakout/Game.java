@@ -1,8 +1,11 @@
 package breakout;
 
 import gameElements.InfoBar;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -14,15 +17,11 @@ import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
-import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import text.GameOverScoreText;
 import text.GameOverText;
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
 import text.GameText;
 import text.ScoreText;
 
@@ -34,7 +33,7 @@ import text.ScoreText;
 public class Game {
 
   public static final String PROPERTY_FILE = "src/config.properties";
-  public static final String[] NUMERICS = {"1", "2", "3", "4", "5","6","7","8","9","0"};
+  public static final String[] NUMERICS = {"1", "2", "3", "4", "5", "6", "7", "8", "9", "0"};
 
   private final Scene gameScene;
   private Properties properties;
@@ -60,15 +59,19 @@ public class Game {
     stage.show();
   }
 
+  /***
+   * loads property file into the private properties
+   * variable.
+   */
   void getPropertiesList() {
     properties = new Properties();
     FileInputStream ip = null;
     try {
       ip = new FileInputStream(Game.PROPERTY_FILE);
       properties.load(ip);
+    } catch (FileNotFoundException e) {
+    } catch (IOException e) {
     }
-    catch (FileNotFoundException e) {}
-    catch (IOException e) {}
   }
 
   /***
@@ -89,25 +92,31 @@ public class Game {
    * current level if the ball touches the ground but there are still lives left.
    * @param elapsedTime second delay
    */
-  public void step (double elapsedTime) {
+  public void step(double elapsedTime) {
     Level currentLevel = getCurrentGameLevel();
     updateGameScore(currentLevel);
-    if (gameIsEnding(currentLevel)) {
+    if (gameIsOngoing(currentLevel)) {
+      currentLevel.step(elapsedTime);
+    } else if (gameIsEnding(currentLevel)) {
       gameOver(gameIsWon(currentLevel));
-      return;
+    } else if (gameIsContinuingToNextLevel(currentLevel)) {
+      resetGameToLevel(currentGameLevelIndex + 1);
     }
-    if (gameIsContinuingToNextLevel(currentLevel)) resetGameToLevel(currentGameLevelIndex+1);
-    else currentLevel.step(elapsedTime);
+  }
+
+  private boolean gameIsOngoing(Level currentLevel) {
+    return !currentLevel.gameIsLost() && !infoBar.timeIsUp();
   }
 
   private boolean gameIsEnding(Level currentLevel) {
-    boolean scoreTooLowToContinue = infoBar.timeIsUp() && !scoreSurpassedThresholdToContinue(currentLevel);
+    boolean scoreTooLowToContinue =
+        infoBar.timeIsUp() && !scoreSurpassedThresholdToContinue(currentLevel);
     boolean lastLevelFinished = infoBar.timeIsUp() && onLastLevel();
     return currentLevel.gameIsLost() || scoreTooLowToContinue || lastLevelFinished;
   }
 
   private boolean onLastLevel() {
-    return currentGameLevelIndex == gameLevels.size()-1;
+    return currentGameLevelIndex == gameLevels.size() - 1;
   }
 
   private boolean gameIsWon(Level currentLevel) {
@@ -115,11 +124,12 @@ public class Game {
   }
 
   private boolean scoreSurpassedThresholdToContinue(Level level) {
-    return totalScore>=level.getScoreToWinLevel();
+    return level.getScore() >= level.getScoreToWinLevel();
   }
 
   private boolean gameIsContinuingToNextLevel(Level currentLevel) {
-    boolean scoreHighEnoughToContinue = infoBar.timeIsUp() && scoreSurpassedThresholdToContinue(currentLevel);
+    boolean scoreHighEnoughToContinue =
+        infoBar.timeIsUp() && scoreSurpassedThresholdToContinue(currentLevel);
     return currentLevel.allBlocksBrokenInLevel() || scoreHighEnoughToContinue;
   }
 
@@ -137,7 +147,7 @@ public class Game {
     gameRoot = new Group();
     gameOverText = new GameOverText(gameRoot);
     gameOverScoreText = new GameOverScoreText(gameRoot);
-    infoBar = new InfoBar(new ScoreText(totalScore,gameRoot),gameRoot);
+    infoBar = new InfoBar(new ScoreText(totalScore, gameRoot), gameRoot);
 
     initializeGameLevels();
     resetGameToLevelFirstTime(getLevelOneIndex());
@@ -148,36 +158,38 @@ public class Game {
     return scene;
   }
 
+  /***
+   * handles key code
+   * @param code dictates the action
+   * follows cheat key descriptions in README
+   */
   private void handleKeyInput(KeyCode code) {
     Level currentLevel = getCurrentGameLevel();
-    if(code == KeyCode.SPACE && gameIsEnding(currentLevel)) {
+    if (code == KeyCode.SPACE && gameIsEnding(currentLevel)) {
       resetGameToLevel(getLevelOneIndex());
-    }
-    else if(keyCodeIsNumeric(code)) {
+    } else if (keyCodeIsNumeric(code)) {
       handleNumericKeyCode(code);
-    }
-    else if (gameIsWon(currentLevel)){
+    } else if (gameIsWon(currentLevel)) {
       currentLevel.handleKeyInputOnEndScreen(code);
-    }
-    else {
+    } else {
       currentLevel.handleKeyInputDuringGame(code);
     }
   }
 
   private void handleMouseInput(MouseButton button) {
     //left mouse click
-    if(button == MouseButton.PRIMARY && currentGameLevelIndex!=getLevelOneIndex()) {
-      resetGameToLevel(currentGameLevelIndex-1);
+    if (button == MouseButton.PRIMARY && currentGameLevelIndex != getLevelOneIndex()) {
+      resetGameToLevel(currentGameLevelIndex - 1);
     }
     //right mouse click
-    else if(button == MouseButton.SECONDARY && currentGameLevelIndex!=gameLevels.size()-1) {
-      resetGameToLevel(currentGameLevelIndex+1);
+    else if (button == MouseButton.SECONDARY && currentGameLevelIndex != gameLevels.size() - 1) {
+      resetGameToLevel(currentGameLevelIndex + 1);
     }
   }
 
   private String parseKeyCodeToDigit(KeyCode code) {
     String codeAsString = code.toString();
-    String digitOfCode = codeAsString.substring(codeAsString.length()-1);
+    String digitOfCode = codeAsString.substring(codeAsString.length() - 1);
     return digitOfCode;
   }
 
@@ -190,8 +202,8 @@ public class Game {
   private void handleNumericKeyCode(KeyCode code) {
     int codeAsInteger = Integer.parseInt(parseKeyCodeToDigit(code));
     int maxAllowableLevel = gameLevels.size();
-    if(codeAsInteger<=maxAllowableLevel && codeAsInteger>0) {
-      resetGameToLevel(codeAsInteger-1);
+    if (codeAsInteger <= maxAllowableLevel && codeAsInteger > 0) {
+      resetGameToLevel(codeAsInteger - 1);
     }
   }
 
@@ -228,23 +240,22 @@ public class Game {
       Object[] filesInGameArray = filesInGame.toArray();
       gameLevels = new ArrayList<>();
 
-      for(Object filePath:filesInGameArray) {
+      for (Object filePath : filesInGameArray) {
         int levelNumber = getLevelNumberFromFileName(filePath.toString());
-        if(levelNumber != -1) {
-          gameLevels.add(new Level(gameRoot,getGameName(),levelNumber,infoBar));
+        if (levelNumber != -1) {
+          gameLevels.add(new Level(gameRoot, getGameName(), levelNumber, infoBar));
         }
       }
-    }
-    catch(IOException e) {
+    } catch (IOException e) {
       throw new IllegalArgumentException("Given game name does not exist.");
     }
   }
 
   //returns -1 if no int existed in filename
   private int getLevelNumberFromFileName(String fileName) {
-    for(int index = 0; index < fileName.length(); index++) {
-      String letter = fileName.substring(index,index+1);
-      if(Arrays.asList(NUMERICS).contains(letter)) {
+    for (int index = 0; index < fileName.length(); index++) {
+      String letter = fileName.substring(index, index + 1);
+      if (Arrays.asList(NUMERICS).contains(letter)) {
         return Integer.parseInt(letter);
       }
     }
@@ -262,13 +273,29 @@ public class Game {
   }
 
   // Getters and setters:
+
   /***
    * Gets the Level object currently running.
    * @return Level object currently running
    */
   public Level getCurrentGameLevel() {
-    if (indexIsOutOfBounds(currentGameLevelIndex)) return gameLevels.get(getLevelOneIndex());
+    if (indexIsOutOfBounds(currentGameLevelIndex)) {
+      return gameLevels.get(getLevelOneIndex());
+    }
     return gameLevels.get(currentGameLevelIndex);
+  }
+
+  /**
+   * Sets the Level object currently running to levelArg.
+   *
+   * @param levelArg level to be displayed Unit testing purposes only.
+   */
+  public void setCurrentGameLevel(Level levelArg) {
+    gameOverText.removeText();
+    gameOverScoreText.removeText();
+    levelArg.setGameRoot(gameRoot);
+    levelArg.increaseBallScore(totalScore);
+    levelArg.showLevel();
   }
 
   /***
@@ -301,24 +328,13 @@ public class Game {
     gameOverScoreText = gameScoreText;
   }
 
-  /**
-   * Sets the Level object currently running to levelArg.
-   * @param levelArg level to be displayed
-   * Unit testing purposes only.
-   */
-  public void setCurrentGameLevel(Level levelArg) {
-    gameOverText.removeText();
-    gameOverScoreText.removeText();
-    levelArg.setGameRoot(gameRoot);
-    levelArg.increaseBallScore(totalScore);
-    levelArg.showLevel();
-  }
-
   /***
    * Gets the Scene currently running the Game.
    * @return Scene object
    */
-  public Scene getScene() { return gameScene; }
+  public Scene getScene() {
+    return gameScene;
+  }
 
   public GameText getGameOverText() {
     return gameOverText;
@@ -335,7 +351,10 @@ public class Game {
   public Group getRoot() {
     return gameRoot;
   }
-  public void setRoot(Group root) { this.gameRoot = root; }
+
+  public void setRoot(Group root) {
+    this.gameRoot = root;
+  }
 
   /***
    * Get the List maintaining all the Levels in the current Game.
@@ -344,7 +363,6 @@ public class Game {
   public List<Level> getGameLevelsList() {
     return gameLevels;
   }
-  public void setGameLevels(List<Level> levels) { this.gameLevels = levels; }
 
   /***
    * Sets the index of the level currently running to a new levelNumber.
@@ -353,22 +371,49 @@ public class Game {
   public void setLevelNumber(int levelNumber) {
     currentGameLevelIndex = levelNumber;
   }
-  public int getLevelNumber() { return currentGameLevelIndex; }
-  String getTitle() { return properties.getProperty("title"); }
-  int getSceneSize() { return Integer.parseInt(properties.getProperty("scene_size"));}
-  int getPlayableAreaSize() { return Integer.parseInt(properties.getProperty("playable_area_size"));}
-  int getFramesPerSecond() { return Integer.parseInt(properties.getProperty("frames_per_second"));}
-  public double getSecondDelay() { return 1.0 / getFramesPerSecond(); }
-  Paint getBackgroundColor() { return Paint.valueOf(properties.getProperty("background_color"));}
-  String getGameName() { return properties.getProperty("game_name");}
-  int getLevelOneIndex() { return Integer.parseInt(properties.getProperty("level_one_index"));}
-  int getFinalLevelIndex() { return Integer.parseInt(properties.getProperty("final_level_index"));}
+
+  // properties accessors//
+  String getTitle() {
+    return properties.getProperty("title");
+  }
+
+  int getSceneSize() {
+    return Integer.parseInt(properties.getProperty("scene_size"));
+  }
+
+  int getPlayableAreaSize() {
+    return Integer.parseInt(properties.getProperty("playable_area_size"));
+  }
+
+  int getFramesPerSecond() {
+    return Integer.parseInt(properties.getProperty("frames_per_second"));
+  }
+
+  public double getSecondDelay() {
+    return 1.0 / getFramesPerSecond();
+  }
+
+  Paint getBackgroundColor() {
+    return Paint.valueOf(properties.getProperty("background_color"));
+  }
+
+  String getGameName() {
+    return properties.getProperty("game_name");
+  }
+
+  int getLevelOneIndex() {
+    return Integer.parseInt(properties.getProperty("level_one_index"));
+  }
+
+  int getFinalLevelIndex() {
+    return Integer.parseInt(properties.getProperty("final_level_index"));
+  }
 
   public List<Level> getGameLevels() {
     return gameLevels;
   }
 
   public void setScore(int score) {
-    totalScore=score;
+    totalScore = score;
   }
 }

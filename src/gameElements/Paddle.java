@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.util.Properties;
 import javafx.scene.Group;
 import javafx.scene.input.KeyCode;
-import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
@@ -18,7 +17,7 @@ import javafx.scene.shape.Rectangle;
  *
  *  Method: collision, setSize, move
  */
-public class Paddle extends Rectangle{
+public class Paddle extends Rectangle {
 
   private Group gameRoot;
   private Properties properties;
@@ -36,9 +35,9 @@ public class Paddle extends Rectangle{
     try {
       ip = new FileInputStream(Game.PROPERTY_FILE);
       properties.load(ip);
+    } catch (FileNotFoundException e) {
+    } catch (IOException e) {
     }
-    catch (FileNotFoundException e) {}
-    catch (IOException e) {}
   }
 
   public void removePaddle() {
@@ -46,7 +45,7 @@ public class Paddle extends Rectangle{
   }
 
   public void setPaddleProperties() {
-    setX(getPlayableAreaSize() / 2 - getNormalPaddleWidth()/2);
+    setX(getPlayableAreaSize() / 2 - getNormalPaddleWidth() / 2);
     setY(getSceneSize() - getVerticalPaddleOffset());
     setWidth(getNormalPaddleWidth());
     setHeight(getPaddleHeight());
@@ -55,17 +54,16 @@ public class Paddle extends Rectangle{
   }
 
   public void handleKeyInput(KeyCode code, boolean isPaused) {
-    if(code == KeyCode.LEFT && !isPaused) {
+    if (code == KeyCode.LEFT && !isPaused) {
       moveLeft();
-    }
-    else if(code== KeyCode.RIGHT && !isPaused) {
+    } else if (code == KeyCode.RIGHT && !isPaused) {
       moveRight();
     }
   }
 
   void moveLeft() {
     double newXPosition = getX() - getPaddleSpeed();
-    if(newXPosition>0) {
+    if (newXPosition > 0) {
       setX(newXPosition);
     }
   }
@@ -73,15 +71,14 @@ public class Paddle extends Rectangle{
   //assumes Scene has already been instantiated in Game so that it can use getScene
   private void moveRight() {
     double newXPosition = getX() + getPaddleSpeed();
-    if(newXPosition + getWidth() <getScene().getWidth()) {
+    if (newXPosition + getWidth() < getScene().getWidth()) {
       setX(newXPosition);
     }
   }
 
   double getCenterX() {
-    return getX() + getWidth()/2;
-  } // TODO: should this have brackets around it?
-  double getCenterY() { return (getY() + getHeight())/2; }
+    return getX() + getWidth() / 2;
+  }
 
   //TODO: fix for edges of ball that are not in center
   public boolean isTouchingPaddleTop(Circle collisionCircle) {
@@ -97,14 +94,14 @@ public class Paddle extends Rectangle{
     double Dx = Xn - Xcoord;
     double Dy = Yn - Ycoord;
 
-    return (Dx * Dx + Dy * Dy) <= R*R;
+    return (Dx * Dx + Dy * Dy) <= R * R;
   }
 
   boolean isTouchingPaddleLeftSide(Circle collisionCircle) {
     double xPos = this.getX();
     double xCoord = collisionCircle.getCenterX();
     double Xn = calculateXn(xPos, xCoord);
-    boolean touchingLeftSide = Xn==this.getCenterX()-this.getWidth()/2;
+    boolean touchingLeftSide = Xn == this.getCenterX() - this.getWidth() / 2;
     return isTouchingPaddleTop(collisionCircle) && touchingLeftSide;
   }
 
@@ -112,7 +109,7 @@ public class Paddle extends Rectangle{
     double xPos = this.getX();
     double xCoord = collisionCircle.getCenterX();
     double Xn = calculateXn(xPos, xCoord);
-    boolean touchingRightSide = Xn==this.getCenterX()+this.getWidth()/2;
+    boolean touchingRightSide = Xn == this.getCenterX() + this.getWidth() / 2;
     return isTouchingPaddleTop(collisionCircle) && touchingRightSide;
   }
 
@@ -125,13 +122,36 @@ public class Paddle extends Rectangle{
     setWidth(newWidth);
   }
 
+  // properties accessors//
+  Paint getPaddleColor() {
+    return Paint.valueOf(properties.getProperty("paddle_color"));
+  }
 
-  Paint getPaddleColor() { return Paint.valueOf(properties.getProperty("paddle_color"));}
-  int getNormalPaddleWidth() { return Integer.parseInt(properties.getProperty("normal_paddle_width"));}
-  int getPowerUpPaddleWidth() { return Integer.parseInt(properties.getProperty("power_up_paddle_width"));}
-  int getPaddleHeight() { return Integer.parseInt(properties.getProperty("paddle_height"));}
-  int getVerticalPaddleOffset() { return Integer.parseInt(properties.getProperty("vertical_paddle_offset"));}
-  int getPaddleSpeed() { return Integer.parseInt(properties.getProperty("paddle_speed"));}
-  int getSceneSize() { return Integer.parseInt(properties.getProperty("scene_size"));}
-  int getPlayableAreaSize() { return Integer.parseInt(properties.getProperty("playable_area_size"));}
+  int getNormalPaddleWidth() {
+    return Integer.parseInt(properties.getProperty("normal_paddle_width"));
+  }
+
+  int getPowerUpPaddleWidth() {
+    return Integer.parseInt(properties.getProperty("power_up_paddle_width"));
+  }
+
+  int getPaddleHeight() {
+    return Integer.parseInt(properties.getProperty("paddle_height"));
+  }
+
+  int getVerticalPaddleOffset() {
+    return Integer.parseInt(properties.getProperty("vertical_paddle_offset"));
+  }
+
+  int getPaddleSpeed() {
+    return Integer.parseInt(properties.getProperty("paddle_speed"));
+  }
+
+  int getSceneSize() {
+    return Integer.parseInt(properties.getProperty("scene_size"));
+  }
+
+  int getPlayableAreaSize() {
+    return Integer.parseInt(properties.getProperty("playable_area_size"));
+  }
 }

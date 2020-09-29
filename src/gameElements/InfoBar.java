@@ -1,20 +1,16 @@
 package gameElements;
 
+import breakout.Game;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Properties;
 import javafx.scene.Group;
-import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
-import breakout.Game;
-import text.GameOverText;
 import text.GameText;
-import text.LevelText;
 import text.LivesText;
 import text.PauseText;
-import text.ScoreText;
 import text.StatusText;
 
 public class InfoBar extends Rectangle {
@@ -28,7 +24,7 @@ public class InfoBar extends Rectangle {
   private GameTimer gameTimer;
   private Group root;
 
-  public InfoBar(GameText scoreText,Group root) {
+  public InfoBar(GameText scoreText, Group root) {
     initializeProperties();
     setPosition(0, 0, getSceneSize(), getInfoBarHeight());
     setFill(getInfoBarColor());
@@ -50,12 +46,14 @@ public class InfoBar extends Rectangle {
     try {
       ip = new FileInputStream(Game.PROPERTY_FILE);
       properties.load(ip);
+    } catch (FileNotFoundException e) {
+    } catch (IOException e) {
     }
-    catch (FileNotFoundException e) {}
-    catch (IOException e) {}
   }
+
   // FIXME
-  public void initializeLevelSpecificText(GameText pauseText, GameText livesText, GameText levelText, GameText scoreToWinText) {
+  public void initializeLevelSpecificText(GameText pauseText, GameText livesText,
+      GameText levelText, GameText scoreToWinText) {
     this.levelText = levelText;
     this.scoreToWinText = scoreToWinText;
     this.pauseText = pauseText;
@@ -81,7 +79,6 @@ public class InfoBar extends Rectangle {
     subclassPauseText.startPause();
     pauseText = subclassPauseText;
     gameTimer.pauseTimer();
-    // setIsPaused = true
   }
 
   public void initiateUnpauseInText() {
@@ -95,7 +92,6 @@ public class InfoBar extends Rectangle {
     pauseText.removeText();
     pauseText = new PauseText(gameRoot);
     gameTimer.pauseTimer();
-    // setIsPaused = true
   }
 
   public void removeAllLevelSpecificText() {
@@ -126,7 +122,9 @@ public class InfoBar extends Rectangle {
    * Returns the gameLivesText object for unit testing.
    * @return LivesText object for the Level
    */
-  public GameText getLivesText() { return livesText; }
+  public GameText getLivesText() {
+    return livesText;
+  }
 
   public GameText getLevelText() {
     return levelText;
@@ -136,7 +134,9 @@ public class InfoBar extends Rectangle {
    * Returns the gamePauseText object for unit testing.
    * @return PauseText object for the Level
    */
-  public GameText getPauseText() { return pauseText; }
+  public GameText getPauseText() {
+    return pauseText;
+  }
 
   public GameText getScoreText() {
     return scoreText;
@@ -145,16 +145,9 @@ public class InfoBar extends Rectangle {
   public boolean timeIsUp() {
     return gameTimer.timeIsUp();
   }
-  private int getInfoBarHeight() { return Integer.parseInt(properties.getProperty("info_bar_height")); }
-  private Paint getInfoBarColor() { return Paint.valueOf(properties.getProperty("info_bar_color")); }
-  private int getSceneSize() { return Integer.parseInt(properties.getProperty("scene_size")); }
 
   public GameTimer getGameTimer() {
     return gameTimer;
-  }
-
-  public GameText getScoreToWinText() {
-    return scoreToWinText;
   }
 
   public void setScoreToWinText(int newScore) {
@@ -163,7 +156,16 @@ public class InfoBar extends Rectangle {
     scoreToWinText = subclassUpdateValueText;
   }
 
-  public void removeInfoBar() {
-    root.getChildren().remove(this);
+  // properties accessors//
+  private int getInfoBarHeight() {
+    return Integer.parseInt(properties.getProperty("info_bar_height"));
+  }
+
+  private Paint getInfoBarColor() {
+    return Paint.valueOf(properties.getProperty("info_bar_color"));
+  }
+
+  private int getSceneSize() {
+    return Integer.parseInt(properties.getProperty("scene_size"));
   }
 }

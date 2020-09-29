@@ -1,7 +1,5 @@
 package text;
 
-import java.util.ArrayList;
-import java.util.List;
 import javafx.scene.Group;
 
 public class GameOverText extends GameText {
@@ -29,10 +27,9 @@ public class GameOverText extends GameText {
   }
 
   public void gameOverUpdate(boolean gameIsWon) {
-    if(gameIsWon) {
+    if (gameIsWon) {
       updateText(getGameWonTitle());
-    }
-    else {
+    } else {
       updateText(getGameOverTitle());
     }
   }

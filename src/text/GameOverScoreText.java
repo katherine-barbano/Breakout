@@ -20,7 +20,8 @@ public class GameOverScoreText extends GameOverText {
 
   @Override
   public void initializeText(String words) {
-    initializeProperties(getGameOverScoreTitle(), getGameOverScoreXPosition(), getGameOverScoreYPosition(), getGameOverScoreId());
+    initializeProperties(getGameOverScoreTitle(), getGameOverScoreXPosition(),
+        getGameOverScoreYPosition(), getGameOverScoreId());
     addText();
   }
 
@@ -51,7 +52,8 @@ public class GameOverScoreText extends GameOverText {
     System.out.println(previousGameScores.toString());
     String[] highScores = new String[getGameOverScoreAmountShown()];
     for (int i = 0; i < highScores.length; i++) {
-      highScores[i] = (i >= previousGameScores.size()) ?  "TBD" : String.valueOf(previousGameScores.get(i));
+      highScores[i] =
+          (i >= previousGameScores.size()) ? "TBD" : String.valueOf(previousGameScores.get(i));
     }
     return highScores;
   }
@@ -66,8 +68,11 @@ public class GameOverScoreText extends GameOverText {
 
   @Override
   public boolean equals(Object o) {
-    if (this == o) { return true; }
-    else if (o == null || getClass() != o.getClass()) { return false; }
+    if (this == o) {
+      return true;
+    } else if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
     GameOverScoreText that = (GameOverScoreText) o;
     return Objects.equals(previousGameScores, that.previousGameScores);
   }

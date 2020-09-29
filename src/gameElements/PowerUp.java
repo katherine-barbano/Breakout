@@ -2,32 +2,24 @@ package gameElements;
 
 import breakout.Game;
 import breakout.Level;
-import javafx.scene.paint.Paint;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Properties;
 import javafx.scene.Group;
+import javafx.scene.paint.Paint;
 import javafx.scene.shape.Circle;
 
 public abstract class PowerUp extends Circle {
 
+  protected Paddle gamePaddle;
   private Group gameRoot;
   private Properties properties;
-  protected Paddle gamePaddle;
   private Ball gameBall;
   private Block ownerBlock;
   private PowerUpType powerUpType;
   private int velocityY;
   private boolean isReleased;
-
-  public enum PowerUpType {
-    BREAKER_BALL,
-    PADDLE,
-    MOVING_BLOCK,
-    SLOW_BALL,
-    P_LAST // shouldn't be reached
-  }
 
   public PowerUp(Group gameRootArg, Paddle paddleArg, Block blockArg) {
     gameRoot = gameRootArg;
@@ -64,9 +56,9 @@ public abstract class PowerUp extends Circle {
     try {
       ip = new FileInputStream(Game.PROPERTY_FILE);
       properties.load(ip);
+    } catch (FileNotFoundException e) {
+    } catch (IOException e) {
     }
-    catch (FileNotFoundException e) {}
-    catch (IOException e) {}
   }
 
   void setProperties() {
@@ -107,41 +99,93 @@ public abstract class PowerUp extends Circle {
   private void addToScene() {
     assert (gameRoot != null);
     assert (gameRoot.getChildren() != null);
-    if (! gameRoot.getChildren().contains(this)) {
+    if (!gameRoot.getChildren().contains(this)) {
       gameRoot.getChildren().add(this);
     }
   }
+
   public void removeFromScene() {
     gameRoot.getChildren().remove(this);
   }
 
-  private void updatePositionY(double elapsedTime) { setCenterY(getCenterY() + velocityY * elapsedTime); }
+  private void updatePositionY(double elapsedTime) {
+    setCenterY(getCenterY() + velocityY * elapsedTime);
+  }
 
-  public Block getOwnerBlock() { return ownerBlock; }
-  public void setOwnerBlock(Block ownerBlock) { this.ownerBlock = ownerBlock; }
+  public Block getOwnerBlock() {
+    return ownerBlock;
+  }
 
-  public void setIsReleased(boolean released) { isReleased = released; }
+  public void setOwnerBlock(Block ownerBlock) {
+    this.ownerBlock = ownerBlock;
+  }
 
-  public Group getGameRoot() { return gameRoot; }
-  public void setGameRoot(Group gameRoot) { this.gameRoot = gameRoot; }
+  public void setIsReleased(boolean released) {
+    isReleased = released;
+  }
 
-  public void setPaddle(Paddle gamePaddle) { this.gamePaddle = gamePaddle; }
+  public Group getGameRoot() {
+    return gameRoot;
+  }
 
-  public void setPowerUpType(PowerUpType type) { this.powerUpType = type; }
-  public PowerUpType getPowerUpType() { return this.powerUpType; }
+  public void setGameRoot(Group gameRoot) {
+    this.gameRoot = gameRoot;
+  }
 
-  public Ball getGameBall() { return this.gameBall; }
-  public void setGameBall(Ball ball) { this.gameBall = ball; }
+  public void setPaddle(Paddle gamePaddle) {
+    this.gamePaddle = gamePaddle;
+  }
 
-  int getMovingBlockScoreValue() { return Integer.parseInt(properties.getProperty("moving_block_score_value"));}
-  int getBallRadius() { return Integer.parseInt(properties.getProperty("ball_radius"));}
-  int getPowerUpDropSpeed() { return Integer.parseInt(properties.getProperty("power_up_drop_speed"));}
-  Paint getPaddlePowerUpColor() { return Paint.valueOf(properties.getProperty("paddle_power_up_color"));}
-  Paint getSlowBallPowerUpColor() { return Paint.valueOf(properties.getProperty("slow_ball_power_up_color"));}
-  Paint getBreakerBallPowerUpColor() { return Paint.valueOf(properties.getProperty("breaker_ball_color"));}
+  public PowerUpType getPowerUpType() {
+    return this.powerUpType;
+  }
+
+  public void setPowerUpType(PowerUpType type) {
+    this.powerUpType = type;
+  }
+
+  public void setGameBall(Ball ball) {
+    this.gameBall = ball;
+  }
+
+  // properties accessors //
+  int getMovingBlockScoreValue() {
+    return Integer.parseInt(properties.getProperty("moving_block_score_value"));
+  }
+
+  int getBallRadius() {
+    return Integer.parseInt(properties.getProperty("ball_radius"));
+  }
+
+  int getPowerUpDropSpeed() {
+    return Integer.parseInt(properties.getProperty("power_up_drop_speed"));
+  }
+
+  Paint getPaddlePowerUpColor() {
+    return Paint.valueOf(properties.getProperty("paddle_power_up_color"));
+  }
+
+  Paint getSlowBallPowerUpColor() {
+    return Paint.valueOf(properties.getProperty("slow_ball_power_up_color"));
+  }
+
+  Paint getBreakerBallPowerUpColor() {
+    return Paint.valueOf(properties.getProperty("breaker_ball_color"));
+  }
+
   int getSlowBallSpeed() {
     int slowBallSpeed = Integer.parseInt(properties.getProperty("slow_ball_speed"));
-    if (gameBall.getVelocityY() < 0) slowBallSpeed *= -1;
+    if (gameBall.getVelocityY() < 0) {
+      slowBallSpeed *= -1;
+    }
     return slowBallSpeed;
+  }
+
+  public enum PowerUpType {
+    BREAKER_BALL,
+    PADDLE,
+    MOVING_BLOCK,
+    SLOW_BALL,
+    P_LAST // shouldn't be reached
   }
 }
