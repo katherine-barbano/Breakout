@@ -101,15 +101,17 @@ blocks, where each character represents a block. Each character in the
 file should be separated by a space from the next character in that row.
 Block rows are separated by a new line.
     - "0" represents no block being present in that position.
-    - "1" represents a block of hardness 1 (needing only 1 hit to break it).
-    - "2" represents a block of hardness 2 (needing 2 hits to break it).
-    - "3" represents a block of hardness 3 (needing 3 hits to break it).
-    - "P" represents blocks that drop power-ups that increase the size of the paddle
-    - "S" represents blocks that drop power ups that slow down the ball.
+    - "1" represents a block of hardness 1 (needing only 1 hit to break it), color pale turquoise.
+    - "2" represents a block of hardness 2 (needing 2 hits to break it), color pale violet red.
+    - "3" represents a block of hardness 3 (needing 3 hits to break it), color purple.
+    - "V" represents a stationary block that randomly changes hardness and can only be broken
+    when its hardness is 1.
+    - "P" represents blocks that drop power-ups that increase the size of the paddle, color light green.
+    - "S" represents blocks that drop power ups that slow down the ball, color light blue.
     - "B" represents blocks that drop power ups that allow the ball to break any
-      hardness of block with one hit.
+      hardness of block with one hit, color orange.
     - "M" represents blocks moving in a row, with the position of the block in the diagram
-      specifying the block's starting position.
+      specifying the block's starting position. They are set to a random hardness value.
 - Moving blocks should only be created in a row with no other blocks present.
 This means that if a level file contains an "M", the rest of the row with
 the "M" in it should be all "0"s.
