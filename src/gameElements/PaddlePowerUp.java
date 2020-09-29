@@ -10,8 +10,9 @@ public class PaddlePowerUp extends PowerUp{
   }
 
   @Override
-  public void givePowerUp() {
-    gamePaddle.extendPaddleWidth();
+  public void givePowerUp(Ball gameBall, Paddle gamePaddle) {
+    assert (gamePaddle != null);
+    gamePaddle.setPowerUpWidth();
   }
 
   @Override

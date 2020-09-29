@@ -91,15 +91,20 @@ public class PowerUpTest extends DukeApplicationTest {
 
   @Test
   void testBallBreakerWorks() {
-    game.setupScene(); // FIXME made public
+    game.setupScene();
     Group testGroup = new Group();
     InfoBar infoBar = new InfoBar(new ScoreText(0,testGroup),testGroup);
     Level testLevel = new Level(game.getRoot(), "power_up_test_data", "breakerBallPowerUp",infoBar);
     game.setCurrentGameLevel(testLevel);
 
     testLevel.addBlocksToRoot();
-    testLevel.showLevel(); // FIXME made public
+    testLevel.showLevel();
 
     assertEquals(true, game.getCurrentGameLevel().getGameBall().isBreakerBall());
+  }
+
+  @Test
+  void testPaddleWidthExtendsWithPowerUp() {
+
   }
 }

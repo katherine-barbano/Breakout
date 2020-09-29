@@ -45,11 +45,6 @@ public class Paddle extends Rectangle{
     gameRoot.getChildren().remove(this);
   }
 
-  void extendPaddleWidth() { setWidth(getNormalPaddleWidth() * 2); }
-  void setNormalPaddleWidth() {
-    setWidth(getNormalPaddleWidth());
-  }
-
   public void setPaddleProperties() {
     setX(getPlayableAreaSize() / 2 - getNormalPaddleWidth()/2);
     setY(getSceneSize() - getVerticalPaddleOffset());
@@ -125,9 +120,15 @@ public class Paddle extends Rectangle{
     return Math.max(xPos, Math.min(xCoord, (xPos + this.getWidth())));
   }
 
+  public void setPowerUpWidth() {
+    int newWidth = getPowerUpPaddleWidth();
+    setWidth(newWidth);
+  }
+
 
   Paint getPaddleColor() { return Paint.valueOf(properties.getProperty("paddle_color"));}
   int getNormalPaddleWidth() { return Integer.parseInt(properties.getProperty("normal_paddle_width"));}
+  int getPowerUpPaddleWidth() { return Integer.parseInt(properties.getProperty("power_up_paddle_width"));}
   int getPaddleHeight() { return Integer.parseInt(properties.getProperty("paddle_height"));}
   int getVerticalPaddleOffset() { return Integer.parseInt(properties.getProperty("vertical_paddle_offset"));}
   int getPaddleSpeed() { return Integer.parseInt(properties.getProperty("paddle_speed"));}

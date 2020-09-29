@@ -10,10 +10,10 @@ public class MovingBlockPowerUp extends PowerUp{
   }
 
   @Override
-  public void givePowerUp() {
+  public void givePowerUp(Ball gameBall, Paddle gamePaddle) {
     int bonusScore = getMovingBlockScoreValue();
-    if (getGameBall() != null) {
-      getGameBall().increaseScoreBy(bonusScore);
+    if (gameBall != null) {
+      gameBall.increaseScoreBy(bonusScore);
     }
   }
 

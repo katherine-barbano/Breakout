@@ -15,9 +15,9 @@ public class SlowBallPowerUp extends PowerUp {
   }
 
   @Override
-  public void givePowerUp() {
-    if (getGameBall() != null)
-      getGameBall().setVelocityY(getSlowBallSpeed());
+  public void givePowerUp(Ball gameBall, Paddle gamePaddle) {
+    if (gameBall != null)
+      gameBall.setVelocityY(getSlowBallSpeed());
   }
 
   @Override

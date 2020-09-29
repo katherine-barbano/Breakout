@@ -206,7 +206,7 @@ public class Level {
       resetCurrentLevel();
     }
     levelConfiguration.updateBlocks(elapsedTime, touchedBlock, gameIsPaused);
-    dropFoundPowerUps(elapsedTime);
+    levelConfiguration.updateVisiblePowerUps(elapsedTime, gameIsPaused);
   }
 
   /***
@@ -300,47 +300,27 @@ public class Level {
   private void dropFirstPowerUp() {
     Block firstPowerUpBlock = getFirstBlockWithPowerUp();
     if(firstPowerUpBlock!=null) {
-      levelConfiguration.handleTouchedBlock(firstPowerUpBlock);
+      levelConfiguration.releasePowerUpInBlock(firstPowerUpBlock);
     }
   }
 
-  //define first block as the block that exists farthest to the top left.
   public Block getFirstBlockWithPowerUp() {
-    int indexFirstPowerUpBlock = -1;
-    Block firstPowerUpBlock = new Block();
-    boolean indexInRange = indexFirstPowerUpBlock<levelConfiguration.getNumberOfBlocksRemaining()-1;
-    while(!firstPowerUpBlock.hasPowerUp() && indexInRange) {
-      indexFirstPowerUpBlock++;
-      List<Block> currentBlockList = levelConfiguration.getBlocksAsList();
-      firstPowerUpBlock = currentBlockList.get(indexFirstPowerUpBlock);
-      indexInRange = indexFirstPowerUpBlock<levelConfiguration.getNumberOfBlocksRemaining()-1;
-    }
-    if(firstPowerUpBlock.hasPowerUp()) {
-      return firstPowerUpBlock;
+    for (Block block : levelConfiguration.getBlocksAsList()) {
+      if (block.hasPowerUp()) return block;
     }
     return null;
   }
 
-  private void dropSinglePowerUp(PowerUp fallingPowerUp, double elapsedTime) {
-    fallingPowerUp.updateLocation(elapsedTime, gameIsPaused);
-    if (gamePaddle.isTouchingPaddleTop(fallingPowerUp)) {
-      fallingPowerUp.setPaddle(gamePaddle);
-      fallingPowerUp.setGameBall(gameBall);
-      fallingPowerUp.givePowerUp();
-    }
-  }
-
-  void dropFoundPowerUps(double elapsedTime) {
-    List<PowerUp> powerUps = levelConfiguration.getVisiblePowerUps();
-    for (PowerUp fallingPowerUp: powerUps) {
-      dropSinglePowerUp(fallingPowerUp,elapsedTime);
-    }
-  }
-
   private void dropAllPowerUps() {
+    for (Block block : levelConfiguration.getBlocksAsList()) {
+      if (block.hasPowerUp()) {
+        levelConfiguration.releasePowerUpInBlock(block);
+      }
+    }
+    /*
     for(int powerUpsLeft = levelConfiguration.getNumberOfPowerUps(); powerUpsLeft>0; powerUpsLeft--) {
       dropFirstPowerUp();
-    }
+    }*/
   }
 
   private void addExtraTime() {

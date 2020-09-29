@@ -140,8 +140,9 @@ public class Block extends Rectangle {
   public boolean hasReleasedPowerUp() { return (randomPowerUp!= null  && hasReleasedPowerUp); }
   public void setHasReleasedPowerUp(boolean hasReleasedPowerUp) {
     this.hasReleasedPowerUp = hasReleasedPowerUp;
-    randomPowerUp.setIsReleased(true);
+    this.randomPowerUp.setIsReleased(true);
     setHasPowerUp(false);
+    removeFromScene();
   }
   public void setPowerUp(PowerUp powerUp) { randomPowerUp = powerUp; }
   public PowerUp getPowerUp() { return randomPowerUp; }

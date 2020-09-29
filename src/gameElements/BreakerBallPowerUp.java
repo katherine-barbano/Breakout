@@ -9,16 +9,16 @@ public class BreakerBallPowerUp extends PowerUp {
     setPowerUpType(PowerUpType.BREAKER_BALL);
   }
 
-  public void givePowerUp() {
-    if (getGameBall() != null) {
-      getGameBall().setIsBreakerBall(true);
+  public void givePowerUp(Ball gameBall, Paddle gamePaddle) {
+    if (gameBall != null) {
+      gameBall.setIsBreakerBall(true);
     }
   }
 
   @Override
   void setProperties() {
     super.setProperties();
-    setFill(getPaddlePowerUpColor());
+    setFill(getBreakerBallPowerUpColor());
     setId("Breaker ball power up");
   }
 }

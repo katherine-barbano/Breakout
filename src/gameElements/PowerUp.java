@@ -51,7 +51,7 @@ public abstract class PowerUp extends Circle {
     setProperties();
   }
 
-  public abstract void givePowerUp();
+  public abstract void givePowerUp(Ball gameBall, Paddle gamePaddle);
 
   void assignToBlock(Block block) {
     ownerBlock = block;
@@ -87,21 +87,9 @@ public abstract class PowerUp extends Circle {
   public void updateLocation(double elapsedTime, boolean isPaused) {
     if (isPaused) {
       removeFromScene();
+      return;
     }
-    else {
-      updatePositionY(elapsedTime);
-      if (isTouchingPaddle()) {
-        givePowerUp();
-        removeFromScene();
-      }
-    }
-  }
-
-  private boolean isTouchingPaddle() {
-    if (gamePaddle == null) return false;
-    return gamePaddle.isTouchingPaddleTop(this) ||
-        gamePaddle.isTouchingPaddleLeftSide(this) ||
-        gamePaddle.isTouchingPaddleRightSide(this);
+    updatePositionY(elapsedTime);
   }
 
   private double GetXCenterOfBlock(Block block) {
@@ -117,7 +105,6 @@ public abstract class PowerUp extends Circle {
   }
 
   private void addToScene() {
-    assert (this != null); // FIXME for testing
     assert (gameRoot != null);
     assert (gameRoot.getChildren() != null);
     if (! gameRoot.getChildren().contains(this)) {
@@ -151,5 +138,10 @@ public abstract class PowerUp extends Circle {
   int getPowerUpDropSpeed() { return Integer.parseInt(properties.getProperty("power_up_drop_speed"));}
   Paint getPaddlePowerUpColor() { return Paint.valueOf(properties.getProperty("paddle_power_up_color"));}
   Paint getSlowBallPowerUpColor() { return Paint.valueOf(properties.getProperty("slow_ball_power_up_color"));}
-  int getSlowBallSpeed() { return Integer.parseInt(properties.getProperty("slow_ball_speed")); }
+  Paint getBreakerBallPowerUpColor() { return Paint.valueOf(properties.getProperty("breaker_ball_color"));}
+  int getSlowBallSpeed() {
+    int slowBallSpeed = Integer.parseInt(properties.getProperty("slow_ball_speed"));
+    if (gameBall.getVelocityY() < 0) slowBallSpeed *= -1;
+    return slowBallSpeed;
+  }
 }

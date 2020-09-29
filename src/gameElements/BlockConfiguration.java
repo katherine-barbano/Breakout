@@ -115,7 +115,6 @@ public class BlockConfiguration {
     else {
       PowerUp createdPowerUp = makePowerUp(hardnessChar, myLevel);
       createdBlock = new Block(createdPowerUp);
-      numberOfPowerUps++;
     }
     numberOfBlocksRemaining++;
     return createdBlock;
@@ -125,6 +124,7 @@ public class BlockConfiguration {
     Group gameRoot = level.getGameRoot();
     Paddle gamePaddle = level.getGamePaddle();
     PowerUp powerUp;
+    numberOfPowerUps++;
     switch (hardnessChar) {
       case 'S':
         powerUp = new SlowBallPowerUp(gameRoot, gamePaddle);
@@ -137,6 +137,7 @@ public class BlockConfiguration {
         break;
       case 'M':
         powerUp = new MovingBlockPowerUp(gameRoot, gamePaddle);
+        numberOfPowerUps--;
         break;
       default:
         throw new IllegalStateException("Unexpected value: " + hardnessChar);
@@ -158,11 +159,10 @@ public class BlockConfiguration {
   }
 
   public void decrementBlock(Block block) {
-    if (myLevel.getGameBall().isBreakerBall()) {
-      removeBlockFromConfiguration(block);
-    }
     block.decreaseHardnessByOne();
-    if (block.getBlockHardness() == 0) {
+    increaseScoreBy(getScoreIncrement());
+    boolean isBreakerBall = myLevel.getGameBall().isBreakerBall();
+    if (block.getBlockHardness() == 0 || isBreakerBall) {
       decreaseNumberOfBlocksByOne();
       block.removeFromScene();
     }
@@ -229,16 +229,6 @@ public class BlockConfiguration {
     return powerUpList;
   }
 
-  // FIXME: currently unused, might not need
-  public List<Block> getMovingBlocks() {
-    List<Block> movingBlockList = new ArrayList<>();
-    for (Block block : getBlocksAsList()) {
-      if (block != null && block instanceof MovingBlock)
-        movingBlockList.add(block);
-    }
-    return movingBlockList;
-  }
-
   public List<Block> getVaryingBlocks() {
     List<Block> varyingBlockList = new ArrayList<>();
     for (Block block : getBlocksAsList()) {
@@ -246,14 +236,6 @@ public class BlockConfiguration {
         varyingBlockList.add(block);
     }
     return varyingBlockList;
-  }
-
-  // FIXME: also currently unused.
-  boolean containsMovingBlock(String fileLine) {
-    for (char key : fileLine.toCharArray()) {
-      if (key == 'M') return true;
-    }
-    return false;
   }
 
   public void removeAllBlocks() {
@@ -271,15 +253,11 @@ public class BlockConfiguration {
 
   public BlockRow[] getBlockRows() { return configRows; }
 
-  void decreaseNumberOfBlocksByOne() {
-    numberOfBlocksRemaining--;
-    myLevel.getGameBall().increaseScoreBy(getScoreIncrement()); // FIXME horrid
-  }
+  void decreaseNumberOfBlocksByOne() { numberOfBlocksRemaining--; }
+  void increaseScoreBy(int value) { myLevel.getGameBall().increaseScoreBy(value); }
   void setNumberOfBlocksRemaining(int numberOfBlocksRemaining) { this.numberOfBlocksRemaining = numberOfBlocksRemaining; }
   public int getNumberOfBlocksRemaining() { return numberOfBlocksRemaining; }
-  boolean isEmpty() { return (numberOfBlocksRemaining == 0);}
   public int getNumberOfPowerUps() { return numberOfPowerUps; }
-  public void setNumberOfPowerUps(int powerUps) { this.numberOfPowerUps = powerUps; }
 
   private int getInfoBarHeight() { return Integer
       .parseInt(properties.getProperty("info_bar_height")); }
@@ -294,6 +272,7 @@ public class BlockConfiguration {
     updateBlockAttributes(elapsedTime, gameIsPaused);
     if (touchedBlock == null) return;
     else {
+      //increaseScoreBy(getScoreIncrement());
       handleTouchedBlock(touchedBlock);
     }
   }
@@ -311,13 +290,13 @@ public class BlockConfiguration {
       if (powerUpType == PowerUpType.MOVING_BLOCK) {
         myLevel.getGameBall().increaseScoreBy(myLevel.getGameBall().getMovingBlockScoreValue());
       } else if (touchedBlock.getBlockHardness() == touchedBlock.getMinimumHardness()) {
-        handleFoundPowerUpInBlock(touchedBlock);
+        releasePowerUpInBlock(touchedBlock);
       }
     }
     decrementBlock(touchedBlock);
   }
 
-  private void handleFoundPowerUpInBlock(Block block) {
+  public void releasePowerUpInBlock(Block block) {
     PowerUpType powerUpType = block.getPowerUp().getPowerUpType();
     switch (powerUpType) {
       case SLOW_BALL :
@@ -325,7 +304,7 @@ public class BlockConfiguration {
         block.getPowerUp().setGameBall(myLevel.getGameBall());
         break;
       } case PADDLE: {
-        myLevel.getGamePaddle().setWidth(myLevel.getGamePaddle().getWidth());
+        block.getPowerUp().setPaddle(myLevel.getGamePaddle());
         break;
       } case MOVING_BLOCK: {
         myLevel.getGameBall().increaseScoreBy(myLevel.getGameBall().getMovingBlockScoreValue());
@@ -337,6 +316,20 @@ public class BlockConfiguration {
     if (powerUpType != PowerUpType.MOVING_BLOCK) {
       block.releasePowerUp();
       block.setHasReleasedPowerUp(true);
+    }
+  }
+
+  public void updateVisiblePowerUps(double elapsedTime, boolean gameIsPaused) {
+    for (PowerUp fallingPowerUp: getVisiblePowerUps()) {
+      if (gameIsPaused) fallingPowerUp.removeFromScene();
+      else {
+        fallingPowerUp.updateLocation(elapsedTime, gameIsPaused);
+        if (myLevel.getGamePaddle().isTouchingPaddleTop(fallingPowerUp)) {
+          fallingPowerUp.givePowerUp(getLevel().getGameBall(), getLevel().getGamePaddle());
+          fallingPowerUp.removeFromScene();
+          numberOfPowerUps--;
+        }
+      }
     }
   }
 }
