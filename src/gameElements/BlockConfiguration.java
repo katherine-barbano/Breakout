@@ -160,9 +160,9 @@ public class BlockConfiguration {
 
   public void decrementBlock(Block block) {
     block.decreaseHardnessByOne();
-    increaseScoreBy(getScoreIncrement());
     boolean isBreakerBall = myLevel.getGameBall().isBreakerBall();
     if (block.getBlockHardness() == 0 || isBreakerBall) {
+      increaseScoreBy(getScoreIncrement());
       decreaseNumberOfBlocksByOne();
       block.removeFromScene();
     }
@@ -272,7 +272,6 @@ public class BlockConfiguration {
     updateBlockAttributes(elapsedTime, gameIsPaused);
     if (touchedBlock == null) return;
     else {
-      //increaseScoreBy(getScoreIncrement());
       handleTouchedBlock(touchedBlock);
     }
   }
@@ -285,13 +284,8 @@ public class BlockConfiguration {
   }
 
   public void handleTouchedBlock(Block touchedBlock) {
-    if (touchedBlock.hasPowerUp()) {
-      PowerUpType powerUpType = touchedBlock.getPowerUp().getPowerUpType();
-      if (powerUpType == PowerUpType.MOVING_BLOCK) {
-        myLevel.getGameBall().increaseScoreBy(myLevel.getGameBall().getMovingBlockScoreValue());
-      } else if (touchedBlock.getBlockHardness() == touchedBlock.getMinimumHardness()) {
-        releasePowerUpInBlock(touchedBlock);
-      }
+    if (touchedBlock.hasPowerUp() && touchedBlock.getBlockHardness() == touchedBlock.getMinimumHardness()) {
+      releasePowerUpInBlock(touchedBlock);
     }
     decrementBlock(touchedBlock);
   }

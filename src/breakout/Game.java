@@ -18,6 +18,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+import text.GameOverScoreText;
 import text.GameOverText;
 import java.io.File;
 import java.io.IOException;
@@ -40,10 +41,12 @@ public class Game {
   private Group gameRoot;
 
   private List<Level> gameLevels;
+  private List<Integer> gameScores;
   private int totalScore;
   private int currentGameLevelIndex;
   private InfoBar infoBar;
   private GameText gameOverText;
+  private GameText gameOverScoreText;
 
   /***
    * Constructor initializes gameScene and gameRoot, including key inputs,
@@ -138,6 +141,7 @@ public class Game {
     totalScore = 0;
     gameRoot = new Group();
     gameOverText = new GameOverText(gameRoot);
+    gameOverScoreText = new GameOverScoreText(gameRoot);
     infoBar = new InfoBar(new ScoreText(totalScore,gameRoot),gameRoot);
 
     initializeGameLevels();
@@ -205,8 +209,11 @@ public class Game {
     infoBar.removeScoreText();
 
     GameOverText subclassGameOverText = (GameOverText) gameOverText;
+    GameOverScoreText gameScoresText = (GameOverScoreText) gameOverScoreText;
+    gameScoresText.addScoreToList(totalScore);
     subclassGameOverText.gameOverUpdate(gameIsWon);
     gameOverText = subclassGameOverText;
+    gameOverScoreText = gameScoresText;
 
     currentLevel.removeLevel();
   }
@@ -278,6 +285,7 @@ public class Game {
     }
     initializeGameLevels();
     gameOverText.removeText();
+    gameOverScoreText.removeText();
     setLevelNumber(levelIndex);
     showCurrentLevel();
     Level newLevel = gameLevels.get(levelIndex);
@@ -296,6 +304,7 @@ public class Game {
    */
   public void setCurrentGameLevel(Level levelArg) {
     gameOverText.removeText();
+    gameOverScoreText.removeText();
     levelArg.setGameRoot(gameRoot);
     levelArg.increaseBallScore(totalScore);
     levelArg.showLevel();
