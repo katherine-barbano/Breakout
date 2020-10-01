@@ -133,6 +133,11 @@ public class Game {
     return currentLevel.allBlocksBrokenInLevel() || scoreHighEnoughToContinue;
   }
 
+  /***
+   * Updates the score of the game for a level and displays
+   * the level number on info bar.
+   * @param level current Level
+   */
   public void updateGameScore(Level level) {
     totalScore = level.getScore();
     infoBar.updateScoreText(totalScore);
@@ -301,6 +306,8 @@ public class Game {
   /***
    * Resets and shows the level number given in the argument.
    * LevelIndex should be start indexed at 0.
+   * This method should be called to reset the game for the first time,
+   * before a level is added.
    * @param levelIndex Index in Levels to show
    */
   public void resetGameToLevelFirstTime(int levelIndex) {
@@ -316,6 +323,14 @@ public class Game {
     newLevel.increaseBallScore(totalScore);
   }
 
+  /***
+   * Performs all the actions of resetGameToLevelFirstTime,
+   * and prepares the recent scores list and removes the current
+   * level from the screen.
+   * This method can only be call when a Level has already been
+   * added to the Scene.
+   * @param levelIndex
+   */
   public void resetGameToLevel(int levelIndex) {
     prepareScoreList();
     getCurrentGameLevel().removeLevel();
@@ -336,10 +351,18 @@ public class Game {
     return gameScene;
   }
 
+  /***
+   * Gets the GameOverText currently in the Game
+   * @return GameOverText
+   */
   public GameText getGameOverText() {
     return gameOverText;
   }
 
+  /***
+   * Gets the InfoBar currently in the Game
+   * @return InfoBar
+   */
   public InfoBar getInfoBar() {
     return infoBar;
   }
@@ -352,6 +375,10 @@ public class Game {
     return gameRoot;
   }
 
+  /***
+   * Sets the Group to the argument
+   * @param root Group
+   */
   public void setRoot(Group root) {
     this.gameRoot = root;
   }

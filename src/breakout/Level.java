@@ -27,6 +27,7 @@ import text.ScoreToWinText;
  * Maintains gameElements for a single level of the game. Handles removal and addition of gameElements
  * to the Group. Handles pausing/unpausing the game, maintains the number of lives left in the level,
  * maintains an instance of Ball and Paddle, and maintains blocks on the screen from a BlockConfiguration.
+ * Handles level-specific cheat keys and keeps track of lives, pausing, time limit, and score to win the level.
  */
 public class Level {
 
@@ -95,6 +96,13 @@ public class Level {
     readLevelScoresAndTimeFile(getFileNameOfScoreToWinAndLivesFile(gameName));
   }
 
+  /***
+   * Given a gameName and filename, returns a String corresponding
+   * to the path.
+   * @param gameName name of directory storing the game levels, for example, sample_game
+   * @param fileName name of the file, for example, level_1.txt
+   * @return file path string
+   */
   public String generateFilePathForFile(String gameName, String fileName) {
     return FILE_SOURCE_PATH + gameName + "/" + fileName + ".txt";
   }
@@ -154,7 +162,9 @@ public class Level {
   }
 
   /***
-   * Display the current level on the screen
+   * Display the current level on the screen. Initialize
+   * gameElement objects like ball, paddle, blocks, and level-specific
+   * GameText.
    */
   public void showLevel() {
     GameText gameLivesText = new LivesText(getLives(), gameRoot);
@@ -170,6 +180,9 @@ public class Level {
     addBlocksToRoot();
   }
 
+  /***
+   * Add all blocks from level configuration to the Scene.
+   */
   public void addBlocksToRoot() {
     List<Block> allBlocks = levelConfiguration.getBlocksAsList();
     for (Block block : allBlocks) {
@@ -209,13 +222,9 @@ public class Level {
   }
 
   /***
-   * Handles key input relating to cheat keys and paddle control.
-   * @param code KeyCode input by player
+   * Handles behavior when a level-specific cheat key is pressed.
+   * @param code KeyCode corresponding to the cheat key that is pressed
    */
-  void handleKeyInputOnEndScreen(KeyCode code) {
-
-  }
-
   void handleKeyInputDuringGame(KeyCode code) {
     gamePaddle.handleKeyInput(code, gameIsPaused);
     if (code == KeyCode.SPACE) {
@@ -295,6 +304,11 @@ public class Level {
     }
   }
 
+  /***
+   * Returns the first block in BlockConfiguration, that is, the one
+   * farthest to the upper left, that has a power up stored inside.
+   * @return Block
+   */
   public Block getFirstBlockWithPowerUp() {
     for (Block block : levelConfiguration.getBlocksAsList()) {
       if (block.hasPowerUp()) {
@@ -341,7 +355,7 @@ public class Level {
   }
 
   /***
-   * Number of lives left in the Level
+   * Gets number of lives left in the Level
    * @return number of lives
    */
   int getLives() {
@@ -353,7 +367,10 @@ public class Level {
     infoBar.updateLivesText(lives);
   }
 
-  // made public for unit testing
+  /***
+   * Decreases the number of lives stored in level and
+   * displayed by 1
+   */
   public void decreaseLivesByOne() {
     setLives(levelLives - 1);
   }
@@ -390,47 +407,95 @@ public class Level {
     return levelNumber;
   }
 
+  /***
+   * Gets the score of the current ball in the level
+   * @return score
+   */
   int getScore() {
     return gameBall.getScore();
   }
 
+  /***
+   * Increases score of ball by number of points
+   * @param points int
+   */
   void increaseBallScore(int points) {
     gameBall.increaseScoreBy(points);
   }
 
+  /***
+   * returns the group associated with Level
+   * @return group
+   */
   public Group getGameRoot() {
     return gameRoot;
   }
 
+  /***
+   * sets the group associated with level
+   * @param gameRoot group
+   */
   public void setGameRoot(Group gameRoot) {
     this.gameRoot = gameRoot;
   }
 
+  /***
+   * gets the paddle object for the level
+   * @return Paddle
+   */
   public Paddle getGamePaddle() {
     return gamePaddle;
   }
 
+  /***
+   * Gets the ball object for the level
+   * @return Ball
+   */
   public Ball getGameBall() {
     return this.gameBall;
   }
 
+  /***
+   * Gets the InfoBar for the level
+   * @return InfoBar
+   */
   public InfoBar getInfoBar() {
     return infoBar;
   }
 
+  /***
+   * Gets the score necessary to win this level
+   * and proceed to the next level by the time the
+   * timer runs out.
+   * @return int
+   */
   public int getScoreToWinLevel() {
     return scoreToWinLevel;
   }
 
+  /***
+   * Gets the original time limit of the level
+   * before it starts counting down.
+   * @return int
+   */
   public int getLevelTimeLimit() {
     return levelTimeLimit;
   }
 
+  /***
+   * Sets the stored time limit in level
+   * and displays time limit on the InfoBar.
+   * @param newTimeLimit Int
+   */
   public void setLevelTimeLimit(int newTimeLimit) {
     levelTimeLimit = newTimeLimit;
     infoBar.setTimeLimit(newTimeLimit);
   }
 
+  /***
+   * Sets the fact that the game is paused.
+   * @param isPaused boolean
+   */
   public void setGameIsPaused(boolean isPaused) {
     this.gameIsPaused = isPaused;
     if (isPaused == true) {
