@@ -2,6 +2,10 @@ package text;
 
 import javafx.scene.Group;
 
+/***
+ * Subclass to display level number status indicator on the InfoBar
+ * at the specified position and with the "Level: " title.
+ */
 public class LevelText extends StatusText {
 
   public LevelText(int levelNumber, Group gameRootArg) {

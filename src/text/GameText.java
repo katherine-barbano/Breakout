@@ -10,20 +10,47 @@ import javafx.scene.paint.Paint;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 
+/***
+ * Abstract superclass for all types of text in this game of Breakout.
+ * Contains abstractions for how text is initialized and updated, and
+ * concretely defines how to addText and removeText from the Scene.
+ */
 public abstract class GameText extends Text {
 
   private Properties properties;
   private Group gameRoot;
 
+  /***
+   * Constructor that sets the Group to add text elements to.
+   * @param gameRootArg Group
+   */
   public GameText(Group gameRootArg) {
     gameRoot = gameRootArg;
     getPropertiesList();
   }
 
+  /***
+   * Describes how text should be displayed on the screen for the
+   * first time when instantiated.
+   * @param words The text that should be displayed on the screen.
+   */
   abstract void initializeText(String words);
 
+  /***
+   * Describes how text should be updated on the screen when
+   * it needs to change.
+   * @param text The text that should be displayed on the screen.
+   */
   abstract void updateText(String text);
 
+  /***
+   * Helper method for subclasses to initialize the text,
+   * position, and id.
+   * @param text
+   * @param x
+   * @param y
+   * @param id
+   */
   void initializeProperties(String text, int x, int y, String id) {
     setText(text);
     setX(x);
@@ -33,6 +60,9 @@ public abstract class GameText extends Text {
     setId(id);
   }
 
+  /***
+   * Used to retrieve constants from properties file.
+   */
   void getPropertiesList() {
     properties = new Properties();
     FileInputStream ip = null;
@@ -44,10 +74,16 @@ public abstract class GameText extends Text {
     }
   }
 
+  /***
+   * Remove this object from the scene.
+   */
   public void removeText() {
     gameRoot.getChildren().remove(this);
   }
 
+  /***
+   * Add this object to the scene.
+   */
   public void addText() {
     gameRoot.getChildren().add(this);
   }

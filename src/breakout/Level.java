@@ -246,6 +246,10 @@ public class Level {
     }
   }
 
+  void handleKeyInputOnEndScreen(KeyCode keyCode) {
+
+  }
+
   private void handleSpaceBarInput() {
     if (gameIsPaused) {
       unpauseGame();
