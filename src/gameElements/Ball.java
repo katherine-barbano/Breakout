@@ -14,9 +14,7 @@ import javafx.scene.shape.Circle;
 /***
  * Purpose: A circle that breaks Blocks, and ends the game if it crosses the
  * bottom of the screen. Bounces off all other walls of the screen, as well as
- * the Paddle and other Blocks.
- *
- * Method: isOnScreen, breakBlock, isTouchingBlockInBlockConfiguration, isTouchingPaddle
+ * the Paddle and other Blocks. This class handles ball-block and ball-wall collisions.
  */
 public class Ball extends Circle {
 
@@ -32,6 +30,12 @@ public class Ball extends Circle {
   private boolean isBreakerBall = false;
   private int ballScore;
 
+  /***
+   * Initializes properties of the ball and adds it to the scene.
+   * @param gameRootArg group
+   * @param paddleArg paddle associated with ball
+   * @param levelArg current level the ball is associated with
+   */
   public Ball(Group gameRootArg, Paddle paddleArg, Level levelArg) {
     gameRoot = gameRootArg;
     paddle = paddleArg;
@@ -57,6 +61,11 @@ public class Ball extends Circle {
     }
   }
 
+  /***
+   * Sets the position, radius, color of the ball. The x velocity
+   * of the ball is initially 0, and the y velocity of the ball is
+   * initially the value provided in the properties file.
+   */
   public void setBallProperties() {
     setScore(0);
     setCenterX(getPlayableArea() / 2);
@@ -68,6 +77,9 @@ public class Ball extends Circle {
     velocityY = getNormalBallSpeed();
   }
 
+  /***
+   * Removes the ball from the scene.
+   */
   public void removeBall() {
     gameRoot.getChildren().remove(this);
   }
@@ -117,18 +129,34 @@ public class Ball extends Circle {
     setCenterY(getCenterY() + velocityY * elapsedTime);
   }
 
+  /***
+   * Gets the velocity in x direction.
+   * @return int velocity
+   */
   public int getVelocityX() {
     return velocityX;
   }
 
+  /***
+   * Sets velocity in x direction.
+   * @param velocityXArg
+   */
   public void setVelocityX(int velocityXArg) {
     velocityX = velocityXArg;
   }
 
+  /***
+   * Gets velocity in y direction
+   * @return int velocity
+   */
   public int getVelocityY() {
     return velocityY;
   }
 
+  /***
+   * Sets velocity in y direction
+   * @param velocityYArg int velocity
+   */
   public void setVelocityY(int velocityYArg) {
     velocityY = velocityYArg;
   }
@@ -198,6 +226,11 @@ public class Ball extends Circle {
     }
   }
 
+  /***
+   * Returns the Block that the ball is currently touching. Returns
+   * null if it is not touching any block.
+   * @return Block
+   */
   public Block getBlockBallIsTouching() {
     for (Block block : blockConfiguration.getBlocksAsList()) {
       if (block == null) {
@@ -233,22 +266,43 @@ public class Ball extends Circle {
     return getCenterY() + getBallRadius() >= getScene().getHeight();
   }
 
+  /***
+   * Increases score associated with the ball by argument int
+   * @param i increment to increase the score by
+   */
   public void increaseScoreBy(int i) {
     this.ballScore += i;
   }
 
+  /***
+   * Returns the current score associated with the ball
+   * @return score
+   */
   public int getScore() {
     return this.ballScore;
   }
 
+  /***
+   * Sets the current score associated with the ball
+   * @param i score
+   */
   public void setScore(int i) {
     this.ballScore = i;
   }
 
+  /***
+   * Sets the breakerBall status if the paddle has received the breakerBall power up.
+   * This means the Ball breaks any block with a single hit regardless of hardness.
+   * @param isBreakerBall true if the breaker ball power up has been applied
+   */
   public void setIsBreakerBall(boolean isBreakerBall) {
     this.isBreakerBall = isBreakerBall;
   }
 
+  /***
+   * Gets whether the ball has a breakerball status.
+   * @return true if it is a break ball
+   */
   public boolean isBreakerBall() {
     return this.isBreakerBall;
   }

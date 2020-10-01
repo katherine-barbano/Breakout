@@ -9,6 +9,11 @@ import javafx.util.Duration;
 import text.GameText;
 import text.TimerText;
 
+/***
+ * Keeps track of the amount of time left in the current level
+ * using a JavaFX Timeline object. Displays the time left in a TimerText
+ * object.
+ */
 public class GameTimer {
 
   private Timeline timeline;
@@ -16,7 +21,12 @@ public class GameTimer {
   private GameText timerText;
   private Group root;
 
-  //referenced https://asgteach.com/2011/10/javafx-animation-and-binding-simple-countdown-timer-2/ for how to set up Timeline with javafx
+  /***
+   * Initializes and pauses the Timeline object to keep track of the remaining time
+   * in a countdown.
+   * @param gameRoot
+   * @param timeStart
+   */
   public GameTimer(Group gameRoot, int timeStart) {
     root = gameRoot;
     this.timeSeconds = timeStart;
@@ -25,6 +35,7 @@ public class GameTimer {
     pauseTimer();
   }
 
+  //referenced https://asgteach.com/2011/10/javafx-animation-and-binding-simple-countdown-timer-2/ for how to set up Timeline with javafx
   private void initializeTimeline() {
     timeline = new Timeline();
     timeline.setCycleCount(timeSeconds);
@@ -51,10 +62,16 @@ public class GameTimer {
     timerText.removeText();
   }
 
+  /***
+   * Pauses the timeline
+   */
   void pauseTimer() {
     timeline.pause();
   }
 
+  /***
+   * Unpauses the timeline
+   */
   void unpauseTimer() {
     timeline.play();
   }
@@ -63,6 +80,10 @@ public class GameTimer {
     return timeSeconds == 0;
   }
 
+  /***
+   * Returns the amount of time remaining
+   * @return seconds remaining
+   */
   public int getTimeRemaining() {
     return timeSeconds;
   }

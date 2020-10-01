@@ -14,14 +14,18 @@ import javafx.scene.shape.Rectangle;
 /***
  *  A small rectangle at the bottom of the screen that a Ball
  *  can bounce off of. Moved horizontally using the arrow keys.
- *
- *  Method: collision, setSize, move
+ *  This class handles ball-paddle collisions, and using arrow keys
+ *  to move the paddle.
  */
 public class Paddle extends Rectangle {
 
   private Group gameRoot;
   private Properties properties;
 
+  /***
+   * Adds paddle to the scene and sets its properties.
+   * @param gameRootArg group
+   */
   public Paddle(Group gameRootArg) {
     gameRoot = gameRootArg;
     initializeProperties();
@@ -40,10 +44,16 @@ public class Paddle extends Rectangle {
     }
   }
 
+  /***
+   * Removes the paddle from the scene.
+   */
   public void removePaddle() {
     gameRoot.getChildren().remove(this);
   }
 
+  /***
+   * Sets position, width, height, color, and id of paddle.
+   */
   public void setPaddleProperties() {
     setX(getPlayableAreaSize() / 2 - getNormalPaddleWidth() / 2);
     setY(getSceneSize() - getVerticalPaddleOffset());
@@ -53,6 +63,12 @@ public class Paddle extends Rectangle {
     setId("paddle");
   }
 
+  /***
+   * Handles left and right arrow key input to move
+   * the paddle horizontally if the game is not paused.
+   * @param code KeyCode
+   * @param isPaused true if the game is paused
+   */
   public void handleKeyInput(KeyCode code, boolean isPaused) {
     if (code == KeyCode.LEFT && !isPaused) {
       moveLeft();
@@ -80,7 +96,12 @@ public class Paddle extends Rectangle {
     return getX() + getWidth() / 2;
   }
 
-  //TODO: fix for edges of ball that are not in center
+  /***
+   * Returns true if the Circle argument has collided with
+   * the top of the paddle.
+   * @param collisionCircle Either a Ball or a PowerUp
+   * @return true if the Circle is touching the top of the Paddle
+   */
   public boolean isTouchingPaddleTop(Circle collisionCircle) {
     double R = collisionCircle.getRadius();
     double Xcoord = collisionCircle.getCenterX();
