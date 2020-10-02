@@ -49,7 +49,6 @@ public class GameOverScoreText extends GameOverText {
 
   private String[] getHighestScores() {
     Collections.sort(previousGameScores, Collections.reverseOrder());
-    System.out.println(previousGameScores.toString());
     String[] highScores = new String[getGameOverScoreAmountShown()];
     for (int i = 0; i < highScores.length; i++) {
       highScores[i] =
