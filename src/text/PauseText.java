@@ -11,6 +11,8 @@ import javafx.scene.Group;
  * Subclass to display the fact that the game is paused when pressing the space bar
  * cheat key, or "Press space to start" at the beginning of the game (because
  * the game always begins in the paused state).
+ *
+ * @author Katherine Barbano
  */
 public class PauseText extends GameText {
 

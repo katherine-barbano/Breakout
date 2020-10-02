@@ -14,6 +14,8 @@ import javafx.scene.text.Text;
  * Abstract superclass for all types of text in this game of Breakout.
  * Contains abstractions for how text is initialized and updated, and
  * concretely defines how to addText and removeText from the Scene.
+ *
+ * @author Katherine Barbano
  */
 public abstract class GameText extends Text {
 

@@ -5,6 +5,8 @@ import javafx.scene.Group;
 /***
  * Subclass to display score to win status indicator on the InfoBar
  * at the specified position and with the "Score needed to win level: " title.
+ *
+ * @author Katherine Barbano
  */
 public class ScoreToWinText extends StatusText {
 

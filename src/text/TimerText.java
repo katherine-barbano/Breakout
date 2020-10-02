@@ -5,6 +5,8 @@ import javafx.scene.Group;
 /***
  * Subclass to display remaining time status indicator on the InfoBar
  * at the specified position and with the "Time: " title.
+ *
+ * @author Katherine Barbano
  */
 public class TimerText extends StatusText {
 

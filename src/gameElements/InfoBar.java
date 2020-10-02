@@ -18,6 +18,8 @@ import text.StatusText;
  * status indicators for the level and game, such as whether the game is paused,
  * the score, the number of lives left, the level number, the score necessary to win,
  * and the remaining time.
+ *
+ * @author Katherine Barbano
  */
 public class InfoBar extends Rectangle {
 

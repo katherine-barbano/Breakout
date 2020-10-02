@@ -28,6 +28,9 @@ import text.ScoreToWinText;
  * to the Group. Handles pausing/unpausing the game, maintains the number of lives left in the level,
  * maintains an instance of Ball and Paddle, and maintains blocks on the screen from a BlockConfiguration.
  * Handles level-specific cheat keys and keeps track of lives, pausing, time limit, and score to win the level.
+ *
+ * @author Katherine Barbano
+ * @author features added by Anna Diemel
  */
 public class Level {
 

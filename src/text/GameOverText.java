@@ -5,6 +5,8 @@ import javafx.scene.Group;
 /***
  * Subclass to display the fact that the game has ended, and
  * whether the game resulted in a win or a loss.
+ *
+ * @author Katherine Barbano
  */
 public class GameOverText extends GameText {
 

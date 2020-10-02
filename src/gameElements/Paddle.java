@@ -16,6 +16,8 @@ import javafx.scene.shape.Rectangle;
  *  can bounce off of. Moved horizontally using the arrow keys.
  *  This class handles ball-paddle collisions, and using arrow keys
  *  to move the paddle.
+ *
+ * @author Katherine Barbano
  */
 public class Paddle extends Rectangle {
 

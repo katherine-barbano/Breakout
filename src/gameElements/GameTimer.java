@@ -13,6 +13,8 @@ import text.TimerText;
  * Keeps track of the amount of time left in the current level
  * using a JavaFX Timeline object. Displays the time left in a TimerText
  * object.
+ *
+ * @author Katherine Barbano
  */
 public class GameTimer {
 

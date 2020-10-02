@@ -7,6 +7,8 @@ import javafx.scene.Group;
  * specifically for status indicators like Score: 10 or Lives: 3.
  * Contains abstraction for what to set the position, id, and title
  * variables as.
+ *
+ * @author Katherine Barbano
  */
 public abstract class StatusText extends GameText {
 

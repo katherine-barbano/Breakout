@@ -29,6 +29,9 @@ import text.ScoreText;
  * Handles the game flow over multiple Levels. Creates and initializes the Scene, Group, and
  * Nodes, and handles key input as well as losing and winning. Creates and runs the game through all Levels
  * within a directory in the data folder.
+ *
+ * @author Katherine Barbano
+ * @author features added by Anna Diemel
  */
 public class Game {
 

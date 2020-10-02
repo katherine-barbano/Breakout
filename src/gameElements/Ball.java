@@ -12,9 +12,13 @@ import javafx.scene.shape.Circle;
 
 
 /***
- * Purpose: A circle that breaks Blocks, and ends the game if it crosses the
+ * A circle that breaks Blocks, and ends the game if it crosses the
  * bottom of the screen. Bounces off all other walls of the screen, as well as
  * the Paddle and other Blocks. This class handles ball-block and ball-wall collisions.
+ * Maintains score associated for the blocks this ball has broken.
+ *
+ * @author Katherine Barbano
+ * @author features added by Anna Diemel
  */
 public class Ball extends Circle {
 
